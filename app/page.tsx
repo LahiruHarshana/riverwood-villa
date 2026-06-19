@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
+  ArrowLeft,
   ArrowUpRight,
   Bath,
   BedDouble,
@@ -198,22 +199,58 @@ const gallery = [
 
 const testimonials = [
   {
-    quote:
-      "Riverwood has that rare balance of privacy, warmth, and tropical calm. The first morning on the balcony was the whole reason to come.",
+    quote: "Riverwood has that rare balance of privacy, warmth, and tropical calm. The first morning on the balcony was the whole reason to come.",
     name: "Amelia Cooper",
     role: "Family guest",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
   },
   {
-    quote:
-      "The villa works beautifully for a small group. We had enough space to gather, enough quiet to disappear, and no rush anywhere.",
+    quote: "The villa works beautifully for a small group. We had enough space to gather, enough quiet to disappear, and no rush anywhere.",
     name: "Nathan Harper",
-    role: "Weekend retreat guest",
+    role: "Weekend retreat",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
   },
   {
-    quote:
-      "A polished stay without feeling formal. The river setting, rooms, and meal support made everything feel easy.",
+    quote: "A polished stay without feeling formal. The river setting, rooms, and meal support made everything feel easy.",
     name: "Grace Powell",
     role: "Long-stay guest",
+    avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+  },
+  {
+    quote: "Unbelievably peaceful. We spent our afternoons just watching the water from the terrace. Best vacation ever.",
+    name: "Elias Vance",
+    role: "Couples retreat",
+    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
+  },
+  {
+    quote: "The attention to detail is stunning. From the soft linens to the perfectly curated garden, Riverwood exceeded expectations.",
+    name: "Sofia Lin",
+    role: "Boutique traveler",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704b",
+  },
+  {
+    quote: "Having private access to the entire villa gave us the ultimate freedom. Highly recommend the hosted dining!",
+    name: "Marcus Wright",
+    role: "Group stay",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026703d",
+  },
+  {
+    quote: "Quiet, remote, yet impeccably maintained. The high ceilings and natural light in the bedrooms are wonderful.",
+    name: "Chloe Bennett",
+    role: "Solo traveler",
+    avatar: "https://i.pravatar.cc/150?u=a04258a2462d826712d",
+  },
+  {
+    quote: "A true hidden gem. We woke up to birdsong and coffee on the balcony every single day. We'll definitely be back.",
+    name: "James O'Connor",
+    role: "Anniversary stay",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024e",
+  },
+  {
+    quote: "Flawless hospitality. The team made sure we had absolutely everything we needed without ever intruding on our privacy.",
+    name: "Zara Patel",
+    role: "Family guest",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026702e",
   },
 ];
 
@@ -558,45 +595,86 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="offer-grid">
-            <div className="offer-tabs" data-animate>
+          <div className="vista-slider-container desktop-only" data-animate>
+            {/* Left Panel: Description of Active Item */}
+            <div className="vista-slider-info">
+              <div className="icon-pill">
+                <OfferIcon size={32} />
+              </div>
+              <h3>{currentOffer.title}</h3>
+              <p>{currentOffer.copy}</p>
+            </div>
+
+            {/* Right Panel: Accordion */}
+            <div className="vista-slider-accordion">
               {offerTabs.map((tab, index) => {
-                const TabIcon = tab.icon;
+                const isActive = activeOffer === index;
                 return (
                   <button
-                    className={`offer-tab ${activeOffer === index ? "active" : ""}`}
                     key={tab.number}
-                    type="button"
+                    className={`vista-accordion-item ${isActive ? "active" : ""}`}
                     onClick={() => setActiveOffer(index)}
+                    onMouseEnter={() => setActiveOffer(index)}
+                    aria-expanded={isActive}
                   >
-                    <span className="offer-number">{tab.number}</span>
-                    <span className="offer-tab-copy">
-                      <strong>{tab.title}</strong>
-                      <small>{tab.label}</small>
-                    </span>
-                    <TabIcon size={24} />
+                    {isActive ? (
+                      <div className="vista-accordion-content active-content">
+                        <Image
+                          src={tab.image}
+                          alt={tab.title}
+                          fill
+                          sizes="(max-width: 900px) 100vw, 55vw"
+                        />
+                        <div className="vista-accordion-badge">
+                          <span className="badge-number">{tab.number}</span>
+                          <span className="badge-title">{tab.title}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="vista-accordion-content inactive-content">
+                        <ArrowLeft className="inactive-arrow" size={24} />
+                        <div className="inactive-text-wrapper">
+                          <span className="inactive-text">
+                            <span className="inactive-number">{tab.number}</span>{" "}
+                            {tab.title.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </button>
                 );
               })}
             </div>
-            <article className="offer-panel" data-animate>
-              <div className="offer-image">
-                <Image
-                  src={currentOffer.image}
-                  alt={currentOffer.title}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 55vw"
-                />
-                <span>{currentOffer.label}</span>
-              </div>
-              <div className="offer-detail">
-                <div className="icon-pill">
-                  <OfferIcon size={26} />
+          </div>
+
+          <div className="mobile-offer-grid mobile-only" data-animate>
+            {offerTabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <div className="mobile-offer-card" key={tab.number}>
+                  <div className="mobile-offer-image-wrapper">
+                    <Image
+                      src={tab.image}
+                      alt={tab.title}
+                      fill
+                      sizes="(max-width: 991px) 100vw, 0vw"
+                      className="mobile-offer-img"
+                    />
+                    <div className="mobile-badge">
+                      <span className="mobile-badge-number">{tab.number}</span>
+                      <span className="mobile-badge-title">{tab.title}</span>
+                    </div>
+                  </div>
+                  <div className="mobile-offer-content">
+                    <div className="mobile-offer-title">
+                      <Icon size={24} />
+                      <h3>{tab.title}</h3>
+                    </div>
+                    <p>{tab.copy}</p>
+                  </div>
                 </div>
-                <h3>{currentOffer.title}</h3>
-                <p>{currentOffer.copy}</p>
-              </div>
-            </article>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -789,31 +867,85 @@ export default function Home() {
 
       <section className="section testimonials-section">
         <div className="container">
-          <div className="section-heading two-column">
-            <div data-animate>
-              <span className="section-badge">What guests say</span>
-              <h2>Trusted for privacy, loved for quiet luxury</h2>
+          <div className="vista-testimonials-container">
+            {/* Sticky Info Panel */}
+            <div className="vista-testimonials-info" data-animate>
+              <span className="section-badge">What Our Clients Say</span>
+              <h2>Trusted by many,<br />loved by all</h2>
+              <p>
+                Our guests' stories reflect our commitment to excellence. See how we've helped them find their perfect getaways, peaceful retreats, and memorable moments.
+              </p>
             </div>
-            <p data-animate>
-              Guests return for the quiet, the warmth, and the sense of arriving
-              somewhere genuinely private — not just another villa rental.
-            </p>
-          </div>
-          <div className="testimonial-grid">
-            {testimonials.map((item) => (
-              <article className="testimonial-card" key={item.name} data-animate>
-                <div className="stars" aria-label="Five stars">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} size={16} fill="currentColor" />
+
+            {/* Marquee Columns */}
+            <div className="vista-testimonials-marquee" data-animate>
+              {/* Column 1 (Scroll Down) */}
+              <div className="marquee-col">
+                <div className="marquee-track down">
+                  {[...testimonials.slice(0, 3), ...testimonials.slice(0, 3)].map((item, i) => (
+                    <article className="testimonial-card" key={`col1-${i}`}>
+                      <div className="stars" aria-label="Five stars">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} size={14} fill="#f7c547" color="#f7c547" />
+                        ))}
+                      </div>
+                      <div className="testimonial-guest">
+                        <div className="guest-avatar"><img src={item.avatar} alt={item.name} /></div>
+                        <div>
+                          <strong>{item.name}</strong>
+                          <span>{item.role}</span>
+                        </div>
+                      </div>
+                      <p>{item.quote}</p>
+                    </article>
                   ))}
                 </div>
-                <p>&ldquo;{item.quote}&rdquo;</p>
-                <div>
-                  <strong>{item.name}</strong>
-                  <span>{item.role}</span>
+              </div>
+              {/* Column 2 (Scroll Up) */}
+              <div className="marquee-col">
+                <div className="marquee-track up">
+                  {[...testimonials.slice(3, 6), ...testimonials.slice(3, 6)].map((item, i) => (
+                    <article className="testimonial-card" key={`col2-${i}`}>
+                      <div className="stars" aria-label="Five stars">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} size={14} fill="#f7c547" color="#f7c547" />
+                        ))}
+                      </div>
+                      <div className="testimonial-guest">
+                        <div className="guest-avatar"><img src={item.avatar} alt={item.name} /></div>
+                        <div>
+                          <strong>{item.name}</strong>
+                          <span>{item.role}</span>
+                        </div>
+                      </div>
+                      <p>{item.quote}</p>
+                    </article>
+                  ))}
                 </div>
-              </article>
-            ))}
+              </div>
+              {/* Column 3 (Scroll Down) */}
+              <div className="marquee-col">
+                <div className="marquee-track down">
+                  {[...testimonials.slice(6, 9), ...testimonials.slice(6, 9)].map((item, i) => (
+                    <article className="testimonial-card" key={`col3-${i}`}>
+                      <div className="stars" aria-label="Five stars">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} size={14} fill="#f7c547" color="#f7c547" />
+                        ))}
+                      </div>
+                      <div className="testimonial-guest">
+                        <div className="guest-avatar"><img src={item.avatar} alt={item.name} /></div>
+                        <div>
+                          <strong>{item.name}</strong>
+                          <span>{item.role}</span>
+                        </div>
+                      </div>
+                      <p>{item.quote}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

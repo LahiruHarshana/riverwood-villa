@@ -599,6 +599,7 @@ figure {
 
 .hero-small-mark {
   width: 30%;
+  height: auto;
   min-width: 5.3rem;
   opacity: 0;
   color: currentColor;

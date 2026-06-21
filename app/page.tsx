@@ -2,335 +2,471 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
 import {
   ArrowUpRight,
-  Bath,
-  BedDouble,
-  CalendarDays,
-  ChevronDown,
-  Clock3,
   Facebook,
-  Home as HomeIcon,
-  Hotel,
   Instagram,
-  Leaf,
   Mail,
   MapPin,
-  Menu,
-  MessageCircle,
   Phone,
-  Sailboat,
-  ShieldCheck,
-  Sparkles,
-  Star,
-  Trees,
-  Utensils,
-  Waves,
-  Wifi,
   X,
 } from "lucide-react";
 
 const navItems = [
   ["Home", "#home"],
-  ["Offer", "#offer"],
-  ["Stays", "#stays"],
-  ["Gallery", "#gallery"],
+  ["About", "#about"],
+  ["Project", "#project"],
+  ["Sustainability", "#sustainability"],
+  ["Service", "#service"],
+  ["Journal", "#journal"],
   ["Contact", "#contact"],
 ];
 
-const heroStats = [
-  ["4+", "Private suites"],
-  ["12+", "Happy guests"],
-  ["360°", "River views"],
-];
-
-const offerTabs = [
+const projectSlides = [
   {
-    number: "01",
-    title: "Private Villa Living",
-    label: "Whole-villa stays",
-    copy: "Reserve Riverwood as a quiet private base with generous gathering spaces, garden-facing rooms, and an easy arrival rhythm.",
+    title: "Riverside Arrival",
+    number: "1",
     image: "/villa/villa-exterior-front.jpg",
-    icon: HomeIcon,
+    copy: "The stay begins with the white villa, shaded palms, and a threshold that immediately slows the day down.",
   },
   {
-    number: "02",
-    title: "Slow Riverside Days",
-    label: "Nature and calm",
-    copy: "Wake to palms, river air, birdsong, and shaded balconies built for long tea, reading, and unhurried conversation.",
-    image: "/villa/villa-riverside.webp",
-    icon: Waves,
-  },
-  {
-    number: "03",
-    title: "Hosted Dining Moments",
-    label: "Meals and terraces",
-    copy: "Gather around patio dining, morning breakfasts, and relaxed evening meals with hosting support arranged around your stay.",
-    image: "/villa/villa-terrace-dining.webp",
-    icon: Utensils,
-  },
-];
-
-const services = [
-  {
-    icon: Hotel,
-    title: "Boutique Rooms",
-    copy: "High-ceiling bedrooms, soft linens, ensuite comfort, and quiet corners for rest.",
-  },
-  {
-    icon: Trees,
-    title: "Garden Setting",
-    copy: "Tropical greenery, paved walkways, open-air balconies, and riverwood shade.",
-  },
-  {
-    icon: Utensils,
-    title: "Dining Support",
-    copy: "Breakfast, tea, and hosted meal planning available when your dates are confirmed.",
-  },
-  {
-    icon: Wifi,
-    title: "Connected Calm",
-    copy: "Starlink-supported connectivity for guests who need to work without losing the view.",
-  },
-  {
-    icon: Sailboat,
-    title: "Local Experiences",
-    copy: "Boat rides, nature sightings, nearby beaches, and quiet routes can be suggested.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Private Planning",
-    copy: "Straightforward enquiry support for couples, families, small groups, and longer stays.",
-  },
-];
-
-const stays = [
-  {
-    category: "Signature",
-    title: "Whole Villa Retreat",
-    location: "Riverside private stay",
-    price: "$320",
-    beds: "4 rooms",
-    baths: "4 baths",
-    size: "Full villa",
-    image: "/villa/villa-exterior-side-river.jpg",
-  },
-  {
-    category: "Couples",
-    title: "Canopy Suite Stay",
-    location: "Garden-facing bedroom",
-    price: "$120",
-    beds: "1 room",
-    baths: "Ensuite",
-    size: "Balcony",
-    image: "/villa/villa-bedroom-canopy.jpg",
-  },
-  {
-    category: "Family",
-    title: "Terrace Dining Escape",
-    location: "Patio and lounge access",
-    price: "$220",
-    beds: "2 rooms",
-    baths: "2 baths",
-    size: "Shared spaces",
-    image: "/villa/villa-dining-patio.jpg",
-  },
-  {
-    category: "Long Stay",
-    title: "Work From Riverwood",
-    location: "Desk, Wi-Fi, and calm",
-    price: "Custom",
-    beds: "Flexible",
-    baths: "Private",
-    size: "Starlink",
-    image: "/villa/villa-bedroom-desk.jpg",
-  },
-  {
-    category: "Nature",
-    title: "River Morning Package",
-    location: "Balcony and water views",
-    price: "$180",
-    beds: "2 guests",
-    baths: "Ensuite",
-    size: "River view",
+    title: "Balcony Rituals",
+    number: "2",
     image: "/villa/villa-balcony-chairs-river.webp",
+    copy: "Open balconies, warm rooms, and river views shape mornings that feel private, easy, and quietly cinematic.",
   },
   {
-    category: "Hosted",
-    title: "Slow Weekend Gathering",
-    location: "Meals and terrace time",
-    price: "$280",
-    beds: "Group stay",
-    baths: "Private",
-    size: "Dining patio",
-    image: "/villa/villa-outdoor-restaurant.webp",
-  },
-];
-
-const aboutFeatures = [
-  {
-    icon: Leaf,
-    title: "Naturally Quiet",
-    copy: "The architecture keeps the stay connected to palms, shaded verandas, and river air.",
-  },
-  {
-    icon: Sparkles,
-    title: "Warmly Hosted",
-    copy: "Thoughtful support is available without making the villa feel overmanaged.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Easy to Arrange",
-    copy: "Send your group size and dates, then shape the stay with simple private guidance.",
-  },
-];
-
-const gallery = [
-  { src: "/villa/villa-hero.webp", label: "Hero view" },
-  { src: "/villa/villa-exterior-night.jpg", label: "Evening facade" },
-  { src: "/villa/villa-balcony-table.jpg", label: "Balcony table" },
-  { src: "/villa/villa-bedroom-high-ceiling.jpg", label: "High ceiling room" },
-  { src: "/villa/villa-peacocks-veranda.jpg", label: "Veranda life" },
-  { src: "/villa/villa-terrace.webp", label: "Terrace" },
-  { src: "/villa/villa-boat-sunset.webp", label: "Sunset boat" },
-  { src: "/villa/villa-paved-walkway.webp", label: "Garden walkway" },
-];
-
-const testimonials = [
-  {
-    quote:
-      "Riverwood has that rare balance of privacy, warmth, and tropical calm. The first morning on the balcony was the whole reason to come.",
-    name: "Amelia Cooper",
-    role: "Family guest",
-  },
-  {
-    quote:
-      "The villa works beautifully for a small group. We had enough space to gather, enough quiet to disappear, and no rush anywhere.",
-    name: "Nathan Harper",
-    role: "Weekend retreat guest",
-  },
-  {
-    quote:
-      "A polished stay without feeling formal. The river setting, rooms, and meal support made everything feel easy.",
-    name: "Grace Powell",
-    role: "Long-stay guest",
-  },
-];
-
-const journal = [
-  {
-    title: "How to plan a slower villa weekend beside the water",
-    meta: "Stay guide",
-    image: "/villa/villa-balcony-palms.jpg",
-  },
-  {
-    title: "What to pack for a private riverside boutique stay",
-    meta: "Guest notes",
-    image: "/villa/villa-long-balcony.jpg",
-  },
-  {
-    title: "Morning tea, terrace dinners, and the Riverwood rhythm",
-    meta: "Experience",
+    title: "Hosted Dining",
+    number: "3",
     image: "/villa/villa-terrace-dining.webp",
+    copy: "Meals, tea, and local support can be shaped around the rhythm of your group without making the villa feel formal.",
   },
 ];
 
-const faqs = [
-  {
-    question: "Can we reserve the full villa privately?",
-    answer:
-      "Yes. Riverwood Villa is well suited to private bookings for families, couples, and small groups who want the whole place to themselves.",
-  },
-  {
-    question: "Can meals be arranged during the stay?",
-    answer:
-      "Breakfast and hosted dining support can be discussed when you enquire. Availability depends on your dates, group size, and preferences.",
-  },
-  {
-    question: "Is the villa suitable for remote work?",
-    answer:
-      "Yes. The villa includes calm work corners and Starlink-supported connectivity, while still keeping the stay close to nature.",
-  },
-  {
-    question: "Do you support longer stays?",
-    answer:
-      "Longer stays can be arranged. Share your preferred dates and we can suggest the best room or full-villa setup.",
-  },
-  {
-    question: "What is the best way to enquire?",
-    answer:
-      "Use the contact form or email link with your dates, group size, and preferred stay style. We will respond with the next practical details.",
-  },
+const journalImages = [
+  ["/villa/villa-exterior-night.jpg", "Warm facade after dark"],
+  ["/villa/villa-balcony-table.jpg", "Tea above the palms"],
+  ["/villa/villa-bedroom-high-ceiling.jpg", "High ceiling rest"],
+  ["/villa/villa-peacocks-veranda.jpg", "Veranda life"],
+  ["/villa/villa-boat-sunset.webp", "Sunset boat route"],
+  ["/villa/villa-hero.webp", "The riverwood view"],
 ];
+
+function settleHeroReveal() {
+  const overlay = document.querySelector<HTMLElement>(".hero-overlay");
+  if (overlay) overlay.style.opacity = "0.65";
+
+  document.querySelectorAll<SVGTextElement>(".hero-logo-text").forEach((text) => {
+    text.style.fillOpacity = "1";
+    text.style.strokeDashoffset = "0";
+  });
+
+  const smallMark = document.querySelector<HTMLElement>(".hero-small-mark");
+  if (smallMark) smallMark.style.opacity = "1";
+
+  document
+    .querySelectorAll<HTMLElement>(
+      '.hero-content p span, .scroll-to-explore span, [data-loader="nav-logo"], [data-loader="nav-est"], [data-loader="nav-btn-line"]'
+    )
+    .forEach((element) => {
+      element.style.transform = "translateY(0)";
+    });
+
+  const navLine = document.querySelector<HTMLElement>('[data-loader="nav-line"]');
+  if (navLine) navLine.style.transform = "scaleX(1)";
+}
+
+function LoaderMark() {
+  return (
+    <svg viewBox="0 0 500 500" aria-hidden="true" className="loader-svg">
+      <g transform="matrix(3.0810909271240234, 0, 0, 3.0810909271240234, -520.272705078125, -520.272705078125)">
+        <circle className="loader-circle" cx="250" cy="250" r="75" />
+        <image
+          className="loader-kanji"
+          href="/brand/logo.png"
+          x="200"
+          y="200"
+          width="100"
+          height="100"
+        />
+      </g>
+    </svg>
+  );
+}
+
+function HeroLogo() {
+  return (
+    <svg
+      className="hero-logo"
+      data-loader="svg"
+      viewBox="0 0 1443 390"
+      aria-hidden="true"
+    >
+      <text className="hero-logo-text" x="0" y="142">
+        RIVERWOOD
+      </text>
+      <text className="hero-logo-text is-small" x="0" y="342">
+        VILLA
+      </text>
+    </svg>
+  );
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeOffer, setActiveOffer] = useState(0);
-  const [activeFaq, setActiveFaq] = useState(0);
+  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    document.body.style.opacity = "1";
+    const fallback = window.setTimeout(() => {
+      settleHeroReveal();
+      setShowLoader(false);
+    }, 6200);
+    return () => window.clearTimeout(fallback);
+  }, []);
 
-    if (reduceMotion) {
-      document.documentElement.classList.add("motion-reduced");
-      return;
+  useEffect(() => {
+    let alive = true;
+
+    function animateMenu() {
+      if (!alive) return;
+
+      if (menuOpen) {
+        gsap.set(".site-menu", { autoAlpha: 1, pointerEvents: "auto" });
+        gsap.fromTo(
+          ".menu-left",
+          { xPercent: -100 },
+          { xPercent: 0, duration: 0.95, ease: "expo.inOut" }
+        );
+        gsap.fromTo(
+          ".menu-right",
+          { xPercent: 100 },
+          { xPercent: 0, duration: 0.95, ease: "expo.inOut" },
+        );
+        gsap.fromTo(
+          ".menu-left a span, .menu-left a strong",
+          { yPercent: 120, autoAlpha: 0 },
+          {
+            yPercent: 0,
+            autoAlpha: 1,
+            duration: 0.82,
+            ease: "power4.out",
+            stagger: 0.035,
+            delay: 0.18,
+          }
+        );
+        gsap.fromTo(
+          ".menu-right button, .menu-right > div, .menu-right small",
+          { y: 34, autoAlpha: 0 },
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.68,
+            ease: "power3.out",
+            stagger: 0.07,
+            delay: 0.34,
+          }
+        );
+      } else {
+        gsap.to(".site-menu", {
+          autoAlpha: 0,
+          pointerEvents: "none",
+          duration: 0.42,
+          ease: "sine.out",
+        });
+        gsap.to(".menu-left", { xPercent: -100, duration: 0.55, ease: "expo.inOut" });
+        gsap.to(".menu-right", { xPercent: 100, duration: 0.55, ease: "expo.inOut" });
+      }
     }
 
-    let cleanup = () => {};
-    const revealFallback = window.setTimeout(() => {
-      document.querySelector<HTMLElement>(".loader")?.remove();
-      document.querySelectorAll<HTMLElement>(".hero-word").forEach((el) => {
-        el.style.transform = "translateY(0%)";
-      });
-      document.querySelectorAll<HTMLElement>(".hero-fade").forEach((el) => {
-        el.style.opacity = "1";
-        el.style.visibility = "visible";
-        el.style.transform = "translateY(0)";
-      });
-    }, 4200);
+    animateMenu();
 
-    async function initMotion() {
+    return () => {
+      alive = false;
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    let alive = true;
+    let cleanup = () => {};
+
+    async function bootMotion() {
       try {
-        const [{ gsap }, { ScrollTrigger }, LenisModule] = await Promise.all([
-          import("gsap"),
-          import("gsap/ScrollTrigger"),
-          import("lenis"),
-        ]);
-        const Lenis = LenisModule.default;
+        if (!alive) return;
+
+          const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+          ).matches;
+
+          if (reduceMotion) {
+            document.documentElement.classList.add("motion-reduced");
+            settleHeroReveal();
+            setShowLoader(false);
+            document.querySelectorAll<HTMLElement>(".gallery-item").forEach((el) => {
+              el.style.opacity = "1";
+              el.style.transform = "";
+            });
+            document.querySelectorAll<HTMLElement>(".reveal-img").forEach((el) => {
+              el.style.clipPath = "inset(0 0% 0 0)";
+            });
+            return;
+          }
 
         gsap.registerPlugin(ScrollTrigger);
 
         const lenis = new Lenis({
           lerp: 0.08,
           smoothWheel: true,
+          wheelMultiplier: 0.88,
         });
 
-        const raf = (time: number) => {
-          lenis.raf(time);
-          requestAnimationFrame(raf);
-        };
-        requestAnimationFrame(raf);
         lenis.on("scroll", ScrollTrigger.update);
+        const raf = (time: number) => lenis.raf(time * 1000);
+        gsap.ticker.add(raf);
+        gsap.ticker.lagSmoothing(0);
 
-        const loadTl = gsap.timeline({
-          defaults: { ease: "power3.out" },
-          onComplete: () => {
-            window.clearTimeout(revealFallback);
-            initScrollAnimations();
-          },
+        const clickHandler = (event: MouseEvent) => {
+          const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
+            'a[href^="#"]'
+          );
+          if (!link) return;
+          const target = document.querySelector<HTMLElement>(link.hash);
+          if (!target) return;
+          event.preventDefault();
+          setMenuOpen(false);
+          lenis.scrollTo(target, { offset: -20 });
+        };
+
+        document.addEventListener("click", clickHandler);
+
+        // ─── Custom cursor (desktop / hover-capable only) ────────────────
+        const cursorDot = document.querySelector<HTMLElement>(".cursor-dot");
+        const cursorRing = document.querySelector<HTMLElement>(".cursor-ring");
+
+        if (cursorDot && cursorRing && window.matchMedia("(hover: hover)").matches) {
+          const xRing = gsap.quickTo(cursorRing, "x", { duration: 0.5, ease: "power3.out" });
+          const yRing = gsap.quickTo(cursorRing, "y", { duration: 0.5, ease: "power3.out" });
+
+          window.addEventListener("pointermove", (e: PointerEvent) => {
+            gsap.set(cursorDot, { x: e.clientX, y: e.clientY });
+            xRing(e.clientX);
+            yRing(e.clientY);
+          });
+
+          document.querySelectorAll("a, button, .gallery-item, .home_project_item").forEach((el) => {
+            el.addEventListener("pointerenter", () => cursorRing.classList.add("is-hover"));
+            el.addEventListener("pointerleave", () => cursorRing.classList.remove("is-hover"));
+          });
+        }
+
+        // ─── Velocity skew ──────────────────────────────────────────────
+        const skewSetter = gsap.quickSetter("[data-skew]", "skewY", "deg") as (v: number) => void;
+        const clampSkew = gsap.utils.clamp(-5, 5);
+        let currentSkew = 0;
+
+        lenis.on("scroll", ({ velocity }: { velocity: number }) => {
+          currentSkew = clampSkew(velocity * -0.35);
+          skewSetter(currentSkew);
         });
 
-        loadTl
-          .to(".loader-bar", { width: "100%", duration: 0.65 })
-          .to(".loader-text", { y: -36, autoAlpha: 0, duration: 0.3 }, "-=0.05")
-          .to(".loader", { yPercent: -100, duration: 0.55, ease: "power4.inOut" });
+        gsap.ticker.add(() => {
+          currentSkew *= 0.88;
+          skewSetter(currentSkew);
+        });
 
-        function initScrollAnimations() {
-          gsap.to(".hero-media", {
-            yPercent: 18,
+        // ─── Magnetic buttons ────────────────────────────────────────────
+        document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
+          const strength = Number(el.dataset.magnetic ?? "0.38");
+          el.addEventListener("pointermove", (e: PointerEvent) => {
+            const r = el.getBoundingClientRect();
+            gsap.to(el, {
+              x: (e.clientX - (r.left + r.width / 2)) * strength,
+              y: (e.clientY - (r.top + r.height / 2)) * strength,
+              duration: 0.55,
+              ease: "power3.out",
+            });
+          });
+          el.addEventListener("pointerleave", () => {
+            gsap.to(el, { x: 0, y: 0, duration: 0.55, ease: "power3.out" });
+          });
+        });
+
+        // ─── Helper: mask-reveal words ──────────────────────────────────
+        function maskRevealWords(
+          el: HTMLElement,
+          trigger: HTMLElement | null,
+          startPos = "top 86%",
+          staggerVal = 0.028,
+          dur = 1.15
+        ) {
+          const text = el.innerText;
+          el.innerHTML = "";
+          text.split(" ").forEach((word) => {
+            if (!word.trim()) return;
+            const outer = document.createElement("span");
+            outer.style.display = "inline-block";
+            outer.style.overflow = "hidden";
+            outer.style.verticalAlign = "top";
+            const inner = document.createElement("span");
+            inner.style.display = "inline-block";
+            inner.innerText = word + "\u00A0";
+            outer.appendChild(inner);
+            el.appendChild(outer);
+          });
+          gsap.fromTo(
+            el.querySelectorAll<HTMLElement>("span > span"),
+            { yPercent: 110 },
+            {
+              yPercent: 0,
+              duration: dur,
+              stagger: { each: staggerVal, ease: "power4.out" },
+              ease: "power4.out",
+              scrollTrigger: { trigger: trigger ?? el, start: startPos },
+            }
+          );
+        }
+
+        // ─── Helper: clip-path image reveal ────────────────────────────
+        function clipRevealImg(frame: HTMLElement, trigger: HTMLElement | null, startPos = "top 87%") {
+          gsap.set(frame, { clipPath: "inset(0 100% 0 0)" });
+          gsap.to(frame, {
+            clipPath: "inset(0 0% 0 0)",
+            duration: 1.3,
+            ease: "power4.inOut",
+            scrollTrigger: { trigger: trigger ?? frame, start: startPos, once: true },
+          });
+          const innerImg = frame.querySelector<HTMLElement>("img");
+          if (innerImg) {
+            gsap.fromTo(
+              innerImg,
+              { scale: 1.18 },
+              {
+                scale: 1,
+                duration: 1.35,
+                ease: "power3.out",
+                scrollTrigger: { trigger: trigger ?? frame, start: startPos },
+              }
+            );
+            gsap.to(innerImg, {
+              yPercent: 8,
+              ease: "none",
+              scrollTrigger: {
+                trigger: frame.closest("section") ?? frame,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            });
+          }
+        }
+
+        const context = gsap.context(() => {
+
+          // ─── Loader (preserved exactly) ──────────────────────────────
+          const loaderCircle = document.querySelector<SVGCircleElement>(".loader-circle");
+          const circleLength = loaderCircle?.getTotalLength() ?? 0;
+
+          if (loaderCircle) {
+            gsap.set(loaderCircle, {
+              strokeDasharray: circleLength,
+              strokeDashoffset: 0,
+            });
+          }
+
+          gsap
+            .timeline({
+              onComplete: () => {
+                if (alive) setShowLoader(false);
+                ScrollTrigger.refresh();
+              },
+            })
+            .to('[data-loader="panel-line"]', {
+              yPercent: (index) => (index % 2 === 0 ? 100 : -100),
+              duration: 1.3,
+              ease: "expo.inOut",
+              stagger: 0.1,
+            })
+            .to('[data-loader="line-mid"]', {
+              yPercent: (index) => (index % 2 === 0 ? -100 : 100),
+              duration: 1.5,
+              ease: "power4.inOut",
+              stagger: 0.1,
+            }, "<")
+            .to(".loader-circle", {
+              strokeDashoffset: circleLength,
+              duration: 1.2,
+              ease: "expo.inOut",
+            }, "<+0.35")
+            .to(".loader-kanji", { autoAlpha: 0, duration: 0.4, ease: "sine.out" }, "<+0.6")
+            .to(".loader-circle", { autoAlpha: 0, duration: 0.4, ease: "sine.out" }, "<+0.2")
+            .to(".loader-panel", {
+              xPercent: (index) => (index % 2 === 0 ? -100 : 100),
+              duration: 1.4,
+              ease: "expo.inOut",
+            }, ">")
+            .from(".hero-logo-text", {
+              strokeDashoffset: 900,
+              fillOpacity: 0,
+              duration: 3.5,
+              ease: "power2.inOut",
+              stagger: 0.15,
+            }, "<+0.1")
+            .to(".hero-logo-text", {
+              fillOpacity: 1,
+              duration: 2.5,
+              ease: "sine.out",
+            }, "<+2.0")
+            .fromTo('[data-loader="overlay"]', { opacity: 1 }, {
+              opacity: 0.65,
+              duration: 1.5,
+              ease: "sine.out",
+            }, "<+0.3")
+            .fromTo('[data-loader="home-svg-small"]', { autoAlpha: 0 }, {
+              autoAlpha: 1,
+              duration: 1.5,
+              ease: "sine.out",
+            }, "<+0.2")
+            .from('[data-loader="para-line"]', {
+              yPercent: 100,
+              stagger: 0.045,
+              duration: 1.5,
+              ease: "power4.out",
+            }, "<")
+            .from('[data-loader="nav-line"]', {
+              scaleX: 0,
+              duration: 1.5,
+              ease: "expo.inOut",
+            }, "<")
+            .from('[data-loader="nav-logo"]', {
+              yPercent: 100,
+              duration: 1.5,
+              ease: "power3.out",
+            }, "<+0.2")
+            .from('[data-loader="nav-est"]', {
+              yPercent: 100,
+              duration: 1.5,
+              ease: "power3.out",
+            }, "<+0.2")
+            .from('[data-loader="nav-btn-line"]', {
+              xPercent: -100,
+              duration: 1.5,
+              ease: "power3.out",
+              stagger: 0.2,
+            }, "<+0.2")
+            .from('[data-loader="scroll-txt"]', {
+              yPercent: 100,
+              duration: 1.5,
+              ease: "power3.out",
+            }, "<+0.25")
+            .to(".loader", { autoAlpha: 0, duration: 0.01 })
+            .set(".loader", { display: "none" });
+
+          // ─── Hero parallax ────────────────────────────────────────────
+          gsap.to(".hero-bg img", {
+            scale: 1.14,
+            yPercent: 16,
             ease: "none",
             scrollTrigger: {
               trigger: ".hero",
@@ -340,670 +476,1038 @@ export default function Home() {
             },
           });
 
-          gsap.utils.toArray<HTMLElement>("[data-animate]").forEach((el, i) => {
-            gsap.from(el, {
-              y: 34,
-              autoAlpha: 0,
-              duration: 0.75,
-              delay: (i % 4) * 0.04,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: el,
-                start: "top 86%",
-              },
+          // ─── Nav theme switching ──────────────────────────────────────
+          gsap.utils.toArray<HTMLElement>("section, footer").forEach((section) => {
+            const setNavTheme = () => {
+              const isDark = section.dataset.theme === "dark";
+              document.querySelector(".site-nav")?.classList.toggle("is-light", !isDark);
+            };
+            ScrollTrigger.create({
+              trigger: section,
+              start: "top top+=8",
+              end: "bottom top+=8",
+              onEnter: setNavTheme,
+              onEnterBack: setNavTheme,
             });
           });
 
-          gsap.utils.toArray<HTMLElement>(".section-image img").forEach((img) => {
+          // ═══ SECTION 2 — INTRO / ABOUT ═══════════════════════════════
+
+          const introSection = document.querySelector<HTMLElement>(".intro-section");
+
+          gsap.utils.toArray<HTMLElement>(".intro-section [data-anim='intro-title']").forEach((el) => {
+            gsap.fromTo(el, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.25, ease: "power4.out",
+              scrollTrigger: { trigger: el.parentElement, start: "top 90%" },
+            });
+          });
+
+          const introH2 = document.querySelector<HTMLElement>(".intro-left h2");
+          if (introH2) maskRevealWords(introH2, introSection, "top 82%", 0.032, 1.2);
+
+          gsap.utils.toArray<HTMLElement>(".intro-section [data-anim='intro-para']").forEach((el) => {
+            if (el.tagName.toLowerCase() === "h2") return;
+            const text = el.innerText;
+            el.innerHTML = "";
+            text.split(" ").forEach((word) => {
+              if (!word.trim()) return;
+              const outer = document.createElement("span");
+              outer.style.display = "inline-block";
+              outer.style.overflow = "hidden";
+              outer.style.verticalAlign = "top";
+              const inner = document.createElement("span");
+              inner.style.display = "inline-block";
+              inner.innerText = word + "\u00A0";
+              inner.classList.add("intro-word-inner");
+              outer.appendChild(inner);
+              el.appendChild(outer);
+            });
+            gsap.fromTo(
+              el.querySelectorAll(".intro-word-inner"),
+              { yPercent: 108 },
+              {
+                yPercent: 0, duration: 1.1,
+                stagger: { each: 0.026, ease: "power4.out" },
+                ease: "power4.out",
+                scrollTrigger: { trigger: el.closest("section") ?? el, start: "top 80%" },
+              }
+            );
+          });
+
+          const introBtn = introSection?.querySelector<HTMLElement>("[data-anim='fade-in']");
+          if (introBtn) {
+            gsap.fromTo(introBtn, { autoAlpha: 0, y: 16 }, {
+              autoAlpha: 1, y: 0, duration: 1.0, ease: "power3.out",
+              scrollTrigger: { trigger: introBtn, start: "top 90%" },
+            });
+          }
+
+          gsap.utils.toArray<HTMLElement>("[data-anim='intro-whipe']").forEach((whipe) => {
+            const figure = whipe.closest("figure");
+            if (!figure) return;
+            gsap.set(whipe, { width: "100%", transformOrigin: "right center" });
+            gsap.to(whipe, {
+              width: "0%",
+              duration: 1.5,
+              ease: "power4.inOut",
+              scrollTrigger: { trigger: figure.parentElement, start: "top 88%", once: true },
+            });
+          });
+
+          gsap.utils.toArray<HTMLElement>("[data-anim='intro-parallax']").forEach((img) => {
+            gsap.set(img, { scale: 1.22 });
             gsap.to(img, {
-              yPercent: -10,
-              ease: "none",
-              scrollTrigger: {
-                trigger: img,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
+              yPercent: 12, ease: "none",
+              scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true },
             });
           });
 
-          gsap.from(".footer-inner", {
-            y: 80,
-            autoAlpha: 0.5,
-            scale: 0.96,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".site-footer",
-              start: "top bottom",
-              end: "center bottom",
-              scrub: true,
-            },
+          gsap.utils.toArray<HTMLElement>("[data-anim='intro-line'], .section-divider[data-anim='intro-line']").forEach((line) => {
+            gsap.fromTo(line, { scaleX: 0, transformOrigin: "left center" }, {
+              scaleX: 1, duration: 1.8, ease: "power3.inOut",
+              scrollTrigger: { trigger: line, start: "top 95%" },
+            });
           });
-        }
+
+          // ═══ SECTION 3 — STICKY SCROLL ═══════════════════════════════
+
+          gsap.utils.toArray<HTMLElement>("[data-big-text='head']").forEach((el) => {
+            const text = el.innerText;
+            el.innerHTML = "";
+            text.split(" ").forEach((word, wordIndex, arr) => {
+              const wordWrapper = document.createElement("span");
+              wordWrapper.style.display = "inline-block";
+              wordWrapper.style.whiteSpace = "nowrap";
+              wordWrapper.classList.add("film-word");
+              wordWrapper.innerText = word;
+              el.appendChild(wordWrapper);
+              if (wordIndex < arr.length - 1) {
+                const space = document.createElement("span");
+                space.innerHTML = "&nbsp;";
+                space.style.display = "inline-block";
+                el.appendChild(space);
+              }
+            });
+          });
+
+          const scrollTriggerEl = document.querySelector<HTMLElement>("[data-big-text='trigger']");
+          const filmWords = document.querySelectorAll<HTMLElement>(".film-word");
+          const imgTrack = document.querySelector<HTMLElement>(".big_img_track");
+          const parallaxImgs = document.querySelectorAll<HTMLElement>("[data-scroll-parallax='true'] img");
+
+          if (scrollTriggerEl && filmWords.length > 0 && imgTrack) {
+            gsap.set(filmWords, { yPercent: 112, autoAlpha: 0 });
+            gsap.set(imgTrack, { yPercent: 28 });
+
+            const stickyTl = gsap.timeline({
+              defaults: { ease: "none" },
+              scrollTrigger: { trigger: scrollTriggerEl, scrub: true, start: "top top", end: "bottom bottom" },
+            });
+
+            stickyTl
+              .to(filmWords, { yPercent: 0, autoAlpha: 1, stagger: 0.08, duration: 0.22 }, 0)
+              .to("[data-big-text='wrapper']", { yPercent: -10, autoAlpha: 0.72, duration: 0.55 }, 0.35)
+              .to(imgTrack, { yPercent: -54, duration: 1 }, 0);
+
+            parallaxImgs.forEach((img) => {
+              gsap.fromTo(img, { scale: 1.14, yPercent: -6 }, {
+                scale: 1, yPercent: 9, ease: "none",
+                scrollTrigger: {
+                  trigger: img.closest(".g_visual_wrap") ?? img,
+                  scrub: true, start: "top bottom", end: "bottom top",
+                },
+              });
+            });
+
+            gsap.utils.toArray<HTMLElement>(".big_img_col").forEach((col, i) => {
+              gsap.fromTo(col, { autoAlpha: 0, rotateX: 12, y: 44, transformPerspective: 900 }, {
+                autoAlpha: 1, rotateX: 0, y: 0, duration: 1.1, ease: "power4.out", delay: i * 0.06,
+                scrollTrigger: { trigger: imgTrack, start: "top 92%" },
+              });
+            });
+          }
+
+          // ═══ SECTION 4 — PROJECTS (LIGHT THEME GRID) ═════════════════
+
+          gsap.utils.toArray<HTMLElement>(".home_project_item").forEach((item) => {
+            const imgWrap = item.querySelector<HTMLElement>("[data-anim='project-img']");
+            const title = item.querySelector<HTMLElement>(".home_project_title h3");
+            const jp = item.querySelector<HTMLElement>(".home_project_info .jp");
+            const copy = item.querySelector<HTMLElement>(".home_project_copy");
+            const numDivs = item.querySelectorAll<HTMLElement>(".home_project_num > div");
+            const btn = item.querySelector<HTMLElement>(".home_project_right [data-anim='fade-in']");
+
+            const projTl = gsap.timeline({
+              scrollTrigger: { trigger: item, start: "top 82%", once: true },
+            });
+
+            if (imgWrap) {
+              gsap.set(imgWrap, { clipPath: "inset(0 100% 0 0)" });
+              projTl.to(imgWrap, {
+                clipPath: "inset(0 0% 0 0)",
+                duration: 1.3,
+                ease: "power4.inOut",
+              }, 0);
+              const innerImg = imgWrap.querySelector<HTMLElement>("img");
+              if (innerImg) {
+                projTl.fromTo(innerImg, { scale: 1.18 }, {
+                  scale: 1, duration: 1.35, ease: "power3.out",
+                }, 0);
+              }
+            }
+
+            if (jp) {
+              projTl.fromTo(jp, { autoAlpha: 0, yPercent: 115 }, {
+                autoAlpha: 1, yPercent: 0, duration: 1.0, ease: "power4.out",
+              }, 0.2);
+            }
+
+            if (title) {
+              const words = title.innerText.split(" ");
+              title.innerHTML = "";
+              words.forEach((word) => {
+                const outer = document.createElement("span");
+                outer.style.display = "inline-block";
+                outer.style.overflow = "hidden";
+                outer.style.verticalAlign = "top";
+                const inner = document.createElement("span");
+                inner.style.display = "inline-block";
+                inner.innerText = word + "\u00A0";
+                outer.appendChild(inner);
+                title.appendChild(outer);
+              });
+              projTl.fromTo(
+                title.querySelectorAll<HTMLElement>("span > span"),
+                { yPercent: 110 },
+                { yPercent: 0, duration: 1.2, ease: "power4.out", stagger: 0.05 },
+                0.3
+              );
+            }
+
+            if (copy) {
+              const text = copy.innerText;
+              copy.innerHTML = "";
+              text.split(" ").forEach((word) => {
+                if (!word.trim()) return;
+                const outer = document.createElement("span");
+                outer.style.display = "inline-block";
+                outer.style.overflow = "hidden";
+                outer.style.verticalAlign = "top";
+                const inner = document.createElement("span");
+                inner.style.display = "inline-block";
+                inner.innerText = word + "\u00A0";
+                outer.appendChild(inner);
+                copy.appendChild(outer);
+              });
+              projTl.fromTo(
+                copy.querySelectorAll<HTMLElement>("span > span"),
+                { yPercent: 108 },
+                {
+                  yPercent: 0, duration: 1.05,
+                  stagger: { each: 0.022, ease: "power4.out" },
+                  ease: "power4.out",
+                },
+                0.45
+              );
+            }
+
+            if (numDivs.length) {
+              projTl.fromTo(numDivs, { yPercent: 90, autoAlpha: 0 }, {
+                yPercent: 0, autoAlpha: 1, duration: 1.0, ease: "power4.out", stagger: 0.08,
+              }, 0.5);
+            }
+
+            if (btn) {
+              projTl.fromTo(btn, { autoAlpha: 0, y: 16 }, {
+                autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out",
+              }, 0.6);
+            }
+
+            const bgImg = item.querySelector<HTMLElement>(".g_visual_img");
+            if (bgImg) {
+              gsap.to(bgImg, {
+                yPercent: 10,
+                ease: "none",
+                scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true },
+              });
+            }
+          });
+
+          // ═══ SECTION 5 — SUSTAINABILITY ════════════════════════════════
+
+          const sustainSection = document.querySelector<HTMLElement>(".home_sustain");
+
+          const sustainH2 = document.querySelector<HTMLElement>(".g_heading");
+          if (sustainH2) maskRevealWords(sustainH2, sustainSection, "top 84%", 0.03, 1.2);
+
+          gsap.utils.toArray<HTMLElement>(".home_sustain [data-anim='intro-title']").forEach((el) => {
+            gsap.fromTo(el, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.2, ease: "power4.out",
+              scrollTrigger: { trigger: el.parentElement, start: "top 90%" },
+            });
+          });
+
+          const sustainKanji = sustainSection?.querySelector<HTMLElement>(".h_sustain_kanji_wrap [data-anim='fade-in']");
+          if (sustainKanji) {
+            gsap.fromTo(sustainKanji, { autoAlpha: 0, y: 16 }, {
+              autoAlpha: 1, y: 0, duration: 1.0, ease: "power3.out",
+              scrollTrigger: { trigger: sustainKanji, start: "top 90%" },
+            });
+          }
+
+          const sustainPara = document.querySelector<HTMLElement>(".sustain_content_p p");
+          if (sustainPara) {
+            const words = sustainPara.innerText.split(" ");
+            sustainPara.innerHTML = "";
+            words.forEach((word) => {
+              if (!word.trim()) return;
+              const outer = document.createElement("span");
+              outer.style.display = "inline-block";
+              outer.style.overflow = "hidden";
+              outer.style.verticalAlign = "top";
+              const inner = document.createElement("span");
+              inner.style.display = "inline-block";
+              inner.innerText = word + "\u00A0";
+              outer.appendChild(inner);
+              sustainPara.appendChild(outer);
+            });
+            gsap.fromTo(
+              sustainPara.querySelectorAll<HTMLElement>("span > span"),
+              { yPercent: 108 },
+              {
+                yPercent: 0, duration: 1.05,
+                stagger: { each: 0.022, ease: "power4.out" },
+                ease: "power4.out",
+                scrollTrigger: { trigger: sustainSection, start: "top 80%" },
+              }
+            );
+          }
+
+          const sustainBtn = sustainSection?.querySelector<HTMLElement>(".sustain_content_wrap [data-anim='fade-in']");
+          if (sustainBtn) {
+            gsap.fromTo(sustainBtn, { autoAlpha: 0, y: 14 }, {
+              autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out",
+              scrollTrigger: { trigger: sustainBtn, start: "top 88%" },
+            });
+          }
+
+          // Sustainability images — clip-path reveals
+          gsap.utils.toArray<HTMLElement>(".home_sustain .reveal-img").forEach((frame) => {
+            clipRevealImg(frame, sustainSection, "top 86%");
+          });
+
+          // ═══ SECTION 6 — SERVICE (LIGHT THEME) ═══════════════════════
+
+          const serviceSection = document.querySelector<HTMLElement>(".service-section");
+
+          const serviceJp = serviceSection?.querySelector<HTMLElement>(".jp[data-anim='intro-title']");
+          if (serviceJp) {
+            gsap.fromTo(serviceJp, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.25, ease: "power4.out",
+              scrollTrigger: { trigger: serviceJp.parentElement, start: "top 90%" },
+            });
+          }
+
+          const serviceLabel = serviceSection?.querySelector<HTMLElement>(":scope > div:first-child p");
+          if (serviceLabel) {
+            gsap.fromTo(serviceLabel, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.25, ease: "power4.out",
+              scrollTrigger: { trigger: serviceLabel.parentElement, start: "top 90%" },
+            });
+          }
+
+          const serviceTypeEl = document.querySelector<HTMLElement>(".service-type");
+          if (serviceTypeEl) {
+            const directSpans = serviceTypeEl.querySelectorAll<HTMLElement>("[data-anim='service-word']");
+            if (directSpans.length) {
+              directSpans.forEach((span) => {
+                const outer = document.createElement("span");
+                outer.style.display = "inline-block";
+                outer.style.overflow = "hidden";
+                outer.style.verticalAlign = "top";
+                const inner = document.createElement("span");
+                inner.style.display = "inline-block";
+                inner.innerText = span.innerText;
+                inner.style.willChange = "transform";
+                outer.appendChild(inner);
+                span.innerHTML = "";
+                span.appendChild(outer);
+              });
+              gsap.fromTo(
+                serviceTypeEl.querySelectorAll<HTMLElement>("[data-anim='service-word'] span > span"),
+                { yPercent: 110, rotateX: 8 },
+                {
+                  yPercent: 0, rotateX: 0, duration: 1.15, ease: "power4.out",
+                  stagger: 0.07,
+                  scrollTrigger: { trigger: serviceTypeEl, start: "top 84%" },
+                }
+              );
+            }
+
+            const serviceImg = serviceTypeEl.querySelector<HTMLElement>(".service-img");
+            if (serviceImg) clipRevealImg(serviceImg, serviceTypeEl, "top 84%");
+          }
+
+          const servicePara = serviceSection?.querySelector<HTMLElement>(":scope > p[data-anim='intro-para']");
+          if (servicePara) {
+            const text = servicePara.innerText;
+            servicePara.innerHTML = "";
+            text.split(" ").forEach((word) => {
+              if (!word.trim()) return;
+              const outer = document.createElement("span");
+              outer.style.display = "inline-block";
+              outer.style.overflow = "hidden";
+              outer.style.verticalAlign = "top";
+              const inner = document.createElement("span");
+              inner.style.display = "inline-block";
+              inner.innerText = word + "\u00A0";
+              outer.appendChild(inner);
+              servicePara.appendChild(outer);
+            });
+            gsap.fromTo(
+              servicePara.querySelectorAll<HTMLElement>("span > span"),
+              { yPercent: 108 },
+              {
+                yPercent: 0, duration: 1.05,
+                stagger: { each: 0.024, ease: "power4.out" },
+                ease: "power4.out",
+                scrollTrigger: { trigger: servicePara, start: "top 88%" },
+              }
+            );
+          }
+
+          const serviceLink = serviceSection?.querySelector<HTMLElement>("[data-anim='fade-in']");
+          if (serviceLink) {
+            gsap.fromTo(serviceLink, { autoAlpha: 0, y: 14 }, {
+              autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out",
+              scrollTrigger: { trigger: serviceLink, start: "top 90%" },
+            });
+          }
+
+          // ═══ SECTION 7 — GALLERY ════════════════════════════════════════
+
+          const galleryH2 = document.querySelector<HTMLElement>(".gallery-heading h2");
+          if (galleryH2) maskRevealWords(galleryH2, null, "top 85%", 0.03, 1.15);
+
+          const galleryJp = document.querySelector<HTMLElement>(".gallery-heading .jp");
+          if (galleryJp) {
+            gsap.fromTo(galleryJp, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.0, ease: "power4.out",
+              scrollTrigger: { trigger: galleryJp.parentElement, start: "top 90%" },
+            });
+          }
+
+          gsap.utils.toArray<HTMLElement>(".gallery-item").forEach((item, i) => {
+            const isOffset = (i === 1 || i === 4);
+            if (isOffset) gsap.set(item, { y: "5rem" });
+
+            gsap.set(item, { clipPath: "inset(0 100% 0 0)" });
+            gsap.to(item, {
+              clipPath: "inset(0 0% 0 0)",
+              duration: 1.3,
+              ease: "power4.inOut",
+              scrollTrigger: { trigger: item, start: "top 91%", once: true },
+            });
+
+            const fig = item.querySelector<HTMLElement>("img");
+            if (fig) {
+              gsap.fromTo(fig, { scale: 1.12 }, {
+                scale: 1, ease: "none",
+                scrollTrigger: {
+                  trigger: item, start: "top bottom", end: "bottom top", scrub: true,
+                },
+              });
+            }
+          });
+
+          // ═══ SECTION 8 — QUOTE (LIGHT THEME) ════════════════════════════
+
+          const quoteSection = document.querySelector<HTMLElement>(".quote-section");
+
+          const quoteJp = document.querySelector<HTMLElement>(".quote-section .jp");
+          if (quoteJp) {
+            gsap.fromTo(quoteJp, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.0, ease: "power4.out",
+              scrollTrigger: { trigger: quoteJp.parentElement, start: "top 90%" },
+            });
+          }
+
+          const quoteP = document.querySelector<HTMLElement>(".quote-section p");
+          if (quoteP) {
+            const text = quoteP.innerText.trim();
+            quoteP.innerHTML = "";
+            const sentences = text.split(/(?<=[.!?,])\s+|(?<=\w{4,})\s+(?=[A-Z])/g);
+            const chunks = sentences.length > 1 ? sentences : text.split(" ").reduce<string[]>((acc, word, i) => {
+              const chunkIdx = Math.floor(i / 4);
+              acc[chunkIdx] = (acc[chunkIdx] ? acc[chunkIdx] + " " : "") + word;
+              return acc;
+            }, []);
+
+            chunks.forEach((chunk) => {
+              const outer = document.createElement("span");
+              outer.style.display = "block";
+              outer.style.overflow = "clip";
+              const inner = document.createElement("span");
+              inner.style.display = "block";
+              inner.innerText = chunk;
+              outer.appendChild(inner);
+              quoteP.appendChild(outer);
+            });
+
+            gsap.fromTo(
+              quoteP.querySelectorAll<HTMLElement>("span > span"),
+              { yPercent: 105 },
+              {
+                yPercent: 0, duration: 1.15, stagger: 0.1, ease: "power4.out",
+                scrollTrigger: { trigger: quoteSection, start: "top 78%" },
+              }
+            );
+          }
+
+          const quoteImg = document.querySelector<HTMLElement>(".quote-img");
+          if (quoteImg) clipRevealImg(quoteImg, quoteSection, "top 84%");
+
+          // ═══ SECTION 9 — CTA (LIGHT THEME) ══════════════════════════════
+
+          const ctaH2 = document.querySelector<HTMLElement>(".cta-copy h2");
+          if (ctaH2) maskRevealWords(ctaH2, null, "top 82%", 0.04, 1.3);
+
+          const ctaJp = document.querySelector<HTMLElement>(".cta-copy .jp");
+          if (ctaJp) {
+            gsap.fromTo(ctaJp, { yPercent: 115 }, {
+              yPercent: 0, duration: 1.0, ease: "power4.out",
+              scrollTrigger: { trigger: ctaJp.parentElement, start: "top 90%" },
+            });
+          }
+
+          const ctaPara = document.querySelector<HTMLElement>(".cta-copy p[data-anim='intro-para']");
+          if (ctaPara) {
+            const text = ctaPara.innerText;
+            ctaPara.innerHTML = "";
+            text.split(" ").forEach((word) => {
+              if (!word.trim()) return;
+              const outer = document.createElement("span");
+              outer.style.display = "inline-block";
+              outer.style.overflow = "hidden";
+              outer.style.verticalAlign = "top";
+              const inner = document.createElement("span");
+              inner.style.display = "inline-block";
+              inner.innerText = word + "\u00A0";
+              outer.appendChild(inner);
+              ctaPara.appendChild(outer);
+            });
+            gsap.fromTo(
+              ctaPara.querySelectorAll<HTMLElement>("span > span"),
+              { yPercent: 108 },
+              {
+                yPercent: 0, duration: 1.05,
+                stagger: { each: 0.024, ease: "power4.out" },
+                ease: "power4.out",
+                scrollTrigger: { trigger: ctaPara, start: "top 88%" },
+              }
+            );
+          }
+
+          const ctaBtn = document.querySelector<HTMLElement>(".cta-copy [data-anim='fade-in']");
+          if (ctaBtn) {
+            gsap.fromTo(ctaBtn, { autoAlpha: 0, y: 16 }, {
+              autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out",
+              scrollTrigger: { trigger: ctaBtn, start: "top 90%" },
+            });
+          }
+
+          const ctaSmall = document.querySelector<HTMLElement>(".cta-small");
+          const ctaLarge = document.querySelector<HTMLElement>(".cta-large");
+          if (ctaSmall) clipRevealImg(ctaSmall, null, "top 86%");
+          if (ctaLarge) {
+            clipRevealImg(ctaLarge, null, "top 88%");
+            const ctaLargeImg = ctaLarge.querySelector<HTMLElement>("img");
+            if (ctaLargeImg) {
+              gsap.fromTo(ctaLargeImg, { scale: 1.18 }, {
+                scale: 1.0, ease: "none",
+                scrollTrigger: { trigger: ctaLarge, start: "top bottom", end: "bottom top", scrub: true },
+              });
+            }
+          }
+
+          // ═══ SECTION 10 — FOOTER ════════════════════════════════════════
+
+          const footerH2 = document.querySelector<HTMLElement>(".footer-main h2");
+          if (footerH2) maskRevealWords(footerH2, null, "top 88%", 0.04, 1.4);
+
+          const footerNavLinks = document.querySelectorAll<HTMLElement>(".footer > nav a");
+          if (footerNavLinks.length) {
+            gsap.fromTo(footerNavLinks, { autoAlpha: 0, y: 20 }, {
+              autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.05,
+              scrollTrigger: { trigger: ".footer > nav", start: "top 92%" },
+            });
+          }
+
+          const footerInfo = document.querySelectorAll<HTMLElement>(".footer-info > div");
+          if (footerInfo.length) {
+            gsap.fromTo(footerInfo, { autoAlpha: 0, y: 16 }, {
+              autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.07,
+              scrollTrigger: { trigger: ".footer-info", start: "top 92%" },
+            });
+          }
+
+          const footerBottom = document.querySelector<HTMLElement>(".footer-bottom");
+          if (footerBottom) {
+            gsap.fromTo(footerBottom, { autoAlpha: 0 }, {
+              autoAlpha: 1, duration: 1.0, ease: "sine.out",
+              scrollTrigger: { trigger: footerBottom, start: "top 98%" },
+            });
+          }
+
+        });
 
         cleanup = () => {
-          window.clearTimeout(revealFallback);
-          lenis.destroy();
+          document.removeEventListener("click", clickHandler);
+          context.revert();
           ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-          gsap.killTweensOf("*");
+          gsap.ticker.remove(raf);
+          lenis.destroy();
         };
       } catch {
-        window.clearTimeout(revealFallback);
-        document.querySelector<HTMLElement>(".loader")?.remove();
-        document.querySelectorAll<HTMLElement>(".hero-word").forEach((el) => {
-          el.style.transform = "translateY(0%)";
-        });
-        document.querySelectorAll<HTMLElement>(".hero-fade").forEach((el) => {
-          el.style.opacity = "1";
-          el.style.visibility = "visible";
-          el.style.transform = "translateY(0)";
-        });
+        if (alive) {
+          settleHeroReveal();
+          setShowLoader(false);
+          document.querySelectorAll<HTMLElement>(".gallery-item").forEach((el) => {
+            el.style.opacity = "1";
+          });
+        }
       }
     }
 
-    initMotion();
+    bootMotion();
+
     return () => {
-      window.clearTimeout(revealFallback);
+      alive = false;
       cleanup();
     };
   }, []);
 
-  const currentOffer = offerTabs[activeOffer];
-  const OfferIcon = currentOffer.icon;
 
   return (
-    <main id="home">
-      <div className="noise-overlay" />
-      <div className="loader" aria-hidden="true">
-        <div className="loader-text">Riverwood Villa</div>
-        <div className="loader-bar" />
-      </div>
+    <main id="home" className="rv-page">
+      {showLoader ? (
+        <div className="loader" aria-hidden="true">
+          <div className="loader-panel left">
+            <div className="panel-inner">
+              <div data-loader="panel-line" className="loader-line is-panel-inner-l" />
+            </div>
+            <div data-loader="line-mid" className="loader-line is-panel-l" />
+          </div>
+          <div className="loader-panel right">
+            <div className="panel-inner">
+              <div data-loader="panel-line" className="loader-line is-panel-inner-r" />
+            </div>
+            <div data-loader="line-mid" className="loader-line is-panel-r" />
+          </div>
+          <div className="loader-logo"><LoaderMark /></div>
+        </div>
+      ) : null}
 
-      <header className="navbar">
-        <a href="#home" className="brand" aria-label="Riverwood Villa home">
-          <Image
-            src="/brand/riverwood-logo.png"
-            alt=""
-            width={38}
-            height={38}
-            priority
-          />
-          <span>Riverwood Villa</span>
+      <header className="site-nav">
+        <div data-loader="nav-line" className="nav-line" aria-hidden="true" />
+        <a href="#home" className="nav-logo" aria-label="Riverwood Villa home">
+          <span data-loader="nav-logo">Riverwood Villa</span>
         </a>
+        <span className="nav-est">
+          <span data-loader="nav-est">EST - Private Villa</span>
+        </span>
+        <button
+          className="nav-menu"
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="Open menu"
+        >
+          <span>Menu</span>
+          <span className="nav-btn-lines" aria-hidden="true">
+            <i data-loader="nav-btn-line" />
+            <i data-loader="nav-btn-line" />
+          </span>
+        </button>
+      </header>
 
-        <nav className="desktop-nav" aria-label="Primary navigation">
-          {navItems.map(([label, href]) => (
-            <a className="nav-link" href={href} key={href}>
-              <span>{label}</span>
-              <span>{label}</span>
+      <aside className={`site-menu ${menuOpen ? "open" : ""}`} aria-hidden={!menuOpen}>
+        <nav className="menu-left" aria-label="Primary navigation">
+          {navItems.map(([label, href], index) => (
+            <a href={href} key={href}>
+              <span>({index + 1})</span>
+              <strong>{label}</strong>
             </a>
           ))}
         </nav>
-
-        <a className="nav-cta" href="#contact">
-          <i aria-hidden="true" />
-          Contact Us Now
-          <span>
-            <ArrowUpRight size={16} />
-          </span>
-        </a>
-
-        <button
-          className="menu-button"
-          type="button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((value) => !value)}
-        >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-
-        <div className={`mobile-nav ${menuOpen ? "open" : ""}`}>
-          {navItems.map(([label, href]) => (
-            <a
-              href={href}
-              key={href}
-              onClick={() => setMenuOpen(false)}
-            >
-              {label}
-            </a>
-          ))}
-          <a href="#contact" onClick={() => setMenuOpen(false)}>
-            Contact Us Now
-          </a>
+        <div className="menu-right">
+          <button type="button" onClick={() => setMenuOpen(false)}>
+            Close <X size={18} />
+          </button>
+          <div>
+            <p>Email</p>
+            <a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a>
+          </div>
+          <div>
+            <p>Phone</p>
+            <a href="tel:+94770000000">+94 77 000 0000</a>
+          </div>
+          <div>
+            <p>Office</p>
+            <span>Riverside Road, Sri Lanka</span>
+          </div>
+          <small>Private riverside boutique stay</small>
         </div>
-      </header>
+      </aside>
 
-      <div className="hero-wrap">
-        <section className="hero">
+
+
+      <section className="hero" aria-labelledby="hero-title" data-theme="dark">
+        <figure className="hero-bg">
           <Image
-            src="/villa/villa-exterior-night.jpg"
-            alt="Riverwood Villa illuminated at night"
+            src="/villa/hero.png"
+            alt="Aerial view of Riverwood Villa beside the river"
             fill
             priority
             sizes="100vw"
-            className="hero-media"
           />
-          <div className="hero-overlay" />
-          <div className="hero-content">
-            <h1 aria-label="Find your perfect villa today">
-              {["Find your perfect", "villa today"].map((line) => (
-                <span className="hero-line" key={line}>
-                  <span className="hero-word">{line}</span>
-                </span>
-              ))}
-            </h1>
-            <p className="hero-copy hero-fade">
-              A private riverside villa with warm rooms, open balconies, hosted
-              meals, and calm tropical space for families, couples, and groups.
-            </p>
-            <div className="hero-actions hero-fade">
-              <a className="button button-light" href="#stays">
-                Explore Villa
-                <span className="button-circle">
-                  <ArrowUpRight size={17} />
-                </span>
-              </a>
-              <a className="button button-glass" href="#gallery">
-                View Gallery
-              </a>
+          <div data-loader="overlay" className="hero-overlay" />
+        </figure>
+        <div className="hero-container">
+          <div className="hero-layout">
+            <div className="hero-logo-wrap">
+              <h1 id="hero-title" className="hero-h1">
+                Riverwood Villa
+              </h1>
+              <HeroLogo />
             </div>
-            <div className="hero-lower hero-fade">
-              <div className="hero-stats" aria-label="Riverwood Villa highlights">
-                {heroStats.map(([number, label]) => (
-                  <div className="hero-stat" key={label}>
-                    <strong>{number}</strong>
-                    <span>{label}</span>
-                  </div>
-                ))}
+            <div className="hero-content">
+              <div className="hero-content-top">
+                <p data-loader="para">
+                  <span data-loader="para-line">
+                    Private riverside living, balcony mornings, hosted meals, and soft
+                    Sri Lankan river light from arrival to evening.
+                  </span>
+                </p>
+              </div>
+              <div className="scroll-to-explore">
+                <span data-loader="scroll-txt">scroll</span>
               </div>
             </div>
-          </div>
-          <a className="scroll-cue" href="#offer" aria-label="Scroll to offer">
-            <ChevronDown size={18} />
-          </a>
-        </section>
-        <div className="rating-badge hero-fade">
-          <div className="avatar-stack" aria-hidden="true">
-            <Image src="/villa/villa-bedroom-canopy.jpg" alt="" width={42} height={42} />
-            <Image src="/villa/villa-balcony-chair.webp" alt="" width={42} height={42} />
-            <Image src="/villa/villa-terrace.webp" alt="" width={42} height={42} />
-            <Image src="/villa/villa-riverside.webp" alt="" width={42} height={42} />
-          </div>
-          <div className="rating-copy">
-            <span>10+ Featured stays</span>
-            <strong>
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <em>4.9/5</em>
-            </strong>
           </div>
         </div>
-      </div>
+      </section>
 
-      <section className="section offer-section" id="offer">
-        <div className="container">
-          <div className="section-heading two-column">
-            <div data-animate>
-              <span className="section-badge">What we offer</span>
-              <h2>Comprehensive private villa experiences</h2>
-            </div>
-            <p data-animate>
-              Riverwood offers a carefully curated stay experience: private villa
-              access, warm riverside hosting, refined tropical spaces, and a
-              simple path to plan your perfect visit.
-            </p>
+      <section id="about" className="intro-section" data-theme="light">
+        <div className="intro-left">
+          <div className="intro-jp-wrap">
+            <div className="intro-jp-inner"><span className="jp" data-anim="intro-title">(river air)</span></div>
+            <div className="intro-jp-inner"><p data-anim="intro-title">Riverside</p></div>
           </div>
-
-          <div className="offer-grid">
-            <div className="offer-tabs" data-animate>
-              {offerTabs.map((tab, index) => {
-                const TabIcon = tab.icon;
-                return (
-                  <button
-                    className={`offer-tab ${activeOffer === index ? "active" : ""}`}
-                    key={tab.number}
-                    type="button"
-                    onClick={() => setActiveOffer(index)}
-                  >
-                    <span className="offer-number">{tab.number}</span>
-                    <span className="offer-tab-copy">
-                      <strong>{tab.title}</strong>
-                      <small>{tab.label}</small>
-                    </span>
-                    <TabIcon size={24} />
-                  </button>
-                );
-              })}
+          <h2 data-anim="intro-para">A private villa wrapped in river air.</h2>
+        </div>
+        <div className="intro-image-wrap">
+          <figure className="intro-image">
+            <div className="img-bg"></div>
+            <Image
+              src="/villa/villa-exterior-side-river.jpg"
+              alt="Riverwood Villa exterior by the river"
+              fill
+              sizes="(min-width: 900px) 40vw, 100vw"
+              data-anim="intro-parallax"
+            />
+            <div className="whipe" data-anim="intro-whipe"></div>
+          </figure>
+        </div>
+        <div className="intro-right">
+          <div className="intro-content-wrap">
+            <p data-anim="intro-para">
+              Riverwood keeps the first impression simple: open space, quiet
+              greenery, and a warm threshold into a slower kind of stay.
+            </p>
+            <div data-anim="fade-in">
+              <a className="text-button" href="#contact">
+                About Us <ArrowUpRight size={16} />
+              </a>
             </div>
-            <article className="offer-panel" data-animate>
-              <div className="offer-image">
-                <Image
-                  src={currentOffer.image}
-                  alt={currentOffer.title}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 55vw"
-                />
-                <span>{currentOffer.label}</span>
+          </div>
+          <div className="intro-small-wrap">
+            <figure className="intro-small">
+              <div className="img-bg"></div>
+              <Image
+                src="/villa/villa-balcony-path.jpg"
+                alt="Balcony path at Riverwood Villa"
+                fill
+                sizes="16rem"
+                data-anim="intro-parallax"
+              />
+              <div className="whipe" data-anim="intro-whipe"></div>
+            </figure>
+          </div>
+        </div>
+        <div className="intro-line" data-anim="intro-line"></div>
+      </section>
+
+      <section className="scroll_section" data-theme="light">
+        <div className="sticky_scroll_trigger" data-big-text="trigger">
+          <div className="sticky_track">
+            <div className="sticky_elements">
+              <div className="big_txt_container">
+                 <div className="big_txt_row">
+                    <span className="big_txt" data-big-text="wrapper">
+                      <div data-big-text="head">Balcony Mornings</div>
+                    </span>
+                 </div>
+                 <div className="big_txt_row">
+                    <span className="big_txt" data-big-text="wrapper">
+                      <div data-big-text="head">River Light</div>
+                    </span>
+                 </div>
               </div>
-              <div className="offer-detail">
-                <div className="icon-pill">
-                  <OfferIcon size={26} />
+            </div>
+            <div className="big_img_track">
+               <div className="big_img_grid">
+                 <div className="big_img_col">
+                    <figure className="g_visual_wrap" data-scroll-parallax="true">
+                      <div className="g_visual_background"></div>
+                      <Image src="/villa/villa-balcony-table.jpg" alt="Balcony" fill sizes="33vw" data-parallax="true" className="g_visual_img" />
+                    </figure>
+                 </div>
+                 <div className="big_img_col">
+                    <figure className="g_visual_wrap" data-scroll-parallax="true">
+                      <div className="g_visual_background"></div>
+                      <Image src="/villa/villa-bedroom-high-ceiling.jpg" alt="Bedroom" fill sizes="33vw" data-parallax="true" className="g_visual_img" />
+                    </figure>
+                 </div>
+                 <div className="big_img_col">
+                    <figure className="g_visual_wrap" data-scroll-parallax="true">
+                      <div className="g_visual_background"></div>
+                      <Image src="/villa/villa-peacocks-veranda.jpg" alt="Veranda" fill sizes="33vw" data-parallax="true" className="g_visual_img" />
+                    </figure>
+                 </div>
+                 <div className="big_img_col">
+                    <figure className="g_visual_wrap" data-scroll-parallax="true">
+                      <div className="g_visual_background"></div>
+                      <Image src="/villa/villa-boat-sunset.webp" alt="Boat" fill sizes="33vw" data-parallax="true" className="g_visual_img" />
+                    </figure>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="project" className="projects-section" data-theme="light">
+        <div className="home_project_list">
+          {projectSlides.map((slide, index) => (
+            <article className="home_project_item" key={slide.title}>
+              <figure className="g_visual_wrap" data-anim="project-img">
+                <div className="g_visual_background"></div>
+                <Image src={slide.image} alt={slide.title} fill sizes="(min-width: 900px) 50vw, 100vw" className="g_visual_img" data-anim="intro-parallax" />
+              </figure>
+              <div className="home_project_content">
+                <div className="home_project_info">
+                  <span className="jp">(project {slide.number})</span>
+                  <div className="home_project_title">
+                    <h3>{slide.title}</h3>
+                  </div>
                 </div>
-                <h3>{currentOffer.title}</h3>
-                <p>{currentOffer.copy}</p>
+                <div className="home_project_right">
+                  <p className="home_project_copy">{slide.copy}</p>
+                  <div className="home_project_num">
+                    <div>{slide.number}</div>
+                    <div>/</div>
+                    <div>0{projectSlides.length}</div>
+                  </div>
+                  <div data-anim="fade-in">
+                    <a className="text-button" href="#contact">See project <ArrowUpRight size={16} /></a>
+                  </div>
+                </div>
               </div>
             </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="section services-section">
-        <div className="container">
-          <div className="section-heading centered" data-animate>
-            <span className="section-badge">Why choose us</span>
-            <h2>Expert hospitality for calm, private stays</h2>
-            <p>
-              From boutique bedrooms and garden walks to riverside dining and
-              Starlink connectivity — everything shaped around your pace and
-              preferred way to stay.
-            </p>
-          </div>
-
-          <div className="services-grid">
-            {services.map((service) => {
-              const Icon = service.icon;
-              return (
-                <article className="service-card" key={service.title} data-animate>
-                  <div className="service-icon">
-                    <Icon size={26} />
-                  </div>
-                  <h3>{service.title}</h3>
-                  <p>{service.copy}</p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="section stays-section" id="stays">
-        <div className="container">
-          <div className="section-heading two-column">
-            <div data-animate>
-              <span className="section-badge">Featured stays</span>
-              <h2>Discover stays tailored to your pace and group</h2>
-            </div>
-            <div className="heading-action" data-animate>
-              <p>
-                Choose a whole-villa retreat, a suite-focused escape, or a
-                hosted weekend shaped around food, family, and river quiet.
-              </p>
-              <a className="button button-dark" href="#contact">
-                View Availability
-                <span className="button-circle">
-                  <ArrowUpRight size={17} />
-                </span>
-              </a>
-            </div>
-          </div>
-
-          <div className="property-grid">
-            {stays.map((stay) => (
-              <article className="property-card" key={stay.title} data-animate>
-                <a className="property-image-wrap" href="#contact" aria-label={`Enquire about ${stay.title}`}>
-                  <Image
-                    src={stay.image}
-                    alt={stay.title}
-                    fill
-                    sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                    className="property-image"
-                  />
-                  <span className="property-category">{stay.category}</span>
-                </a>
-                <div className="property-meta">
-                  <span>
-                    <MapPin size={16} />
-                    {stay.location}
-                  </span>
-                  <strong>{stay.price}</strong>
-                </div>
-                <h3>{stay.title}</h3>
-                <div className="amenities">
-                  <span>
-                    <BedDouble size={16} />
-                    {stay.beds}
-                  </span>
-                  <span>
-                    <Bath size={16} />
-                    {stay.baths}
-                  </span>
-                  <span>
-                    <Sparkles size={16} />
-                    {stay.size}
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section about-section">
-        <div className="container about-grid">
-          <div className="about-copy" data-animate>
-            <span className="section-badge">Who we are</span>
-            <h2>Redefining riverside villa hospitality</h2>
-            <p>
-              Riverwood Villa is built for guests who want the intimacy of a
-              private home with the polish of a boutique stay. The design is
-              open, tropical, and quietly luxurious without losing warmth.
-            </p>
-            <div className="about-stats">
-              <div>
-                <strong>4+</strong>
-                <span>Stay modes</span>
-              </div>
-              <div>
-                <strong>8</strong>
-                <span>Image-led zones</span>
-              </div>
-              <div>
-                <strong>24h</strong>
-                <span>Enquiry support</span>
-              </div>
-              <div>
-                <strong>90%</strong>
-                <span>Slow travel mood</span>
-              </div>
-            </div>
-          </div>
-          <div className="section-image" data-animate>
-            <Image
-              src="/villa/villa-exterior-side-sunset.jpg"
-              alt="Riverwood Villa at sunset"
-              fill
-              sizes="(max-width: 900px) 100vw, 36vw"
-            />
-          </div>
-          <div className="about-features">
-            {aboutFeatures.map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <article className="feature-block" key={feature.title} data-animate>
-                  <div className="icon-pill">
-                    <Icon size={23} />
-                  </div>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.copy}</p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="partners-section" aria-label="Riverwood highlights">
-        <div className="marquee">
-          {[...Array(2)].map((_, group) => (
-            <div className="marquee-group" key={group}>
-              {[
-                "Private villa",
-                "River air",
-                "Balcony mornings",
-                "Hosted dining",
-                "Garden walks",
-                "Starlink Wi-Fi",
-              ].map((item) => (
-                <span key={`${group}-${item}`}>{item}</span>
-              ))}
-            </div>
           ))}
         </div>
       </section>
 
-      <section className="section gallery-section" id="gallery">
-        <div className="container">
-          <div className="section-heading centered" data-animate>
-            <span className="section-badge">Riverwood in frame</span>
-            <h2>Rooms, balconies, gardens, and riverwood atmosphere</h2>
+      <section id="sustainability" className="home_sustain" data-theme="light">
+        <div className="sustain_container">
+          <div className="h_sustain_col-img">
+            <div className="intro_img u-visual-wrap">
+              <figure className="g_visual_wrap reveal-img">
+                <div className="g_visual_background"></div>
+                <Image src="/villa/villa-balcony-path.jpg" alt="Sustainability architecture" fill sizes="50vw" className="g_visual_img" />
+                <div className="whipe" data-anim="intro-whipe"></div>
+              </figure>
+            </div>
+          </div>
+          <div className="h_sustain_col-l">
+            <div className="h_sustain_kanji_wrap">
+              <span className="jp" style={{fontSize: "clamp(2rem, 4vw, 3rem)", marginBottom: 0}} data-anim="fade-in">建築</span>
+              <div className="kanji_content">
+                <div className="kanji_title" style={{fontSize: "1.4rem", textTransform: "uppercase"}}><div data-anim="intro-title">(Ken chiku)</div></div>
+                <div className="kanji_title" style={{fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "0.15em"}}><div data-anim="intro-title">Architecture</div></div>
+              </div>
+            </div>
+            <div className="h_sustain_head">
+              <h2 className="g_heading">
+                Designs That Sustain Life
+              </h2>
+            </div>
+          </div>
+          
+          <div className="h_sustain_col-r">
+            <div className="sustain_img_small">
+              <figure className="g_visual_wrap reveal-img">
+                <div className="g_visual_background"></div>
+                <Image src="/villa/villa-riverside.webp" alt="River view at Riverwood Villa" fill sizes="25vw" className="g_visual_img" />
+                <div className="whipe" data-anim="intro-whipe"></div>
+              </figure>
+            </div>
+            <div className="sustain_content_wrap">
+              <div className="sustain_content_p">
+                <p data-anim="intro-para">
+                  Balconies, palms, bird calls, and shaded corners let each day unfold
+                  without the hurry of a traditional hotel.
+                </p>
+              </div>
+              <div data-anim="fade-in">
+                <a className="text-button" href="#contact">
+                  Sustainability <ArrowUpRight size={16} />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="gallery-marquee" aria-label="Riverwood Villa image gallery">
-          {[...gallery, ...gallery].map((image, index) => (
-            <figure className="gallery-item" key={`${image.src}-${index}`}>
-              <Image
-                src={image.src}
-                alt={image.label}
-                fill
-                sizes="(max-width: 760px) 74vw, 360px"
-              />
-              <figcaption>{image.label}</figcaption>
+        <div className="line_wrapper">
+          <div className="section-divider" data-anim="intro-line"></div>
+        </div>
+      </section>
+
+      <section id="service" className="service-section" data-theme="light">
+        <div>
+          <span className="jp" data-anim="intro-title">(hosted calm)</span>
+          <p data-anim="intro-title">Service</p>
+        </div>
+        <div className="service-type">
+          <span data-anim="service-word">Precision</span>
+          <span data-anim="service-word">In</span>
+          <figure className="service-img reveal-img" data-anim="project-img">
+            <Image src="/villa/villa-terrace-dining.webp" alt="Hosted dining at Riverwood Villa" fill sizes="30vw" />
+          </figure>
+          <span data-anim="service-word">Every</span>
+          <span data-anim="service-word">Stay</span>
+        </div>
+        <p data-anim="intro-para">
+          Terrace meals, tea, and local guidance can be shaped around your group
+          while the villa still feels fully yours.
+        </p>
+        <div data-anim="fade-in">
+          <a className="text-button" href="#contact">
+            Our service <ArrowUpRight size={16} />
+          </a>
+        </div>
+      </section>
+
+      <section id="journal" className="gallery-section" data-theme="light">
+        <div className="gallery-heading">
+          <span className="jp" data-anim="intro-title">(stay notes)</span>
+          <h2 data-anim="intro-para">Scroll through the stay like a film reel.</h2>
+        </div>
+        <div className="gallery-grid">
+          {journalImages.map(([src, label], index) => (
+            <figure className="gallery-item reveal-img" key={src} data-skew>
+              <Image src={src} alt={label} fill sizes="(min-width: 900px) 30vw, 100vw" />
+              <figcaption>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {label}
+              </figcaption>
             </figure>
           ))}
         </div>
       </section>
 
-      <section className="section testimonials-section">
-        <div className="container">
-          <div className="section-heading two-column">
-            <div data-animate>
-              <span className="section-badge">What guests say</span>
-              <h2>Trusted for privacy, loved for quiet luxury</h2>
-            </div>
-            <p data-animate>
-              Guests return for the quiet, the warmth, and the sense of arriving
-              somewhere genuinely private — not just another villa rental.
-            </p>
-          </div>
-          <div className="testimonial-grid">
-            {testimonials.map((item) => (
-              <article className="testimonial-card" key={item.name} data-animate>
-                <div className="stars" aria-label="Five stars">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} size={16} fill="currentColor" />
-                  ))}
-                </div>
-                <p>&ldquo;{item.quote}&rdquo;</p>
-                <div>
-                  <strong>{item.name}</strong>
-                  <span>{item.role}</span>
-                </div>
-              </article>
-            ))}
-          </div>
+      <section className="quote-section" data-theme="light">
+        <div>
+          <span className="jp" data-anim="intro-title">(one meeting)</span>
+          <p>
+            Riverwood has that rare balance of privacy, warmth, and tropical
+            calm. The first morning on the balcony was the whole reason to come.
+          </p>
         </div>
+        <figure className="quote-img reveal-img" data-anim="project-img">
+          <Image src="/villa/villa-balcony-chairs-river.webp" alt="Balcony chairs looking over the river" fill sizes="32vw" />
+        </figure>
       </section>
 
-      <section className="section journal-section">
-        <div className="container">
-          <div className="section-heading two-column">
-            <div data-animate>
-              <span className="section-badge">Villa notes</span>
-              <h2>Explore the stay, plan the rhythm, arrive ready</h2>
-            </div>
-            <a className="button button-dark" href="#contact" data-animate>
-              Ask a Question
-              <span className="button-circle">
-                <ArrowUpRight size={17} />
-              </span>
+      <section id="contact" className="cta-section" data-theme="light">
+        <figure className="cta-small reveal-img" data-anim="project-img">
+          <Image src="/villa/villa-exterior-side-sunset.jpg" alt="Riverwood Villa at sunset" fill sizes="18vw" />
+        </figure>
+        <div className="cta-copy">
+          <span className="jp" data-anim="intro-title">(connect)</span>
+          <h2 data-anim="intro-para">Bring the dates. Riverwood will slow the rest down.</h2>
+          <p data-anim="intro-para">
+            Send your dates, group size, and the stay style you have in mind.
+            We will help shape the practical next step.
+          </p>
+          <div data-anim="fade-in">
+            <a className="dark-button" href="mailto:hello@riverwoodvilla.com" data-magnetic="0.32">
+              Get in touch <ArrowUpRight size={16} />
             </a>
           </div>
-          <div className="blog-grid">
-            {journal.map((item) => (
-              <article className="blog-card" key={item.title} data-animate>
-                <div className="blog-image">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 760px) 100vw, 33vw"
-                  />
-                </div>
-                <span>{item.meta}</span>
-                <h3>{item.title}</h3>
-                <small>
-                  <Clock3 size={14} />
-                  4 min read
-                </small>
-              </article>
-            ))}
-          </div>
         </div>
+        <figure className="cta-large reveal-img" data-anim="project-img">
+          <Image src="/villa/villa-exterior-night.jpg" alt="Riverwood Villa at night" fill sizes="44vw" />
+        </figure>
       </section>
 
-      <section className="section faq-section">
-        <div className="container faq-grid">
-          <div data-animate>
-            <span className="section-badge">Help center</span>
-            <h2>Frequently asked questions</h2>
-            <p>
-              Practical details before you begin the booking conversation.
-            </p>
-          </div>
-          <div className="faq-list" data-animate>
-            {faqs.map((faq, index) => (
-              <button
-                className={`faq-item ${activeFaq === index ? "open" : ""}`}
-                key={faq.question}
-                type="button"
-                onClick={() => setActiveFaq(index)}
-                aria-expanded={activeFaq === index}
-              >
-                <span className="faq-question">
-                  {faq.question}
-                  <span className="faq-icon">+</span>
-                </span>
-                <span className="faq-answer">{faq.answer}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="contact-section" id="contact">
-        <Image
-          src="/villa/villa-exterior-night.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="contact-bg"
-        />
-        <div className="contact-overlay" />
-        <div className="container contact-grid">
-          <div className="contact-copy" data-animate>
-            <span className="section-badge dark">Get in touch</span>
-            <h2>Let&apos;s make your Riverwood stay effortless</h2>
-            <p>
-              Send your dates, group size, and the stay style you have in mind.
-              We will help shape the practical next step.
-            </p>
-            <div className="contact-lines">
-              <a href="tel:+94770000000">
-                <Phone size={18} />
-                +94 77 000 0000
-              </a>
+      <footer className="footer">
+        <nav>
+          {navItems.map(([label, href], index) => (
+            <a href={href} key={href}>
+              <span>({index + 1})</span>
+              {label}
+            </a>
+          ))}
+        </nav>
+        <div className="footer-main">
+          <h2>Riverwood Villa</h2>
+          <div className="footer-info">
+            <div>
+              <p>Email</p>
               <a href="mailto:hello@riverwoodvilla.com">
-                <Mail size={18} />
-                hello@riverwoodvilla.com
+                <Mail size={15} /> hello@riverwoodvilla.com
               </a>
+            </div>
+            <div>
+              <p>Phone</p>
+              <a href="tel:+94770000000">
+                <Phone size={15} /> +94 77 000 0000
+              </a>
+            </div>
+            <div>
+              <p>Office</p>
               <span>
-                <MapPin size={18} />
-                Riverside private boutique stay
+                <MapPin size={15} /> Riverside Road, Sri Lanka
+              </span>
+            </div>
+            <div>
+              <p>Social</p>
+              <span className="socials">
+                <a href="https://www.instagram.com/" aria-label="Instagram"><Instagram size={17} /></a>
+                <a href="https://www.facebook.com/" aria-label="Facebook"><Facebook size={17} /></a>
               </span>
             </div>
           </div>
-          <form
-            className="contact-form"
-            data-animate
-            action="mailto:hello@riverwoodvilla.com"
-            method="post"
-          >
-            <div className="form-row">
-              <label>
-                First Name
-                <input className="text-field" name="first-name" type="text" />
-              </label>
-              <label>
-                Last Name
-                <input className="text-field" name="last-name" type="text" />
-              </label>
-            </div>
-            <label>
-              Email
-              <input className="text-field" name="email" type="email" />
-            </label>
-            <label>
-              Phone
-              <input className="text-field" name="phone" type="tel" />
-            </label>
-            <label>
-              Message
-              <textarea
-                className="text-field"
-                name="message"
-                rows={4}
-                defaultValue="Hi Riverwood Villa, I would like to enquire about availability."
-              />
-            </label>
-            <button className="form-button" type="submit">
-              Book a Call
-              <CalendarDays size={17} />
-            </button>
-          </form>
         </div>
-      </section>
-
-      <footer className="site-footer">
-        <div className="container footer-inner">
-          <div className="footer-brand">
-            <h2>Riverwood Villa</h2>
-            <p>
-              A private riverside boutique stay for slow mornings, warm
-              hosting, and tropical quiet.
-            </p>
-            <div className="socials">
-              <a href="#" aria-label="Instagram">
-                <Instagram size={18} />
-              </a>
-              <a href="#" aria-label="Facebook">
-                <Facebook size={18} />
-              </a>
-              <a href="mailto:hello@riverwoodvilla.com" aria-label="Email">
-                <Mail size={18} />
-              </a>
-            </div>
-          </div>
-          <div>
-            <h3>Navigation</h3>
-            <a href="#home">Home</a>
-            <a href="#offer">Offer</a>
-            <a href="#stays">Stays</a>
-            <a href="#gallery">Gallery</a>
-          </div>
-          <div>
-            <h3>Stay</h3>
-            <a href="#contact">Availability</a>
-            <a href="#contact">Private Booking</a>
-            <a href="#contact">Dining Support</a>
-            <a href="#contact">Long Stays</a>
-          </div>
-          <div>
-            <h3>Contact</h3>
-            <a href="tel:+94770000000">+94 77 000 0000</a>
-            <a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a>
-            <span>Riverwood Villa</span>
-            <span>Sri Lanka</span>
-          </div>
-        </div>
-        <div className="container footer-bottom">
-          <span>Copyright 2026 Riverwood Villa. All rights reserved.</span>
+        <div className="footer-bottom">
+          <span>©26 Riverwood Villa - All rights reserved</span>
           <a href="#home">Back to top</a>
         </div>
       </footer>
+
+      {/* Custom cursor — desktop only, hidden on touch via CSS */}
+      <div className="cursor-dot" aria-hidden="true" />
+      <div className="cursor-ring" aria-hidden="true" />
     </main>
   );
 }

@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Bodoni_Moda, Manrope } from "next/font/google";
 import "./globals.css";
 
-const geist = Geist({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-geist",
-  weight: ["300", "400", "600", "700"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
+const bodoni = Bodoni_Moda({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Riverwood Villa | Riverside Boutique Stay",
+  title: "Riverwood Villa | Private Riverside Boutique Stay",
   description:
-    "A serene riverside villa stay with private rooms, warm interiors, nature views, and slow luxury hospitality.",
+    "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups. Sri Lanka.",
 };
 
 export default function RootLayout({
@@ -21,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={geist.variable}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${manrope.variable} ${bodoni.variable}`}>{children}</body>
     </html>
   );
 }

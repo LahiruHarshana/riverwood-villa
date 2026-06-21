@@ -1182,6 +1182,15 @@ export default function Home() {
             </div>
             <div className="hero-content">
               <div className="hero-content-top">
+                <Image
+                  className="hero-small-mark"
+                  data-loader="home-svg-small"
+                  src="/brand/logo.png"
+                  alt=""
+                  width={96}
+                  height={96}
+                  aria-hidden="true"
+                />
                 <p data-loader="para">
                   <span data-loader="para-line">
                     Private riverside living, balcony mornings, hosted meals, and soft

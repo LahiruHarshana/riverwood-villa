@@ -1117,6 +1117,11 @@ figure {
   overflow: hidden;
 }
 
+.intro_img > .g_visual_wrap,
+.sustain_img_small > .g_visual_wrap {
+  height: 100%;
+}
+
 .h_sustain_col-l {
   grid-column: 6 / span 3;
   display: flex;

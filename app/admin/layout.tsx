@@ -1,0 +1,32 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { AuthProvider } from "@/hooks/useAuth";
+import { Sidebar } from "@/components/admin/Sidebar";
+import "./admin.css";
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/admin/login";
+
+  if (isLoginPage) {
+    return (
+      <AuthProvider>
+        <div className="admin-app bg-[#f8fafc] min-h-screen">
+          {children}
+        </div>
+      </AuthProvider>
+    );
+  }
+
+  return (
+    <AuthProvider>
+      <div className="admin-app flex min-h-screen bg-[#f8fafc]">
+        <Sidebar currentPath={pathname} />
+        <main className="flex-1 ml-0 md:ml-[240px] min-h-screen overflow-auto">
+          <div className="p-6 md:p-8">{children}</div>
+        </main>
+      </div>
+    </AuthProvider>
+  );
+}

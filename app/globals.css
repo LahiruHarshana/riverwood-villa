@@ -25,7 +25,7 @@
   --gutter: clamp(1rem, 3vw, 3rem);
   --nav-height: 5.625rem;
   --display-size: clamp(4rem, 1.6rem + 12vw, 16rem);
-  --h2-size: clamp(2.1rem, 1.492rem + 3.04vw, 5.14rem);
+  --h2-size: clamp(2rem, 1.2rem + 2.4vw, 3.6rem);
 }
 
 * {
@@ -653,12 +653,17 @@ figure {
 
 .jp {
   display: block;
-  margin-bottom: 1rem;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 99px;
+  border: 1px solid var(--sage-line);
+  background: var(--sage-tint);
   color: var(--sage-deep);
   font-family: var(--font-sans);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   line-height: 1.1;
   text-transform: uppercase;
 }
@@ -668,9 +673,21 @@ figure {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 1rem;
-  padding: clamp(7rem, 11vw, 12rem) var(--gutter);
   background: var(--paper);
   overflow: hidden;
+}
+
+.intro-section {
+  padding: clamp(6rem, 10vw, 11rem) var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+
+.cta-section {
+  padding: clamp(4rem, 6vw, 7rem) clamp(2rem, 4vw, 4rem);
+  margin: 0 var(--gutter) clamp(5rem, 9vw, 9rem);
+  border-radius: 2.5rem;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
 }
 
 .intro-left {
@@ -686,8 +703,8 @@ figure {
 .service-section > div:first-child p {
   color: var(--ink);
   font-family: var(--font-serif);
-  font-size: clamp(1.35rem, 2vw, 2.25rem);
-  line-height: 1;
+  font-size: clamp(1.1rem, 1.4vw, 1.7rem);
+  line-height: 1.1;
 }
 
 .intro-left h2,
@@ -804,10 +821,10 @@ figure {
   width: max-content;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.88rem 1.25rem;
+  padding: 0.85rem 1.4rem;
   border: 1px solid currentColor;
-  border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  border-radius: 99px;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -868,8 +885,13 @@ figure {
 /* Scroll Section */
 .scroll_section {
   position: relative;
-  background: var(--paper-sunk);
+  background-color: var(--paper-sunk);
+  background-image:
+    linear-gradient(to right, rgba(17, 17, 16, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 16, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
   min-height: 180vh;
+  border-bottom: 1px solid var(--line);
 }
 
 .sticky_scroll_trigger {
@@ -893,7 +915,7 @@ figure {
   position: absolute;
   inset: clamp(1rem, 3vw, 3rem);
   border: 1px solid var(--sage-line);
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   pointer-events: none;
 }
 
@@ -913,7 +935,7 @@ figure {
 
 .big_txt {
   font-family: var(--font-serif);
-  font-size: clamp(3.8rem, 11.8vw, 14rem);
+  font-size: clamp(3.2rem, 9.5vw, 11rem);
   font-weight: 500;
   line-height: 0.92;
   text-transform: uppercase;
@@ -980,23 +1002,34 @@ figure {
   z-index: 2;
   background: var(--paper);
   color: var(--ink);
-  padding: clamp(7rem, 11vw, 12rem) var(--gutter);
+  padding: clamp(5rem, 8vw, 9rem) var(--gutter);
+  border-bottom: 1px solid var(--line);
 }
 
 .home_project_list {
   display: flex;
   flex-direction: column;
-  gap: clamp(4rem, 6vw, 6rem);
+  gap: clamp(2rem, 3vw, 3rem);
 }
 
 .home_project_item {
   position: relative;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: clamp(2rem, 4vw, 4rem);
+  gap: clamp(2rem, 3.5vw, 3.5rem);
   align-items: center;
-  padding: clamp(3rem, 5vw, 5rem) 0;
+  padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 2.5vw, 2.5rem);
   overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--paper);
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.home_project_item:hover {
+  background: var(--paper-raised);
+  border-color: rgba(17, 17, 16, 0.18);
+  box-shadow: 0 8px 40px -16px var(--shadow);
 }
 
 .home_project_item:nth-child(even) {
@@ -1060,7 +1093,7 @@ figure {
 
 .home_project_title h3 {
   font-family: var(--font-serif);
-  font-size: clamp(2.5rem, 4.5vw, 5rem);
+  font-size: clamp(2rem, 3.2vw, 4rem);
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 0.95;
@@ -1094,7 +1127,8 @@ figure {
   position: relative;
   background: var(--paper);
   color: var(--ink);
-  padding: clamp(8rem, 12vw, 12rem) var(--gutter);
+  padding: clamp(6rem, 10vw, 10rem) var(--gutter);
+  border-bottom: 1px solid var(--line);
 }
 
 .home_sustain .whipe {
@@ -1160,7 +1194,7 @@ figure {
 
 .g_heading {
   font-family: var(--font-serif);
-  font-size: clamp(3.5rem, 6vw, 7rem);
+  font-size: clamp(2.6rem, 4.2vw, 5.2rem);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 0.94;
@@ -1203,8 +1237,9 @@ figure {
 
 .service-section {
   min-height: auto;
-  padding: clamp(7rem, 11vw, 12rem) var(--gutter);
+  padding: clamp(6rem, 9vw, 10rem) var(--gutter);
   background: var(--paper);
+  border-bottom: 1px solid var(--line);
 }
 
 .service-section > div:first-child {
@@ -1226,12 +1261,16 @@ figure {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.8rem, 2vw, 2rem);
+  gap: clamp(0.8rem, 1.8vw, 1.8rem);
+  padding: clamp(3rem, 5vw, 5rem) clamp(2rem, 4vw, 4rem);
+  border-radius: 20px;
+  background: var(--paper-sunk);
+  border: 1px solid var(--line);
   font-family: var(--font-serif);
-  font-size: clamp(3.4rem, 10.5vw, 12.5rem);
+  font-size: clamp(3rem, 7.5vw, 10rem);
   font-weight: 500;
   letter-spacing: -0.045em;
-  line-height: 0.86;
+  line-height: 0.88;
   text-transform: uppercase;
 }
 
@@ -1254,8 +1293,9 @@ figure {
 }
 
 .gallery-section {
-  padding: clamp(8rem, 12vw, 13rem) var(--gutter);
+  padding: clamp(6rem, 10vw, 11rem) var(--gutter);
   background: var(--paper);
+  border-bottom: 1px solid var(--line);
 }
 
 .gallery-heading {
@@ -1283,8 +1323,9 @@ figure {
   min-height: 34rem;
   overflow: hidden;
   background: var(--sage-tint);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 24px 60px -28px var(--shadow);
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 50px -20px var(--shadow);
   /* initial hidden state — JS adds .is-visible */
   opacity: 0;
   transform: translateY(28px);
@@ -1343,19 +1384,23 @@ figure {
   gap: 2rem;
   min-height: auto;
   align-items: center;
-  padding: clamp(7rem, 11vw, 12rem) var(--gutter);
+  padding: clamp(6rem, 10vw, 11rem) var(--gutter);
   overflow: hidden;
-  background: var(--paper);
+  background: var(--paper-sunk);
+  border-bottom: 1px solid var(--line);
 }
 
 .quote-section > div {
   grid-column: 1 / span 7;
+  padding: clamp(2.5rem, 4vw, 4rem) clamp(2rem, 3.5vw, 3.5rem);
 }
+
+/* .rv-card on quote div adds the border/bg/radius */
 
 .quote-section p {
   font-family: var(--font-serif);
-  font-size: clamp(3.5rem, 7vw, 8.5rem);
-  letter-spacing: -0.035em;
+  font-size: clamp(2.6rem, 5.2vw, 7rem);
+  letter-spacing: -0.03em;
   line-height: 0.98;
 }
 
@@ -1370,7 +1415,6 @@ figure {
 
 .cta-section {
   align-items: center;
-  background: var(--paper);
 }
 
 .cta-small {
@@ -1388,7 +1432,7 @@ figure {
 .cta-copy h2 {
   margin-bottom: 2rem;
   max-width: 8ch;
-  font-size: clamp(3rem, 5.2vw, 6rem);
+  font-size: clamp(2.4rem, 4vw, 4.8rem);
 }
 
 .cta-copy p {
@@ -1405,7 +1449,7 @@ figure {
 }
 
 .footer {
-  padding: clamp(6rem, 10vw, 9rem) var(--gutter) 3rem;
+  padding: clamp(5rem, 8vw, 8rem) var(--gutter) 3rem;
   background: var(--paper);
   color: var(--ink);
 }
@@ -1446,7 +1490,7 @@ figure {
 .footer-main h2 {
   max-width: 9ch;
   font-family: var(--font-serif);
-  font-size: clamp(5rem, 14vw, 17rem);
+  font-size: clamp(4rem, 10vw, 13rem);
   font-weight: 500;
   letter-spacing: -0.05em;
   line-height: 0.74;
@@ -2012,21 +2056,33 @@ figure {
   .service-section,
   .gallery-section,
   .quote-section,
-  .cta-section,
   .footer {
     padding-inline: 1.25rem;
+  }
+
+  .cta-section {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding-inline: 1.25rem;
+    border-radius: 1.75rem;
   }
 
   .intro-left h2,
   .h_sustain_head h2,
   .cta-copy h2,
   .gallery-heading h2 {
-    font-size: clamp(3rem, 15vw, 4.7rem);
+    font-size: clamp(2.4rem, 12vw, 3.8rem);
   }
 
   .service-type,
   .big-row {
-    font-size: clamp(3.1rem, 18vw, 5rem);
+    font-size: clamp(2.6rem, 15vw, 4.5rem);
+    padding: clamp(2rem, 4vw, 3rem) 1.25rem;
+  }
+
+  .home_project_item {
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem;
   }
 
   .home_project_item .g_visual_wrap {
@@ -2034,21 +2090,102 @@ figure {
   }
 
   .home_project_title h3 {
-    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-size: clamp(1.8rem, 7vw, 3rem);
   }
 
   .gallery-item {
     min-height: 26rem;
+    border-radius: 16px;
+  }
+
+  .quote-section > div {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
   }
 
   .quote-section p {
-    font-size: clamp(2.8rem, 13vw, 4.3rem);
+    font-size: clamp(2.2rem, 10vw, 3.6rem);
   }
 
   .footer > nav,
   .footer-bottom {
     grid-template-columns: 1fr;
     flex-direction: column;
+  }
+}
+
+/* ═══ TEMPLATE-INSPIRED MODERN ADDITIONS ═══════════════════════════ */
+
+/* ── Gradient border glow cards (light theme adaptation) ── */
+.rv-card {
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.rv-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(160deg, rgba(17, 17, 16, 0.14), rgba(17, 17, 16, 0.04));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Scroll-trigger reveal (CSS-layer for non-GSAP elements) ── */
+.rv-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.75s ease-out, transform 0.75s ease-out;
+}
+
+.rv-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Section label chip (used inside intro-jp-wrap) ── */
+.intro-jp-wrap .jp {
+  margin-bottom: 0;
+}
+
+/* ── Service section: p below service-type ── */
+.service-section > p {
+  margin-top: 0;
+}
+
+/* ── Quote section quotation mark — softer colour ── */
+.quote-section::before {
+  color: var(--sage-line);
+  font-size: clamp(5rem, 11vw, 13rem);
+}
+
+/* ── Gallery heading gap  ── */
+.gallery-heading {
+  margin-bottom: 4rem;
+}
+
+/* ── Footer nav items with border on hover ── */
+.footer > nav a {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.35s ease, background-position 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ── Intro section left column label area ── */
+.intro-jp-inner {
+  overflow: clip;
+}
+
+/* ── Ensure cards don't overflow on mobile ── */
+@media (max-width: 620px) {
+  .rv-card {
+    border-radius: 16px;
   }
 }
 

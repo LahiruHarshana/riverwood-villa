@@ -1435,7 +1435,7 @@ export default function Home() {
       </section>
 
       <section className="quote-section" data-theme="light">
-        <div>
+        <div className="rv-card">
           <span className="jp" data-anim="intro-title">(one meeting)</span>
           <p>
             Riverwood has that rare balance of privacy, warmth, and tropical
@@ -1465,7 +1465,7 @@ export default function Home() {
           </div>
         </div>
         <figure className="cta-large reveal-img" data-anim="project-img">
-          <Image src="/villa/villa-exterior-night.jpg" alt="Riverwood Villa at night" fill sizes="44vw" />
+          <Image src="/villa/villa-dining-patio.jpg" alt="Riverwood Villa at night" fill sizes="44vw" />
         </figure>
       </section>
 

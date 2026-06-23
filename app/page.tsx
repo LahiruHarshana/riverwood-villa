@@ -83,6 +83,51 @@ const galleryItems = [
   },
 ] as const;
 
+const filmFrames = [
+  {
+    number: "01",
+    eyebrow: "Morning",
+    title: "Wake inside the river light.",
+    copy: "Balcony doors open, palms move softly, and the first hours of the day arrive without a schedule.",
+    image: "/villa/villa-balcony-palms.jpg",
+    alt: "Morning palms seen from a Riverwood Villa balcony",
+  },
+  {
+    number: "02",
+    eyebrow: "Afternoon",
+    title: "Let the villa become your rhythm.",
+    copy: "Move between cool rooms, long tables, shaded verandas, and the water whenever the mood changes.",
+    image: "/villa/villa-exterior-side-river.jpg",
+    alt: "Riverwood Villa beside the river in the afternoon",
+  },
+  {
+    number: "03",
+    eyebrow: "Evening",
+    title: "Follow the last light to the river.",
+    copy: "Gather for a hosted meal, watch the sky deepen, and end the day where the garden meets the water.",
+    image: "/villa/villa-boat-sunset.webp",
+    alt: "A boat on the river at sunset near Riverwood Villa",
+  },
+] as const;
+
+const riverMoments = [
+  {
+    number: "01",
+    title: "First light",
+    copy: "The river begins quietly—silver water, bird calls, and the soft movement of leaves beyond the balcony.",
+  },
+  {
+    number: "02",
+    title: "Slow afternoon",
+    copy: "Shade settles over the garden while boats pass in the distance and every shared space remains open to the breeze.",
+  },
+  {
+    number: "03",
+    title: "Dusk on the water",
+    copy: "The landscape turns warm, dinner begins, and the edge of the river becomes the villa’s most natural gathering place.",
+  },
+] as const;
+
 function settleHeroReveal() {
   const overlay = document.querySelector<HTMLElement>(".hero-overlay");
   if (overlay) overlay.style.opacity = "0.65";
@@ -498,7 +543,7 @@ export default function Home() {
             }
           }
 
-          // ─── Global cinematic continuity ──────────────────────────────
+          // ─── Global continuity after the frozen hero ──────────────────
           const nav = document.querySelector<HTMLElement>(".site-nav");
           const bgDissolve = document.querySelector<HTMLElement>(".bg-dissolve");
           const chapter = document.querySelector<HTMLElement>(".progress-chapter");
@@ -506,7 +551,7 @@ export default function Home() {
 
           gsap.set(chapter, { autoAlpha: 0 });
           ScrollTrigger.create({
-            trigger: ".intro-section",
+            trigger: ".prologue-section",
             start: "top 82%",
             onEnter: () => gsap.to(chapter, { autoAlpha: 1, duration: 0.4 }),
             onLeaveBack: () => gsap.to(chapter, { autoAlpha: 0, duration: 0.25 }),
@@ -519,7 +564,7 @@ export default function Home() {
               trigger: ".rv-page",
               start: "top top",
               end: "bottom bottom",
-              scrub: 0.25,
+              scrub: 0.2,
             },
           });
 
@@ -548,360 +593,397 @@ export default function Home() {
           });
 
           document.querySelectorAll<HTMLElement>("[data-bg]").forEach((section) => {
-            const color = section.dataset.bg ?? "#f6f5f1";
+            const color = section.dataset.bg ?? "#FFFFFF";
             ScrollTrigger.create({
               trigger: section,
               start: "top 60%",
               end: "bottom 40%",
-              onEnter: () => gsap.to(bgDissolve, { backgroundColor: color, duration: 0.9, ease: "power2.out" }),
-              onEnterBack: () => gsap.to(bgDissolve, { backgroundColor: color, duration: 0.9, ease: "power2.out" }),
+              onEnter: () => gsap.to(bgDissolve, { backgroundColor: color, duration: 0.7, ease: "power2.out" }),
+              onEnterBack: () => gsap.to(bgDissolve, { backgroundColor: color, duration: 0.7, ease: "power2.out" }),
             });
           });
 
-          gsap.utils.toArray<HTMLElement>(".drawn-line, .section-divider").forEach((line) => {
+          gsap.utils.toArray<HTMLElement>(".motion-line, .section-rule").forEach((line) => {
             gsap.fromTo(
               line,
               { scaleX: 0, transformOrigin: "left center" },
               {
                 scaleX: 1,
-                duration: 1.25,
+                duration: 1.2,
                 ease: "expo.out",
-                scrollTrigger: { trigger: line, start: "top 88%" },
+                scrollTrigger: { trigger: line, start: "top 90%", once: true },
               },
             );
           });
 
-          // ─── Story / intro ────────────────────────────────────────────
-          const introTimeline = gsap.timeline({
+          gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((frame) => {
+            const image = frame.querySelector<HTMLElement>("img");
+            if (!image) return;
+            gsap.fromTo(
+              image,
+              { yPercent: -8, scale: 1.1 },
+              {
+                yPercent: 8,
+                scale: 1.02,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: frame,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                },
+              },
+            );
+          });
+
+          // ─── Editorial prologue ───────────────────────────────────────
+          const prologueTimeline = gsap.timeline({
             scrollTrigger: {
-              trigger: ".intro-section",
+              trigger: ".prologue-section",
               start: "top 72%",
               once: true,
             },
           });
 
-          introTimeline
-            .from(".intro-jp-inner p", {
+          prologueTimeline
+            .from(".prologue-kicker > *", {
               yPercent: 120,
-              duration: 0.9,
+              duration: 0.8,
               ease: "power4.out",
+              stagger: 0.05,
             })
-            .from(".intro-heading-line", {
-              yPercent: 110,
+            .from(".prologue-title-line > span", {
+              yPercent: 115,
               duration: 1.05,
               ease: "power4.out",
-              stagger: 0.09,
+              stagger: 0.08,
             }, "<+0.08")
-            .from(".intro-content-wrap > *", {
-              y: 36,
+            .from(".prologue-copy > *", {
+              y: 34,
               autoAlpha: 0,
-              duration: 0.85,
+              duration: 0.8,
               ease: "power3.out",
-              stagger: 0.1,
-            }, "<+0.12");
+              stagger: 0.09,
+            }, "<+0.15");
 
-          gsap.fromTo(".intro-image", {
+          gsap.fromTo(".prologue-main-image", {
             clipPath: "inset(0 100% 0 0)",
           }, {
             clipPath: "inset(0 0% 0 0)",
-            duration: 1.45,
+            duration: 1.5,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".intro-image", start: "top 84%", once: true },
+            scrollTrigger: { trigger: ".prologue-visuals", start: "top 82%", once: true },
           });
 
-          gsap.fromTo(".intro-small", {
+          gsap.fromTo(".prologue-float-image", {
             clipPath: "inset(100% 0 0 0)",
+            y: 70,
           }, {
             clipPath: "inset(0% 0 0 0)",
-            duration: 1.25,
+            y: 0,
+            duration: 1.35,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".intro-small", start: "top 88%", once: true },
+            scrollTrigger: { trigger: ".prologue-visuals", start: "top 72%", once: true },
           });
 
-          gsap.to(".intro-image img", {
-            yPercent: 10,
-            scale: 1.08,
+          gsap.to(".prologue-marquee-track", {
+            xPercent: -24,
             ease: "none",
-            scrollTrigger: { trigger: ".intro-section", start: "top bottom", end: "bottom top", scrub: true },
-          });
-
-          gsap.to(".intro-small img", {
-            yPercent: -10,
-            scale: 1.08,
-            ease: "none",
-            scrollTrigger: { trigger: ".intro-small-wrap", start: "top bottom", end: "bottom top", scrub: true },
-          });
-
-          // ─── Sticky film sequence ─────────────────────────────────────
-          const stickyTimeline = gsap.timeline({
             scrollTrigger: {
-              trigger: ".sticky_scroll_trigger",
-              start: "top top",
-              end: "bottom bottom",
-              scrub: 1,
-              invalidateOnRefresh: true,
+              trigger: ".prologue-section",
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.8,
             },
           });
 
-          stickyTimeline
-            .fromTo(".film-word-1", { yPercent: 0, autoAlpha: 1 }, { yPercent: -120, autoAlpha: 0, duration: 1 })
-            .fromTo(".film-word-2", { yPercent: 120, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 1 }, "<+0.15")
-            .to(".film-word-2", { yPercent: -120, autoAlpha: 0, duration: 1 }, ">+0.2")
-            .fromTo(".film-word-3", { yPercent: 120, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 1 }, "<+0.15")
-            .to(".big_img_track", { yPercent: -105, duration: 3.2, ease: "none" }, 0)
-            .to(".big_img_col:nth-child(odd)", { yPercent: -12, duration: 3.2, ease: "none" }, 0)
-            .to(".big_img_col:nth-child(even)", { yPercent: 12, duration: 3.2, ease: "none" }, 0);
+          // ─── Scroll-directed film: image frames behave like video cuts ─
+          const filmFramesEls = gsap.utils.toArray<HTMLElement>(".film-frame");
+          const filmCopies = gsap.utils.toArray<HTMLElement>(".film-copy");
 
-          gsap.utils.toArray<HTMLElement>(".big_img_col .g_visual_img").forEach((image, index) => {
-            gsap.fromTo(image, { scale: 1.18 }, {
-              scale: 1,
-              ease: "none",
+          if (filmFramesEls.length > 0) {
+            gsap.set(filmFramesEls, { clipPath: "inset(100% 0 0 0)", scale: 1.05 });
+            gsap.set(filmFramesEls[0], { clipPath: "inset(0% 0 0 0)", scale: 1 });
+            gsap.set(filmCopies.slice(1), { autoAlpha: 0, y: 44 });
+
+            const filmTimeline = gsap.timeline({
               scrollTrigger: {
-                trigger: ".sticky_scroll_trigger",
+                trigger: ".film-sequence",
                 start: "top top",
-                end: "bottom bottom",
-                scrub: true,
+                end: `+=${filmFramesEls.length * 115}%`,
+                pin: ".film-pin",
+                scrub: 1,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
               },
             });
-            gsap.to(image, { filter: "saturate(1)", duration: 0.2, delay: index * 0.02 });
-          });
 
-          // ─── Stay chapters ────────────────────────────────────────────
-          gsap.from(".projects-header > *", {
-            y: 40,
+            filmFramesEls.forEach((frame, index) => {
+              if (index === 0) return;
+              const position = index;
+              filmTimeline
+                .to(frame, {
+                  clipPath: "inset(0% 0 0 0)",
+                  scale: 1,
+                  duration: 1,
+                  ease: "power3.inOut",
+                }, position)
+                .to(filmFramesEls[index - 1], {
+                  scale: 1.08,
+                  duration: 1,
+                  ease: "none",
+                }, position)
+                .to(filmCopies[index - 1], {
+                  autoAlpha: 0,
+                  y: -34,
+                  duration: 0.42,
+                  ease: "power2.in",
+                }, position)
+                .fromTo(filmCopies[index], {
+                  autoAlpha: 0,
+                  y: 44,
+                }, {
+                  autoAlpha: 1,
+                  y: 0,
+                  duration: 0.62,
+                  ease: "power3.out",
+                }, position + 0.22);
+            });
+
+            filmTimeline.to(".film-progress-fill", {
+              scaleX: 1,
+              duration: filmFramesEls.length,
+              ease: "none",
+            }, 0);
+          }
+
+          // ─── Horizontal stay chapters, inspired by editorial project rails ─
+          const stayPanels = gsap.utils.toArray<HTMLElement>(".stay-panel");
+          const revealStayPanel = (
+            panel: HTMLElement,
+            containerAnimation?: gsap.core.Animation,
+          ) => {
+            const image = panel.querySelector<HTMLElement>(".stay-panel-image");
+            const copy = panel.querySelector<HTMLElement>(".stay-panel-copy");
+            const triggerConfig = containerAnimation
+              ? {
+                  trigger: panel,
+                  containerAnimation,
+                  start: "left 82%",
+                  once: true,
+                }
+              : {
+                  trigger: panel,
+                  start: "top 84%",
+                  once: true,
+                };
+
+            if (image) {
+              gsap.fromTo(image, { clipPath: "inset(0 100% 0 0)" }, {
+                clipPath: "inset(0 0% 0 0)",
+                duration: 1.15,
+                ease: "expo.inOut",
+                scrollTrigger: triggerConfig,
+              });
+            }
+            if (copy) {
+              gsap.from(copy, {
+                y: 40,
+                autoAlpha: 0,
+                duration: 0.85,
+                ease: "power3.out",
+                scrollTrigger: triggerConfig,
+              });
+            }
+          };
+
+          if (window.matchMedia("(min-width: 981px)").matches) {
+            const staySection = document.querySelector<HTMLElement>(".stay-journey");
+            const stayTrack = document.querySelector<HTMLElement>(".stay-track");
+            const stayPin = document.querySelector<HTMLElement>(".stay-pin");
+
+            if (staySection && stayTrack && stayPin) {
+              const travel = () => Math.max(0, stayTrack.scrollWidth - window.innerWidth);
+              const stayTween = gsap.to(stayTrack, {
+                x: () => -travel(),
+                ease: "none",
+                scrollTrigger: {
+                  trigger: staySection,
+                  start: "top top",
+                  end: () => `+=${travel()}`,
+                  pin: stayPin,
+                  scrub: 1,
+                  anticipatePin: 1,
+                  invalidateOnRefresh: true,
+                },
+              });
+
+              gsap.to(".stay-progress-fill", {
+                scaleX: 1,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: staySection,
+                  start: "top top",
+                  end: () => `+=${travel()}`,
+                  scrub: true,
+                },
+              });
+
+              stayPanels.forEach((panel) => revealStayPanel(panel, stayTween));
+              disposers.push(() => stayTween.kill());
+            }
+          } else {
+            stayPanels.forEach((panel) => revealStayPanel(panel));
+          }
+
+          // ─── River chapters: pinned visual with scene-to-scene wipes ──
+          const riverScenes = gsap.utils.toArray<HTMLElement>(".river-scene");
+          const riverMomentEls = gsap.utils.toArray<HTMLElement>(".river-moment");
+          if (riverScenes.length > 0) {
+            gsap.set(riverScenes, { clipPath: "inset(100% 0 0 0)" });
+            gsap.set(riverScenes[0], { clipPath: "inset(0% 0 0 0)" });
+
+            riverMomentEls.forEach((moment, index) => {
+              ScrollTrigger.create({
+                trigger: moment,
+                start: "top 58%",
+                end: "bottom 42%",
+                onEnter: () => {
+                  gsap.to(riverScenes[index], { clipPath: "inset(0% 0 0 0)", duration: 0.9, ease: "expo.inOut" });
+                  gsap.to(riverScenes.filter((_, sceneIndex) => sceneIndex > index), {
+                    clipPath: "inset(100% 0 0 0)",
+                    duration: 0.7,
+                    ease: "expo.inOut",
+                  });
+                },
+                onEnterBack: () => {
+                  gsap.to(riverScenes[index], { clipPath: "inset(0% 0 0 0)", duration: 0.9, ease: "expo.inOut" });
+                  gsap.to(riverScenes.filter((_, sceneIndex) => sceneIndex > index), {
+                    clipPath: "inset(100% 0 0 0)",
+                    duration: 0.7,
+                    ease: "expo.inOut",
+                  });
+                },
+              });
+            });
+          }
+
+          gsap.from(".river-header > *", {
+            y: 44,
             autoAlpha: 0,
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: ".projects-header", start: "top 82%", once: true },
+            scrollTrigger: { trigger: ".river-header", start: "top 78%", once: true },
           });
 
-          gsap.utils.toArray<HTMLElement>(".home_project_item").forEach((item, index) => {
-            const visual = item.querySelector<HTMLElement>(".g_visual_wrap");
-            const image = item.querySelector<HTMLElement>(".g_visual_img");
-            const content = item.querySelector<HTMLElement>(".home_project_content");
-            const bigNum = item.querySelector<HTMLElement>(".home_project_bignum");
-
-            const timeline = gsap.timeline({
-              scrollTrigger: { trigger: item, start: "top 80%", once: true },
+          gsap.utils.toArray<HTMLElement>(".river-moment").forEach((moment) => {
+            gsap.from(moment.children, {
+              y: 36,
+              autoAlpha: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              stagger: 0.08,
+              scrollTrigger: { trigger: moment, start: "top 80%", once: true },
             });
-
-            timeline
-              .from(item, { y: 70, autoAlpha: 0, duration: 1, ease: "power4.out" })
-              .fromTo(visual, {
-                clipPath: index % 2 === 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
-              }, {
-                clipPath: "inset(0 0% 0 0%)",
-                duration: 1.2,
-                ease: "expo.inOut",
-              }, "<+0.08")
-              .from(content, {
-                x: index % 2 === 0 ? 50 : -50,
-                autoAlpha: 0,
-                duration: 0.9,
-                ease: "power3.out",
-              }, "<+0.22");
-
-            if (image) {
-              gsap.fromTo(image, { yPercent: -8, scale: 1.12 }, {
-                yPercent: 8,
-                scale: 1.02,
-                ease: "none",
-                scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true },
-              });
-            }
-
-            if (bigNum) {
-              gsap.to(bigNum, {
-                yPercent: index % 2 === 0 ? -12 : 12,
-                ease: "none",
-                scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true },
-              });
-            }
           });
 
-          // ─── Riverside section ────────────────────────────────────────
-          gsap.fromTo(".h_sustain_watermark", {
-            autoAlpha: 0,
-            y: 40,
-          }, {
-            autoAlpha: 0.07,
-            y: 0,
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: { trigger: ".home_sustain", start: "top 72%", once: true },
-          });
-
-          gsap.from(".h_sustain_kanji_wrap, .h_sustain_head, .sustain_content_wrap", {
-            y: 48,
-            autoAlpha: 0,
-            duration: 0.95,
-            ease: "power3.out",
-            stagger: 0.15,
-            scrollTrigger: { trigger: ".home_sustain", start: "top 72%", once: true },
-          });
-
-          gsap.utils.toArray<HTMLElement>(".home_sustain .g_visual_wrap").forEach((visual, index) => {
-            gsap.fromTo(visual, {
-              clipPath: index === 0 ? "inset(100% 0 0 0)" : "inset(0 0 100% 0)",
+          // ─── Kinetic dining statement ─────────────────────────────────
+          gsap.utils.toArray<HTMLElement>(".dining-word-row").forEach((row, index) => {
+            gsap.fromTo(row, {
+              xPercent: index % 2 === 0 ? -10 : 10,
             }, {
-              clipPath: "inset(0 0 0% 0)",
-              duration: 1.35,
-              ease: "expo.inOut",
-              scrollTrigger: { trigger: visual, start: "top 84%", once: true },
-            });
-          });
-
-          gsap.utils.toArray<HTMLElement>(".home_sustain .g_visual_img").forEach((image) => {
-            gsap.fromTo(image, { yPercent: -10, scale: 1.12 }, {
-              yPercent: 10,
-              scale: 1.02,
+              xPercent: index % 2 === 0 ? 7 : -7,
               ease: "none",
-              scrollTrigger: { trigger: image.closest(".g_visual_wrap"), start: "top bottom", end: "bottom top", scrub: true },
+              scrollTrigger: {
+                trigger: ".dining-section-v2",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1,
+              },
             });
           });
 
-          // ─── Dining / service statement ───────────────────────────────
-          gsap.from(".service-section > div:first-child > *", {
-            y: 30,
-            autoAlpha: 0,
-            duration: 0.85,
-            ease: "power3.out",
-            stagger: 0.1,
-            scrollTrigger: { trigger: ".service-section", start: "top 78%", once: true },
-          });
-
-          gsap.from(".service-type > span", {
-            yPercent: 120,
-            autoAlpha: 0,
-            duration: 1,
-            ease: "power4.out",
-            stagger: 0.12,
-            scrollTrigger: { trigger: ".service-type", start: "top 78%", once: true },
-          });
-
-          gsap.fromTo(".service-img", {
+          gsap.fromTo(".dining-image-window", {
             clipPath: "inset(0 50% 0 50%)",
           }, {
             clipPath: "inset(0 0% 0 0%)",
             duration: 1.35,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".service-type", start: "top 78%", once: true },
+            scrollTrigger: { trigger: ".dining-image-window", start: "top 80%", once: true },
           });
 
-          gsap.to(".service-img img", {
-            scale: 1.12,
-            yPercent: 8,
-            ease: "none",
-            scrollTrigger: { trigger: ".service-section", start: "top bottom", end: "bottom top", scrub: true },
-          });
-
-          gsap.from(".service-section > p, .service-section > .text-button", {
-            y: 34,
+          gsap.from(".dining-detail", {
+            y: 48,
             autoAlpha: 0,
             duration: 0.85,
             ease: "power3.out",
-            stagger: 0.12,
-            scrollTrigger: { trigger: ".service-type", start: "bottom 75%", once: true },
+            stagger: 0.1,
+            scrollTrigger: { trigger: ".dining-details", start: "top 82%", once: true },
           });
 
-          // ─── Gallery ──────────────────────────────────────────────────
-          gsap.from(".gallery-heading > *", {
-            y: 38,
+          // ─── Visual journal rails ─────────────────────────────────────
+          gsap.utils.toArray<HTMLElement>(".journal-row").forEach((row) => {
+            const reverse = row.classList.contains("is-reverse");
+            const distance = () => Math.max(0, row.scrollWidth - window.innerWidth + 80);
+            gsap.fromTo(row, {
+              x: reverse ? () => -distance() : 0,
+            }, {
+              x: reverse ? 0 : () => -distance(),
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".journal-section-v2",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1,
+                invalidateOnRefresh: true,
+              },
+            });
+          });
+
+          gsap.from(".journal-header > *", {
+            y: 40,
+            autoAlpha: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            stagger: 0.1,
+            scrollTrigger: { trigger: ".journal-header", start: "top 82%", once: true },
+          });
+
+          // ─── Manifesto and booking finale ─────────────────────────────
+          gsap.from(".manifesto-line > span", {
+            yPercent: 115,
+            duration: 1,
+            ease: "power4.out",
+            stagger: 0.08,
+            scrollTrigger: { trigger: ".manifesto-section", start: "top 72%", once: true },
+          });
+
+          gsap.from(".booking-copy > *", {
+            y: 44,
+            autoAlpha: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            stagger: 0.1,
+            scrollTrigger: { trigger: ".booking-section-v2", start: "top 76%", once: true },
+          });
+
+          gsap.fromTo(".booking-visual", {
+            clipPath: "inset(100% 0 0 0)",
+          }, {
+            clipPath: "inset(0% 0 0 0)",
+            duration: 1.4,
+            ease: "expo.inOut",
+            scrollTrigger: { trigger: ".booking-section-v2", start: "top 74%", once: true },
+          });
+
+          gsap.from(".footer-v2 > *", {
+            y: 48,
             autoAlpha: 0,
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.12,
-            scrollTrigger: { trigger: ".gallery-heading", start: "top 82%", once: true },
-          });
-
-          ScrollTrigger.batch(".gallery-item", {
-            start: "top 88%",
-            once: true,
-            onEnter: (batch: Element[]) => {
-              batch.forEach((element: Element, index: number) => {
-                window.setTimeout(() => element.classList.add("is-visible"), index * 90);
-              });
-            },
-          });
-
-          // ─── Quote ────────────────────────────────────────────────────
-          gsap.from(".quote-section .rv-card", {
-            xPercent: -14,
-            autoAlpha: 0,
-            duration: 1.1,
-            ease: "power4.out",
-            scrollTrigger: { trigger: ".quote-section", start: "top 76%", once: true },
-          });
-
-          gsap.fromTo(".quote-img", {
-            clipPath: "inset(100% 0 0 0)",
-          }, {
-            clipPath: "inset(0% 0 0 0)",
-            duration: 1.3,
-            ease: "expo.inOut",
-            scrollTrigger: { trigger: ".quote-section", start: "top 76%", once: true },
-          });
-
-          gsap.to(".quote-img img", {
-            yPercent: 12,
-            scale: 1.1,
-            ease: "none",
-            scrollTrigger: { trigger: ".quote-section", start: "top bottom", end: "bottom top", scrub: true },
-          });
-
-          // ─── Booking CTA ──────────────────────────────────────────────
-          gsap.from(".cta-copy > *", {
-            y: 45,
-            autoAlpha: 0,
-            duration: 0.95,
-            ease: "power3.out",
-            stagger: 0.12,
-            scrollTrigger: { trigger: ".cta-section", start: "top 76%", once: true },
-          });
-
-          gsap.fromTo(".cta-small", {
-            clipPath: "circle(0% at 50% 50%)",
-          }, {
-            clipPath: "circle(72% at 50% 50%)",
-            duration: 1.2,
-            ease: "expo.inOut",
-            scrollTrigger: { trigger: ".cta-section", start: "top 76%", once: true },
-          });
-
-          gsap.fromTo(".cta-large", {
-            clipPath: "inset(0 0 100% 0)",
-          }, {
-            clipPath: "inset(0 0 0% 0)",
-            duration: 1.45,
-            ease: "expo.inOut",
-            scrollTrigger: { trigger: ".cta-section", start: "top 76%", once: true },
-          });
-
-          gsap.to(".cta-large img", {
-            yPercent: 10,
-            scale: 1.08,
-            ease: "none",
-            scrollTrigger: { trigger: ".cta-section", start: "top bottom", end: "bottom top", scrub: true },
-          });
-
-          // ─── Footer ───────────────────────────────────────────────────
-          gsap.from(".footer > nav a", {
-            yPercent: 110,
-            autoAlpha: 0,
-            duration: 0.85,
-            ease: "power3.out",
-            stagger: 0.06,
-            scrollTrigger: { trigger: ".footer", start: "top 84%", once: true },
-          });
-
-          gsap.from(".footer-main > *", {
-            y: 50,
-            autoAlpha: 0,
-            duration: 1,
-            ease: "power3.out",
-            stagger: 0.16,
-            scrollTrigger: { trigger: ".footer-main", start: "top 88%", once: true },
+            scrollTrigger: { trigger: ".footer-v2", start: "top 86%", once: true },
           });
         });
 
@@ -1064,408 +1146,376 @@ export default function Home() {
 
       <section
         id="story"
-        className="intro-section rv-rebuilt"
+        className="prologue-section rv-cinematic"
         data-theme="light"
-        data-bg="#f6f5f1"
+        data-bg="#FFFFFF"
         data-chapter="01"
         aria-labelledby="story-title"
       >
-        <div className="intro-left">
-          <div className="intro-jp-wrap">
-            <span className="jp">The Riverwood rhythm</span>
-            <div className="intro-jp-inner">
-              <p>Arrive. Exhale. Stay awhile.</p>
-            </div>
-          </div>
-          <h2 id="story-title">
-            <span className="mask-line"><span className="intro-heading-line">A private</span></span>
-            <span className="mask-line"><span className="intro-heading-line"><em>riverside</em> world</span></span>
-            <span className="mask-line"><span className="intro-heading-line">of your own.</span></span>
+        <div className="prologue-kicker">
+          <span>01</span>
+          <span>The Riverwood story</span>
+          <span>Private riverside living</span>
+        </div>
+
+        <div className="prologue-title-wrap">
+          <h2 id="story-title" className="prologue-title">
+            <span className="prologue-title-line"><span>A villa shaped by</span></span>
+            <span className="prologue-title-line"><span><em>water, light,</em> and time.</span></span>
           </h2>
-        </div>
-
-        <div className="intro-image-wrap">
-          <figure className="intro-image rv-clip" data-cursor="explore">
-            <FillImage
-              src="/villa/villa-riverside.webp"
-              alt="Riverwood Villa beside the river"
-              className="rv-parallax"
-              sizes="(max-width: 980px) 100vw, 34vw"
-            />
-          </figure>
-        </div>
-
-        <div className="intro-right">
-          <div className="intro-content-wrap">
+          <div className="prologue-copy">
             <p>
-              Riverwood is a small, soulful villa where tropical architecture meets the
-              quiet edge of the water. The experience is intentionally simple: generous
-              rooms, open balconies, warm hosting, and time that finally feels spacious.
+              Riverwood is designed for the hours people usually rush through: balcony mornings,
+              long lunches, quiet swims of light across a room, and evenings gathered beside the river.
             </p>
-            <a className="text-button" href="#stay" data-magnetic>
-              Discover the stay <ArrowDownRight size={16} />
+            <a className="outline-button-v2" href="#stay" data-magnetic>
+              Explore the stay <ArrowDownRight size={16} />
             </a>
           </div>
-          <div className="intro-small-wrap">
-            <figure className="intro-small rv-clip" data-cursor="view">
-              <FillImage
-                src="/villa/villa-balcony-table.jpg"
-                alt="Table set on a Riverwood Villa balcony"
-                sizes="(max-width: 980px) 100vw, 25vw"
-              />
-            </figure>
+        </div>
+
+        <div className="prologue-visuals">
+          <figure className="prologue-main-image media-frame" data-parallax data-cursor="enter">
+            <FillImage
+              src="/villa/villa-riverside.webp"
+              alt="Riverwood Villa opening toward the river"
+              sizes="(max-width: 980px) 100vw, 68vw"
+            />
+          </figure>
+          <figure className="prologue-float-image media-frame" data-parallax data-cursor="view">
+            <FillImage
+              src="/villa/villa-balcony-table.jpg"
+              alt="A table prepared on a Riverwood Villa balcony"
+              sizes="(max-width: 980px) 60vw, 22vw"
+            />
+          </figure>
+          <div className="prologue-note">
+            <span>06° North</span>
+            <p>Warm architecture, open balconies, hosted meals, and river air from morning to night.</p>
           </div>
         </div>
-        <div className="intro-line drawn-line" aria-hidden="true" />
+
+        <div className="prologue-marquee" aria-hidden="true">
+          <div className="prologue-marquee-track">
+            <span>River light</span><i>✦</i><span>Open air</span><i>✦</i><span>Slow mornings</span><i>✦</i>
+            <span>Warm hosting</span><i>✦</i><span>River light</span><i>✦</i><span>Open air</span><i>✦</i>
+          </div>
+        </div>
       </section>
 
       <section
-        className="scroll_section rv-rebuilt"
+        className="film-sequence rv-cinematic"
         data-theme="light"
-        data-bg="#efede7"
+        data-bg="#FFFFFF"
         data-chapter="02"
-        aria-label="A cinematic glimpse of the Riverwood Villa experience"
+        aria-label="A scroll-directed day at Riverwood Villa"
       >
-        <div className="sticky_scroll_trigger">
-          <div className="sticky_track">
-            <p className="sticky-kicker">One place. Many ways to slow down.</p>
-            <div className="sticky_elements" aria-hidden="true">
-              <div className="big_txt_row">
-                <span className="big_txt film-word film-word-1">Wake slowly</span>
-              </div>
-              <div className="big_txt_row sticky-word-layer">
-                <span className="big_txt italic film-word film-word-2">Live lightly</span>
-              </div>
-              <div className="big_txt_row sticky-word-layer">
-                <span className="big_txt film-word film-word-3">Stay by water</span>
-              </div>
-            </div>
+        <div className="film-pin">
+          <div className="film-stage" data-cursor="scroll">
+            {filmFrames.map((frame) => (
+              <figure className="film-frame" key={frame.number}>
+                <FillImage
+                  src={frame.image}
+                  alt={frame.alt}
+                  sizes="100vw"
+                />
+              </figure>
+            ))}
+            <div className="film-sage-panel" aria-hidden="true" />
+          </div>
 
-            <div className="big_img_track" aria-hidden="true">
-              <div className="big_img_grid">
-                <div className="big_img_col">
-                  <figure className="g_visual_wrap">
-                    <div className="g_visual_background" />
-                    <FillImage
-                      src="/villa/villa-balcony-palms.jpg"
-                      alt=""
-                      className="g_visual_img"
-                      sizes="25vw"
-                    />
-                  </figure>
+          <div className="film-copy-stack">
+            {filmFrames.map((frame) => (
+              <div className="film-copy" key={frame.number}>
+                <div className="film-meta">
+                  <span>{frame.number} / 03</span>
+                  <span>{frame.eyebrow}</span>
                 </div>
-                <div className="big_img_col">
-                  <figure className="g_visual_wrap">
-                    <div className="g_visual_background" />
-                    <FillImage
-                      src="/villa/villa-exterior-side-river.jpg"
-                      alt=""
-                      className="g_visual_img"
-                      sizes="25vw"
-                    />
-                  </figure>
-                </div>
-                <div className="big_img_col">
-                  <figure className="g_visual_wrap">
-                    <div className="g_visual_background" />
-                    <FillImage
-                      src="/villa/villa-hallway.webp"
-                      alt=""
-                      className="g_visual_img"
-                      sizes="25vw"
-                    />
-                  </figure>
-                </div>
-                <div className="big_img_col">
-                  <figure className="g_visual_wrap">
-                    <div className="g_visual_background" />
-                    <FillImage
-                      src="/villa/villa-balcony-path.jpg"
-                      alt=""
-                      className="g_visual_img"
-                      sizes="25vw"
-                    />
-                  </figure>
-                </div>
+                <h2>{frame.title}</h2>
+                <p>{frame.copy}</p>
               </div>
-            </div>
-            <p className="sticky-caption">Scroll to move through a day at Riverwood</p>
+            ))}
+          </div>
+
+          <div className="film-side-label" aria-hidden="true">
+            Scroll-directed film
+          </div>
+          <div className="film-progress" aria-hidden="true">
+            <div className="film-progress-fill" />
           </div>
         </div>
       </section>
 
       <section
         id="stay"
-        className="projects-section rv-rebuilt"
+        className="stay-journey rv-cinematic"
         data-theme="light"
-        data-bg="#f6f5f1"
+        data-bg="#FFFFFF"
         data-chapter="03"
         aria-labelledby="stay-title"
       >
-        <div className="projects-header">
-          <span className="jp">The stay</span>
-          <div>
-            <h2 id="stay-title">Spaces that feel <em>open, quiet, and deeply personal.</em></h2>
-            <p>
-              Each part of the villa has its own pace—from the privacy of the bedrooms to
-              the sociable ease of the terrace.
-            </p>
-          </div>
-        </div>
-
-        <div className="home_project_list">
-          {stayChapters.map((chapter) => (
-            <article className="home_project_item" key={chapter.number}>
-              <span className="home_project_bignum" aria-hidden="true">{chapter.number}</span>
-              <figure className="g_visual_wrap" data-cursor="view space">
-                <div className="g_visual_background" />
-                <FillImage
-                  src={chapter.image}
-                  alt={chapter.alt}
-                  className="g_visual_img"
-                  sizes="(max-width: 980px) 100vw, 50vw"
-                />
-              </figure>
-              <div className="home_project_content">
-                <div className="home_project_info">
-                  <span className="jp">{chapter.eyebrow}</span>
-                  <div className="home_project_title">
-                    <h3>{chapter.title}</h3>
-                  </div>
-                </div>
-                <div className="home_project_right">
-                  <div className="home_project_num">
-                    <div>{chapter.number}</div><div>/ 03</div>
-                  </div>
-                  <p className="home_project_copy">{chapter.copy}</p>
-                </div>
-              </div>
+        <div className="stay-pin">
+          <div className="stay-track">
+            <article className="stay-intro-panel">
+              <span className="section-index">03 / The stay</span>
+              <h2 id="stay-title">Spaces that make room for <em>real rest.</em></h2>
+              <p>
+                Move through the villa as one continuous experience—from private rooms to
+                open balconies and generous places to gather.
+              </p>
+              <div className="stay-intro-mark" aria-hidden="true">R</div>
             </article>
-          ))}
+
+            {stayChapters.map((chapter) => (
+              <article className="stay-panel" key={chapter.number}>
+                <figure className="stay-panel-image media-frame" data-parallax data-cursor="view space">
+                  <FillImage
+                    src={chapter.image}
+                    alt={chapter.alt}
+                    sizes="(max-width: 980px) 100vw, 58vw"
+                  />
+                </figure>
+                <div className="stay-panel-copy">
+                  <div className="stay-panel-meta">
+                    <span>{chapter.number}</span>
+                    <span>{chapter.eyebrow}</span>
+                  </div>
+                  <h3>{chapter.title}</h3>
+                  <p>{chapter.copy}</p>
+                </div>
+                <span className="stay-panel-number" aria-hidden="true">{chapter.number}</span>
+              </article>
+            ))}
+          </div>
+
+          <div className="stay-progress" aria-hidden="true">
+            <div className="stay-progress-fill" />
+          </div>
         </div>
       </section>
 
       <section
         id="river"
-        className="home_sustain rv-rebuilt"
+        className="river-section-v2 rv-cinematic"
         data-theme="light"
-        data-bg="#e7eae5"
+        data-bg="#FFFFFF"
         data-chapter="04"
         aria-labelledby="river-title"
       >
-        <div className="sustain_container">
-          <div className="h_sustain_col-img">
-            <div className="intro_img">
-              <figure className="g_visual_wrap" data-cursor="river view">
-                <div className="g_visual_background" />
+        <div className="river-grid">
+          <div className="river-visual-column">
+            <div className="river-visual-stack" data-cursor="river">
+              <figure className="river-scene">
                 <FillImage
                   src="/villa/villa-exterior-side-sunset.jpg"
-                  alt="Riverwood Villa beside the river at sunset"
-                  className="g_visual_img"
-                  sizes="(max-width: 980px) 100vw, 42vw"
+                  alt="Riverwood Villa beside the river at first light"
+                  sizes="(max-width: 980px) 100vw, 50vw"
                 />
               </figure>
-            </div>
-          </div>
-
-          <div className="h_sustain_col-l">
-            <span className="h_sustain_watermark" aria-hidden="true">R</span>
-            <div className="h_sustain_kanji_wrap">
-              <span className="jp">At the water&apos;s edge</span>
-              <div className="kanji_content">
-                <span className="kanji_title">A living landscape</span>
-              </div>
-            </div>
-            <div className="h_sustain_head">
-              <h2 id="river-title" className="g_heading">
-                Follow the <em>river</em> from first light to dusk.
-              </h2>
-            </div>
-          </div>
-
-          <div className="h_sustain_col-r">
-            <div className="sustain_img_small">
-              <figure className="g_visual_wrap" data-cursor="wildlife">
-                <div className="g_visual_background" />
+              <figure className="river-scene">
                 <FillImage
                   src="/villa/villa-crocodile.webp"
-                  alt="Wildlife seen near the river"
-                  className="g_visual_img"
-                  sizes="(max-width: 980px) 100vw, 25vw"
+                  alt="Wildlife seen from Riverwood Villa"
+                  sizes="(max-width: 980px) 100vw, 50vw"
+                />
+              </figure>
+              <figure className="river-scene">
+                <FillImage
+                  src="/villa/villa-boat-sunset.webp"
+                  alt="Sunset on the river near Riverwood Villa"
+                  sizes="(max-width: 980px) 100vw, 50vw"
                 />
               </figure>
             </div>
-            <div className="sustain_content_wrap">
-              <div className="sustain_content_p">
-                <p>
-                  The river is not a backdrop here—it shapes the whole stay. Watch boats pass,
-                  listen for birds, notice the changing sky, and let each hour arrive without hurry.
-                </p>
-              </div>
-              <a href="#gallery" className="text-button" data-magnetic>
-                See the landscape <ArrowDownRight size={16} />
-              </a>
+            <div className="river-coordinate">
+              <span>Water / Garden / Sky</span>
+              <span>Sri Lanka</span>
+            </div>
+          </div>
+
+          <div className="river-copy-column">
+            <header className="river-header">
+              <span className="section-index">04 / The river</span>
+              <h2 id="river-title">A landscape that changes <em>with every hour.</em></h2>
+              <p>
+                The water is not scenery behind the villa. It is the rhythm that connects every room,
+                meal, conversation, and view.
+              </p>
+            </header>
+
+            <div className="river-moments">
+              {riverMoments.map((moment) => (
+                <article className="river-moment" key={moment.number}>
+                  <span>{moment.number}</span>
+                  <h3>{moment.title}</h3>
+                  <p>{moment.copy}</p>
+                  <div className="section-rule" aria-hidden="true" />
+                </article>
+              ))}
             </div>
           </div>
         </div>
-        <div className="line_wrapper"><div className="drawn-line" /></div>
       </section>
 
       <section
         id="dining"
-        className="service-section rv-rebuilt"
+        className="dining-section-v2 rv-cinematic"
         data-theme="light"
-        data-bg="#f6f5f1"
+        data-bg="#89A894"
         data-chapter="05"
         aria-labelledby="dining-title"
       >
-        <div>
-          <span className="jp">Hosted moments</span>
-          <p>Simple pleasures, thoughtfully arranged.</p>
+        <header className="dining-header">
+          <span className="section-index">05 / Hosted moments</span>
+          <p>One unhurried day, arranged around you.</p>
+        </header>
+
+        <div className="dining-kinetic" aria-labelledby="dining-title">
+          <h2 id="dining-title" className="dining-word-row"><span>Stay</span><em>softly</em></h2>
+          <h2 className="dining-word-row"><span>Eat</span><em>together</em></h2>
+          <h2 className="dining-word-row"><span>Drift</span><em>slowly</em></h2>
         </div>
-        <h2 id="dining-title" className="service-type">
-          <span data-skew>Stay</span>
-          <span aria-hidden="true">·</span>
-          <span data-skew>Eat</span>
-          <figure className="service-img" data-cursor="taste">
+
+        <div className="dining-feature">
+          <figure className="dining-image-window media-frame" data-parallax data-cursor="taste">
             <FillImage
               src="/villa/villa-outdoor-restaurant.webp"
-              alt="Outdoor dining at Riverwood Villa"
-              sizes="(max-width: 980px) 80vw, 28vw"
+              alt="Outdoor hosted dining at Riverwood Villa"
+              sizes="(max-width: 980px) 100vw, 54vw"
             />
           </figure>
-          <span data-skew>Drift</span>
-        </h2>
-        <p>
-          Begin with breakfast on the balcony, share a long meal on the terrace, then follow
-          the last light toward the water. Riverwood is designed around the pleasure of not rushing.
-        </p>
-        <a className="text-button" href="#book" data-magnetic>
-          Plan your stay <ArrowDownRight size={16} />
-        </a>
+          <p>
+            Breakfast on the balcony. Lunch beneath shade. A long table at dusk.
+            Riverwood turns the simplest moments into the ones people remember.
+          </p>
+          <a className="solid-button-v2" href="#book" data-magnetic>
+            Plan your stay <ArrowDownRight size={16} />
+          </a>
+        </div>
+
+        <div className="dining-details">
+          <article className="dining-detail"><span>01</span><h3>Fresh mornings</h3><p>Slow breakfasts, fruit, tea, and river air.</p></article>
+          <article className="dining-detail"><span>02</span><h3>Shared tables</h3><p>Hosted meals with space for conversation.</p></article>
+          <article className="dining-detail"><span>03</span><h3>Evening calm</h3><p>Last light, soft music, and nowhere else to be.</p></article>
+        </div>
       </section>
 
       <section
         id="gallery"
-        className="gallery-section rv-rebuilt"
+        className="journal-section-v2 rv-cinematic"
         data-theme="light"
-        data-bg="#efede7"
+        data-bg="#FFFFFF"
         data-chapter="06"
         aria-labelledby="gallery-title"
       >
-        <div className="gallery-heading">
-          <span className="jp">A visual journal</span>
-          <h2 id="gallery-title">Scenes from a <em>slower kind of day.</em></h2>
-        </div>
-        <div className="gallery-grid">
-          {galleryItems.map((item) => (
-            <figure className="gallery-item" key={item.index} data-cursor="open">
-              <FillImage
-                src={item.image}
-                alt={item.alt}
-                sizes="(max-width: 980px) 100vw, 33vw"
-              />
-              <figcaption><strong>{item.title}</strong><span>{item.index}</span></figcaption>
-            </figure>
-          ))}
+        <header className="journal-header">
+          <span className="section-index">06 / Visual journal</span>
+          <h2 id="gallery-title">Small scenes from a <em>slower kind of day.</em></h2>
+          <p>Architecture, landscape, wildlife, and the spaces between.</p>
+        </header>
+
+        <div className="journal-viewport">
+          <div className="journal-row">
+            {galleryItems.slice(0, 4).map((item) => (
+              <figure className="journal-card" key={`row-a-${item.index}`} data-cursor="open">
+                <div className="journal-image"><FillImage src={item.image} alt={item.alt} sizes="42vw" /></div>
+                <figcaption><span>{item.index}</span><strong>{item.title}</strong></figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="journal-row is-reverse">
+            {[...galleryItems.slice(3), ...galleryItems.slice(0, 2)].map((item, index) => (
+              <figure className="journal-card is-small" key={`row-b-${item.index}-${index}`} data-cursor="open">
+                <div className="journal-image"><FillImage src={item.image} alt={item.alt} sizes="34vw" /></div>
+                <figcaption><span>{item.index}</span><strong>{item.title}</strong></figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
       </section>
 
       <section
-        className="quote-section rv-rebuilt"
+        className="manifesto-section rv-cinematic"
         data-theme="light"
-        data-bg="#e7eae5"
+        data-bg="#89A894"
         data-chapter="06"
         aria-label="Riverwood Villa philosophy"
       >
-        <div className="rv-card">
-          <p>
-            The best luxury is not more noise. It is more sky, more water, more room to be together.
-          </p>
-          <span className="quote-author">The Riverwood philosophy</span>
-        </div>
-        <figure className="quote-img" data-cursor="pause">
+        <span className="manifesto-index">The Riverwood philosophy</span>
+        <blockquote>
+          <span className="manifesto-line"><span>The best luxury is</span></span>
+          <span className="manifesto-line"><span>more <em>sky</em>, more water,</span></span>
+          <span className="manifesto-line"><span>and more room to be together.</span></span>
+        </blockquote>
+        <figure className="manifesto-image" data-cursor="pause">
           <FillImage
             src="/villa/villa-balcony-chair.webp"
-            alt="A quiet chair on the Riverwood Villa balcony"
-            sizes="(max-width: 980px) 100vw, 34vw"
+            alt="A quiet chair overlooking the Riverwood Villa landscape"
+            sizes="(max-width: 980px) 58vw, 20vw"
           />
         </figure>
       </section>
 
       <section
         id="book"
-        className="cta-section rv-rebuilt"
+        className="booking-section-v2 rv-cinematic"
         data-theme="light"
-        data-bg="#f6f5f1"
+        data-bg="#FFFFFF"
         data-chapter="07"
         aria-labelledby="book-title"
       >
-        <figure className="cta-small" data-cursor="arrive">
-          <FillImage
-            src="/villa/villa-starlink.webp"
-            alt="Open sky above Riverwood Villa"
-            sizes="(max-width: 980px) 38vw, 16vw"
-          />
-        </figure>
-        <div className="cta-copy">
-          <span className="jp">Your riverside escape</span>
-          <h2 id="book-title">Come <em>stay</em> by the river.</h2>
+        <div className="booking-copy">
+          <span className="section-index">07 / Your stay</span>
+          <h2 id="book-title">Come stay <em>where the river slows everything down.</em></h2>
           <p>
-            Tell us your dates, group size, and the kind of stay you are imagining. We will help
-            shape a relaxed Riverwood experience around you.
+            Share your dates, group size, and the kind of escape you are imagining.
+            We will shape a relaxed Riverwood experience around you.
           </p>
           <a
-            className="dark-button"
+            className="booking-button"
             href="mailto:hello@riverwoodvilla.com?subject=Riverwood%20Villa%20booking%20enquiry"
             data-magnetic
           >
-            Start a booking <ArrowUpRight size={16} />
+            <span>Start a booking</span><ArrowUpRight size={20} />
           </a>
         </div>
-        <figure className="cta-large" data-cursor="riverwood">
+
+        <figure className="booking-visual media-frame" data-parallax data-cursor="arrive">
           <FillImage
             src="/villa/villa-hero.webp"
-            alt="Aerial view of Riverwood Villa and the surrounding river landscape"
-            sizes="(max-width: 980px) 100vw, 34vw"
+            alt="Aerial view of Riverwood Villa and the river landscape"
+            sizes="(max-width: 980px) 100vw, 55vw"
           />
         </figure>
+
+        <div className="booking-footnote">
+          <span>Private riverside boutique stay</span>
+          <span>Sri Lanka</span>
+        </div>
       </section>
 
-      <footer className="footer" data-theme="light" data-bg="#efede7">
-        <nav aria-label="Footer navigation">
-          {navItems.slice(0, 6).map(([label, href], index) => (
+      <footer className="footer footer-v2" data-theme="light" data-bg="#89A894">
+        <div className="footer-v2-top">
+          <a href="#home" className="footer-v2-brand">Riverwood</a>
+          <p>Private riverside living, hosted with warmth.</p>
+        </div>
+
+        <nav className="footer-v2-nav" aria-label="Footer navigation">
+          {navItems.map(([label, href], index) => (
             <a href={href} key={href}><span>0{index + 1}</span>{label}</a>
           ))}
         </nav>
-        <div className="footer-main">
-          <h2>Riverwood</h2>
-          <div className="footer-info">
-            <div>
-              <p>Enquiries</p>
-              <a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a>
-              <a href="tel:+94770000000">+94 77 000 0000</a>
-            </div>
-            <div>
-              <p>Location</p>
-              <span>Riverside Road<br />Sri Lanka</span>
-            </div>
-            <div>
-              <p>Follow</p>
-              <div className="socials">
-                <a href="#" aria-label="Riverwood Villa on Instagram">Instagram</a>
-                <a href="#" aria-label="Riverwood Villa on Facebook">Facebook</a>
-              </div>
-            </div>
-            <div>
-              <p>Stay</p>
-              <a href="#book">Booking enquiry <ArrowUpRight size={14} /></a>
-            </div>
-          </div>
+
+        <div className="footer-v2-contact">
+          <div><span>Email</span><a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a></div>
+          <div><span>Phone</span><a href="tel:+94770000000">+94 77 000 0000</a></div>
+          <div><span>Location</span><p>Riverside Road, Sri Lanka</p></div>
+          <div><span>Social</span><p><a href="#">Instagram</a> · <a href="#">Facebook</a></p></div>
         </div>
-        <div className="footer-bottom">
+
+        <div className="footer-v2-bottom">
           <span>© {new Date().getFullYear()} Riverwood Villa</span>
-          <span>Private riverside boutique stay · Sri Lanka</span>
+          <span>Designed for slower days</span>
           <a href="#home">Back to top <ArrowUpRight size={13} /></a>
         </div>
       </footer>

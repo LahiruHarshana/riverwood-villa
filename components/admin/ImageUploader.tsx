@@ -32,7 +32,7 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
           <button
             type="button"
             onClick={() => open?.()}
-            className="w-full py-3 px-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky-500 transition-colors text-slate-500 hover:text-sky-600 font-medium"
+            className="w-full rounded-2xl border-2 border-dashed border-[#151512]/15 bg-[#fffdf7]/60 px-4 py-5 font-bold text-[#465143] transition-colors hover:border-[#6f7d6c] hover:bg-[#fffdf7]"
           >
             Upload Photos
           </button>
@@ -42,7 +42,7 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
       {value.length > 0 && (
         <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
           {value.map((url, index) => (
-            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100">
+            <div key={index} className="relative aspect-square overflow-hidden rounded-2xl bg-[#e8ebe3]">
               <Image
                 src={url}
                 alt={`Room image ${index + 1}`}
@@ -53,7 +53,7 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
               <button
                 type="button"
                 onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-80 hover:opacity-100 transition-opacity"
+                className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white opacity-90 transition-opacity hover:opacity-100"
               >
                 <X className="w-3 h-3" />
               </button>

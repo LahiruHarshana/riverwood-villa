@@ -48,7 +48,8 @@ export function Sidebar({ currentPath }: SidebarProps) {
       {/* Mobile hamburger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 bg-slate-900 text-white rounded-lg"
+        className="fixed top-4 left-4 z-50 md:hidden p-2.5 bg-[#151512] text-[#fffdf7] rounded-full shadow-lg"
+        aria-label={isOpen ? "Close admin menu" : "Open admin menu"}
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
@@ -56,7 +57,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          className="fixed inset-0 bg-[#151512]/50 z-30 md:hidden backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -64,15 +65,25 @@ export function Sidebar({ currentPath }: SidebarProps) {
       {/* Sidebar itself */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-[240px] bg-[#0f172a] text-[#94a3b8] z-40
+          fixed top-0 left-0 h-full w-[272px] bg-[#151512] text-[#d8d6cc] z-40
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
       >
-        <div className="p-6">
-          <h2 className="text-white text-lg font-bold mb-8">Riverwood Villa</h2>
+        <div className="flex h-full flex-col p-5">
+          <div className="mb-8 rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 font-serif text-xl text-[#fffdf7]">
+              R
+            </div>
+            <p className="text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#9ca592]">
+              Private Villa
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-medium leading-none tracking-[-0.04em] text-[#fffdf7]">
+              Riverwood<br />Admin
+            </h2>
+          </div>
 
-          <nav className="space-y-1">
+          <nav className="flex flex-1 flex-col gap-1">
             {navItems.map((item) => {
               const active = isActive(item.path);
               const Icon = item.icon;
@@ -83,10 +94,10 @@ export function Sidebar({ currentPath }: SidebarProps) {
                   href={item.path}
                   onClick={() => setIsOpen(false)}
                   className={`
-                    flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors
+                    flex items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold transition-colors
                     ${active
-                      ? "bg-white text-slate-900 font-medium"
-                      : "text-[#94a3b8] hover:text-white hover:bg-white/10"
+                      ? "bg-[#f6f5f1] text-[#151512] shadow-sm"
+                      : "text-[#d8d6cc] hover:bg-white/10 hover:text-white"
                     }
                   `}
                 >
@@ -96,13 +107,13 @@ export function Sidebar({ currentPath }: SidebarProps) {
               );
             })}
 
-            <div className="border-t border-slate-700 my-4" />
+            <div className="my-4 border-t border-white/10" />
 
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-[#94a3b8] hover:text-white hover:bg-white/10"
+              className="flex items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold text-[#d8d6cc] transition-colors hover:bg-white/10 hover:text-white"
             >
               <ExternalLink className="w-5 h-5" />
               View Site
@@ -110,12 +121,16 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-[#94a3b8] hover:text-white hover:bg-white/10"
+              className="mt-auto flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold text-[#d8d6cc] transition-colors hover:bg-white/10 hover:text-white"
             >
               <LogOut className="w-5 h-5" />
               Sign Out
             </button>
           </nav>
+
+          <p className="mt-5 border-t border-white/10 pt-5 text-xs leading-5 text-[#8f9388]">
+            Calm property operations for bookings, rooms, and guest communication.
+          </p>
         </div>
       </aside>
     </>

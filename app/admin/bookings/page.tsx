@@ -16,8 +16,8 @@ export default function BookingsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl font-bold text-slate-900">LOADING BOOKINGS...</div>
+      <div className="admin-loading">
+        <div>Loading bookings</div>
         <Spinner size="lg" />
       </div>
     );
@@ -33,14 +33,18 @@ export default function BookingsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Bookings</h1>
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-slate-400" />
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <span className="admin-page-kicker">Reservations</span>
+          <h1 className="admin-page-title">Bookings</h1>
+          <p className="admin-page-subtitle">Filter enquiries, confirm guests, and keep every stay moving smoothly.</p>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border border-[#151512]/10 bg-[#fffdf7]/70 px-3 py-2 shadow-sm">
+          <Filter className="w-4 h-4 text-[#6f7d6c]" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+            className="bg-transparent px-2 py-1 text-sm font-bold text-[#151512] outline-none"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -51,11 +55,11 @@ export default function BookingsPage() {
       </div>
 
       {bookings.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-dashed border-slate-300 rounded-xl">
-          <p className="text-slate-500">No bookings found</p>
+        <div className="admin-empty-state py-16 text-center">
+          <p className="font-semibold text-[#6f746a]">No bookings found</p>
         </div>
       ) : (
-        <div className="bg-white border border-[#e2e8f0] rounded-xl shadow-sm overflow-hidden">
+        <div className="admin-card overflow-hidden">
           <BookingTable data={filteredBookings} />
         </div>
       )}

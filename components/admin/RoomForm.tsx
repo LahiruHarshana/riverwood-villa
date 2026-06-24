@@ -74,7 +74,7 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Room Name */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Room Name</label>
+          <label className="text-sm font-bold text-[#465143]">Room Name</label>
           <input
             {...register("name", {
               onChange: (e) => {
@@ -83,82 +83,82 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
                 }
               },
             })}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
         </div>
 
         {/* Slug */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Slug</label>
+          <label className="text-sm font-bold text-[#465143]">Slug</label>
           <input
             {...register("slug")}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.slug && <p className="text-red-500 text-xs">{errors.slug.message}</p>}
         </div>
 
         {/* Description */}
         <div className="md:col-span-2 space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Description</label>
+          <label className="text-sm font-bold text-[#465143]">Description</label>
           <textarea
             {...register("description")}
             rows={4}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
         </div>
 
         {/* Price */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Price Per Night (USD)</label>
+          <label className="text-sm font-bold text-[#465143]">Price Per Night (USD)</label>
           <input
             type="number"
             {...register("pricePerNight", { valueAsNumber: true })}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.pricePerNight && <p className="text-red-500 text-xs">{errors.pricePerNight.message}</p>}
         </div>
 
         {/* Max Guests */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Max Guests</label>
+          <label className="text-sm font-bold text-[#465143]">Max Guests</label>
           <input
             type="number"
             {...register("maxGuests", { valueAsNumber: true })}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.maxGuests && <p className="text-red-500 text-xs">{errors.maxGuests.message}</p>}
         </div>
 
         {/* Bedrooms */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Bedrooms</label>
+          <label className="text-sm font-bold text-[#465143]">Bedrooms</label>
           <input
             type="number"
             {...register("bedrooms", { valueAsNumber: true })}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.bedrooms && <p className="text-red-500 text-xs">{errors.bedrooms.message}</p>}
         </div>
 
         {/* Bathrooms */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Bathrooms</label>
+          <label className="text-sm font-bold text-[#465143]">Bathrooms</label>
           <input
             type="number"
             {...register("bathrooms", { valueAsNumber: true })}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            className="admin-input"
           />
           {errors.bathrooms && <p className="text-red-500 text-xs">{errors.bathrooms.message}</p>}
         </div>
 
         {/* Amenities */}
         <div className="md:col-span-2 space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Amenities</label>
+          <label className="text-sm font-bold text-[#465143]">Amenities</label>
           <div className="flex flex-wrap gap-2 mb-2">
             {amenities.map((amenity, index) => (
-              <span key={index} className="inline-flex items-center gap-1 bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full text-sm">
+              <span key={index} className="inline-flex items-center gap-1 rounded-full bg-[#e8ebe3] px-2.5 py-1 text-sm font-bold text-[#465143]">
                 {amenity}
                 <button type="button" onClick={() => removeAmenity(index)}>
                   <X className="w-3 h-3" />
@@ -170,9 +170,9 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
             <input
               onKeyDown={addAmenity}
               placeholder="Type and press Enter to add"
-              className="flex-1 px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+              className="admin-input flex-1"
             />
-            <div className="p-2 text-slate-400">
+            <div className="p-2 text-[#6f7d6c]">
               <Plus className="w-5 h-5" />
             </div>
           </div>
@@ -180,19 +180,19 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
 
         {/* Images */}
         <div className="md:col-span-2 space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Images</label>
+          <label className="text-sm font-bold text-[#465143]">Images</label>
           <ImageUploader value={images} onChange={(urls) => setValue("images", urls)} />
         </div>
 
         {/* Available */}
-        <div className="md:col-span-2 flex items-center gap-3 p-4 bg-slate-50 rounded-lg">
+        <div className="md:col-span-2 flex items-center gap-3 rounded-2xl border border-[#151512]/10 bg-[#fffdf7]/70 p-4">
           <input
             type="checkbox"
             {...register("isAvailable")}
             id="isAvailable"
-            className="w-5 h-5 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+            className="h-5 w-5 accent-[#465143]"
           />
-          <label htmlFor="isAvailable" className="text-sm font-medium text-slate-700 cursor-pointer">
+          <label htmlFor="isAvailable" className="cursor-pointer text-sm font-bold text-[#465143]">
             Room is available for booking
           </label>
         </div>
@@ -201,7 +201,7 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        className="admin-primary-button w-full disabled:opacity-50"
       >
         {isSubmitting ? <> <Spinner size="sm" /> Saving...</> : "Save Room"}
       </button>

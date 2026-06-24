@@ -54,7 +54,7 @@ export function BookingTable({ data }: BookingTableProps) {
       cell: (info) => (
         <Link
           href={`/admin/bookings/${info.getValue()}`}
-          className="text-sky-600 hover:text-sky-700 font-medium text-sm"
+          className="font-bold text-[#465143] hover:text-[#151512]"
         >
           View
         </Link>
@@ -76,19 +76,19 @@ export function BookingTable({ data }: BookingTableProps) {
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+        <table className="w-full border-separate border-spacing-0 text-left text-sm">
+          <thead className="bg-[#e8ebe3]/70 font-bold text-[#465143]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 whitespace-nowrap">
+                  <th key={header.id} className="whitespace-nowrap border-b border-[#151512]/10 px-4 py-4">
                     {header.isPlaceholder ? null : (
                       <div
                         className={header.column.getCanSort() ? "cursor-pointer select-none flex items-center gap-1" : ""}
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getCanSort() && <ArrowUpDown className="w-3 h-3 text-slate-400" />}
+                        {header.column.getCanSort() && <ArrowUpDown className="w-3 h-3 text-[#6f7d6c]" />}
                       </div>
                     )}
                   </th>
@@ -96,11 +96,11 @@ export function BookingTable({ data }: BookingTableProps) {
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr key={row.id} className="text-[#151512] transition-colors hover:bg-[#fffdf7]/80">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3 whitespace-nowrap">
+                  <td key={cell.id} className="whitespace-nowrap border-b border-[#151512]/10 px-4 py-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -110,22 +110,22 @@ export function BookingTable({ data }: BookingTableProps) {
         </table>
       </div>
 
-      <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200">
-        <div className="text-sm text-slate-500">
+      <div className="flex items-center justify-between px-4 py-3">
+        <div className="text-sm font-semibold text-[#6f746a]">
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full border border-[#151512]/10 p-2 text-[#151512] hover:bg-[#fffdf7] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full border border-[#151512]/10 p-2 text-[#151512] hover:bg-[#fffdf7] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <ChevronRight className="w-4 h-4" />
           </button>

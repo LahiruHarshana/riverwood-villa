@@ -21,9 +21,13 @@ export default function NewRoomPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Add New Room</h1>
-      <div className="bg-white border border-[#e2e8f0] rounded-xl p-6 md:p-8 shadow-sm">
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-6">
+        <span className="admin-page-kicker">Inventory</span>
+        <h1 className="admin-page-title">Add room</h1>
+        <p className="admin-page-subtitle">Create a room listing with guest-ready details and imagery.</p>
+      </div>
+      <div className="admin-panel p-6 md:p-8">
         <RoomForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
       </div>
     </div>

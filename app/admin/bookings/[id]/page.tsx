@@ -49,7 +49,8 @@ export default function BookingDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="admin-loading">
+        <div>Loading booking</div>
         <Spinner size="lg" />
       </div>
     );
@@ -80,91 +81,91 @@ export default function BookingDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Booking Details</h1>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <span className="admin-page-kicker">Guest request</span>
+          <h1 className="admin-page-title">Booking details</h1>
+          <p className="admin-page-subtitle">Review the stay, update status, and send a clear message to the guest.</p>
+        </div>
         <BookingStatusBadge status={booking.status} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Guest Details */}
-        <div className="bg-white border border-[#e2e8f0] rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Guest Information</h2>
+        <div className="admin-panel p-6">
+          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Guest information</h2>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <User className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">{booking.guestName}</span>
+              <User className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="font-semibold text-[#151512]">{booking.guestName}</span>
             </div>
             <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">{booking.guestEmail}</span>
+              <Mail className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="text-[#6f746a]">{booking.guestEmail}</span>
             </div>
             <div className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">{booking.guestPhone}</span>
+              <Phone className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="text-[#6f746a]">{booking.guestPhone}</span>
             </div>
           </div>
         </div>
 
-        {/* Booking Details */}
-        <div className="bg-white border border-[#e2e8f0] rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Booking Information</h2>
+        <div className="admin-panel p-6">
+          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Stay information</h2>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">
+              <Calendar className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="text-[#6f746a]">
                 Check-in: {new Date(booking.checkIn).toLocaleDateString()}
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">
+              <Calendar className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="text-[#6f746a]">
                 Check-out: {new Date(booking.checkOut).toLocaleDateString()}
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">Duration: {duration} nights</span>
+              <Clock className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="text-[#6f746a]">Duration: {duration} nights</span>
             </div>
             <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-slate-400" />
-              <span className="text-slate-700">{booking.guests} guests</span>
+              <Users className="w-5 h-5 text-[#6f7d6c]" />
+              <span className="text-[#6f746a]">{booking.guests} guests</span>
             </div>
             {booking.specialRequests && (
               <div className="flex items-start gap-3 pt-2">
-                <MessageSquare className="w-5 h-5 text-slate-400 mt-0.5" />
+                <MessageSquare className="w-5 h-5 text-[#6f7d6c] mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Special Requests:</p>
-                  <p className="text-slate-600">{booking.specialRequests}</p>
+                  <p className="text-sm font-bold text-[#465143]">Special Requests:</p>
+                  <p className="text-[#6f746a]">{booking.specialRequests}</p>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Status Management */}
-        <div className="lg:col-span-2 bg-white border border-[#e2e8f0] rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Status Management</h2>
-          <div className="flex gap-3">
+        <div className="admin-panel lg:col-span-2 p-6">
+          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Status management</h2>
+          <div className="flex flex-col gap-3 sm:flex-row">
             <button
               onClick={() => handleStatusChange("confirmed")}
               disabled={booking.status === "confirmed"}
-              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="admin-primary-button disabled:cursor-not-allowed disabled:opacity-50"
             >
               <CheckCircle className="w-4 h-4" /> Confirm Booking
             </button>
             <button
               onClick={() => handleStatusChange("cancelled")}
               disabled={booking.status === "cancelled"}
-              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-50"
             >
               <XCircle className="w-4 h-4" /> Cancel Booking
             </button>
           </div>
         </div>
 
-        {/* WhatsApp Actions */}
-        <div className="lg:col-span-2 bg-white border border-[#e2e8f0] rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">WhatsApp Guest</h2>
+        <div className="admin-panel lg:col-span-2 p-6">
+          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">WhatsApp guest</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {prebuiltMessages.map((msg) => (
               <WhatsAppButton
@@ -175,12 +176,11 @@ export default function BookingDetailPage() {
               />
             ))}
           </div>
-          {/* Custom Message */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-slate-700 mb-2">Custom Message</label>
+            <label className="mb-2 block text-sm font-bold text-[#465143]">Custom Message</label>
             <textarea
               placeholder="Type your custom message here..."
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent mb-3"
+              className="admin-input mb-3"
               rows={3}
               id="customMessage"
             />

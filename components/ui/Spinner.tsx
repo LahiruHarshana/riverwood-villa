@@ -5,7 +5,5 @@ export function Spinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
     lg: "w-8 h-8",
   };
 
-  return (
-    <div className={`animate-spin rounded-full border-2 border-current border-t-transparent ${sizeClasses[size]}`} />
-  );
+  return <span className={`rv-spinner ${sizeClasses[size]}`} role="status" aria-label="Loading" />;
 }

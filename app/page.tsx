@@ -1,11 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, X } from "lucide-react";
+import { BookingSearch } from "@/components/booking/BookingSearch";
+
+type MotionModules = {
+  gsap: typeof import("gsap").gsap;
+  ScrollTrigger: typeof import("gsap/ScrollTrigger").ScrollTrigger;
+  Lenis: typeof import("lenis").default;
+};
+type GsapTween = ReturnType<MotionModules["gsap"]["to"]>;
+
+let motionModulesPromise: Promise<MotionModules> | null = null;
+
+function loadMotionModules() {
+  motionModulesPromise ??= Promise.all([
+    import("gsap"),
+    import("gsap/ScrollTrigger"),
+    import("lenis"),
+  ]).then(([gsapModule, scrollTriggerModule, lenisModule]) => ({
+    gsap: gsapModule.gsap,
+    ScrollTrigger: scrollTriggerModule.ScrollTrigger,
+    Lenis: lenisModule.default,
+  }));
+
+  return motionModulesPromise;
+}
 
 const navItems = [
   ["Home", "#home"],
@@ -23,8 +44,8 @@ const stayChapters = [
     eyebrow: "Sleep",
     title: "Rooms made for unhurried mornings",
     copy: "High ceilings, soft natural materials, generous beds, and calm views create a private retreat that feels connected to the landscape.",
-    image: "/villa/villa-bedroom-canopy.jpg",
-    alt: "Canopy bedroom at Riverwood Villa",
+    image: "/villa/villa-bedroom-high-ceiling.jpg",
+    alt: "High-ceiling canopy bedroom at Riverwood Villa",
   },
   {
     number: "02",
@@ -39,17 +60,17 @@ const stayChapters = [
     eyebrow: "Gather",
     title: "Shared spaces with room to linger",
     copy: "Long tables, shaded terraces, and open-air corners give families and groups space to eat, rest, and reconnect without a schedule.",
-    image: "/villa/villa-terrace-dining.webp",
-    alt: "Terrace dining area at Riverwood Villa",
+    image: "/villa/villa-terrace.webp",
+    alt: "Shared veranda seating beside the river at Riverwood Villa",
   },
 ] as const;
 
 const galleryItems = [
   {
-    image: "/villa/villa-exterior-front.jpg",
+    image: "/villa/villa-exterior-side.jpg",
     title: "Arrival",
     index: "01",
-    alt: "Front exterior of Riverwood Villa",
+    alt: "Riverwood Villa exterior beside palms and river light",
   },
   {
     image: "/villa/villa-long-balcony.jpg",
@@ -83,6 +104,236 @@ const galleryItems = [
   },
 ] as const;
 
+const fullGalleryCategories = [
+  "All",
+  "River",
+  "Rooms",
+  "Balconies",
+  "Dining",
+  "Exterior",
+  "Wildlife",
+  "Amenities",
+] as const;
+
+type FullGalleryCategory = (typeof fullGalleryCategories)[number];
+
+const fullGalleryItems: Array<{
+  image: string;
+  title: string;
+  category: Exclude<FullGalleryCategory, "All">;
+  alt: string;
+  caption: string;
+  shape?: "wide" | "tall";
+}> = [
+  {
+    image: "/villa/villa-exterior-side-river.jpg",
+    title: "Riverside balconies",
+    category: "River",
+    alt: "Riverwood Villa balconies beside the river and palms",
+    caption: "The upper level opens directly to river views and palms.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-balcony-chairs-river.webp",
+    title: "Corner river balcony",
+    category: "Balconies",
+    alt: "Two wooden chairs on a Riverwood Villa balcony overlooking the river",
+    caption: "A quiet corner for morning tea with the water below.",
+  },
+  {
+    image: "/villa/villa-terrace-dining.webp",
+    title: "Riverside terrace tables",
+    category: "Dining",
+    alt: "Covered riverside terrace dining area with tables and chairs",
+    caption: "Shaded dining directly beside the river edge.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-balcony-path.jpg",
+    title: "Garden-side balcony",
+    category: "Balconies",
+    alt: "Wooden chairs on a balcony overlooking the garden path",
+    caption: "Balcony seating framed by palms and the garden walkway.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-exterior-side.jpg",
+    title: "Villa and river facade",
+    category: "Exterior",
+    alt: "Side view of Riverwood Villa beside palm trees and the river",
+    caption: "The villa follows the bend of the river from garden to balcony.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-dining-patio.jpg",
+    title: "Sunset dining balcony",
+    category: "Dining",
+    alt: "Dining table on a balcony facing the river at sunset",
+    caption: "A long table set toward the last light on the river.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-bedroom-desk.jpg",
+    title: "Bedroom work corner",
+    category: "Rooms",
+    alt: "Minimal bedroom with canopy bed and desk at Riverwood Villa",
+    caption: "Simple private rooms with desk space and soft lighting.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-boat-sunset.webp",
+    title: "Boat at dusk",
+    category: "River",
+    alt: "Small boat on the river at sunset near Riverwood Villa",
+    caption: "Evening river movement just beyond the villa.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-long-balcony.jpg",
+    title: "Long shared balcony",
+    category: "Balconies",
+    alt: "Long balcony with wooden chairs overlooking tropical greenery",
+    caption: "Open-air seating runs along the guest rooms.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-bedroom-canopy.jpg",
+    title: "Canopy room",
+    category: "Rooms",
+    alt: "Warm bedroom with canopy bed and balcony doors",
+    caption: "A calm room with mosquito netting, warm lights, and balcony access.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-exterior-side-sunset.jpg",
+    title: "Golden river facade",
+    category: "Exterior",
+    alt: "Riverwood Villa exterior beside the river at sunset",
+    caption: "The building catches the warm river light at sunset.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-crocodile.webp",
+    title: "River wildlife",
+    category: "Wildlife",
+    alt: "Crocodile swimming in the river near mangroves",
+    caption: "Wildlife sightings are part of the riverside landscape.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-terrace.webp",
+    title: "Open veranda seating",
+    category: "Balconies",
+    alt: "Covered veranda with wooden chairs overlooking the river",
+    caption: "Shared veranda space for slow afternoons above the water.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-exterior-front.jpg",
+    title: "Front arrival",
+    category: "Exterior",
+    alt: "Front exterior of Riverwood Villa with palm trees and sign",
+    caption: "The front arrival view with palms, balconies, and villa signage.",
+    shape: "wide",
+  },
+  {
+    image: "/villa/villa-exterior-night.jpg",
+    title: "Villa after dark",
+    category: "Exterior",
+    alt: "Riverwood Villa illuminated at night",
+    caption: "Warm balcony lights give the villa a soft night presence.",
+    shape: "wide",
+  },
+  {
+    image: "/villa/villa-balcony-chair.webp",
+    title: "Covered river table",
+    category: "Balconies",
+    alt: "Covered balcony table and chairs overlooking the river",
+    caption: "A sheltered table for reading, tea, and the river breeze.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-balcony-palms.jpg",
+    title: "Palm-view balcony",
+    category: "Balconies",
+    alt: "Wooden chair and table on balcony facing palm trees",
+    caption: "Palm shade and timber details create a quiet private edge.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-hero.webp",
+    title: "Aerial river setting",
+    category: "River",
+    alt: "Aerial view of Riverwood Villa by the river and tropical greenery",
+    caption: "The villa sits between river, mangrove green, and coastal air.",
+    shape: "wide",
+  },
+  {
+    image: "/villa/villa-peacocks-veranda.jpg",
+    title: "Peacocks on the veranda",
+    category: "Wildlife",
+    alt: "Two peacocks standing on the Riverwood Villa veranda railing",
+    caption: "Peacocks sometimes arrive right at the balcony rail.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-bedroom-high-ceiling.jpg",
+    title: "High-ceiling room",
+    category: "Rooms",
+    alt: "High-ceiling bedroom with canopy bed and dressing mirror",
+    caption: "High timber ceilings and polished floors keep the room airy.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-balcony-table.jpg",
+    title: "Shared balcony chairs",
+    category: "Balconies",
+    alt: "Wooden chairs and table along a balcony overlooking the river",
+    caption: "A shared balcony line designed for conversation and river watching.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-hallway.webp",
+    title: "Guest corridor",
+    category: "Rooms",
+    alt: "Long white corridor with wooden guest room doors",
+    caption: "Clean corridors connect the private guest rooms.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-riverside.webp",
+    title: "River bend aerial",
+    category: "River",
+    alt: "Aerial view of Riverwood Villa and the river bend",
+    caption: "An overhead view of the villa and surrounding green river bend.",
+    shape: "wide",
+  },
+  {
+    image: "/villa/villa-paved-walkway.webp",
+    title: "Garden arrival path",
+    category: "Exterior",
+    alt: "Paved walkway beside Riverwood Villa and tropical garden",
+    caption: "The paved garden path leads guests into the villa grounds.",
+    shape: "tall",
+  },
+  {
+    image: "/villa/villa-outdoor-restaurant.webp",
+    title: "Outdoor riverside dining",
+    category: "Dining",
+    alt: "Outdoor restaurant tables beside the river",
+    caption: "Casual riverside tables for hosted meals and group moments.",
+    shape: "wide",
+  },
+  {
+    image: "/villa/villa-starlink.webp",
+    title: "Starlink Wi-Fi speed",
+    category: "Amenities",
+    alt: "Starlink speed test showing fast internet connection",
+    caption: "Fast Starlink connectivity for work, streaming, and longer stays.",
+    shape: "tall",
+  },
+];
+
 const filmFrames = [
   {
     number: "01",
@@ -97,8 +348,8 @@ const filmFrames = [
     eyebrow: "Afternoon",
     title: "Let the villa become your rhythm.",
     copy: "Move between cool rooms, long tables, shaded verandas, and the water whenever the mood changes.",
-    image: "/villa/villa-exterior-side-river.jpg",
-    alt: "Riverwood Villa beside the river in the afternoon",
+    image: "/villa/villa-terrace-dining.webp",
+    alt: "Shaded riverside dining terrace in the afternoon",
   },
   {
     number: "03",
@@ -206,6 +457,7 @@ function FillImage({
       fill
       sizes={sizes}
       className={className}
+      loading="lazy"
     />
   );
 }
@@ -213,22 +465,64 @@ function FillImage({
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLoader, setShowLoader] = useState(true);
+  const [fullGalleryExpanded, setFullGalleryExpanded] = useState(false);
+  const [activeFullGalleryCategory, setActiveFullGalleryCategory] =
+    useState<FullGalleryCategory>("All");
+  const hasAnimatedMenu = useRef(false);
+  const fullGalleryRef = useRef<HTMLElement | null>(null);
+
+  const openFullGallery = () => {
+    setFullGalleryExpanded(true);
+    window.requestAnimationFrame(() => {
+      fullGalleryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      loadMotionModules()
+        .then(({ ScrollTrigger }) => ScrollTrigger.refresh())
+        .catch(() => undefined);
+    });
+  };
+
+  const selectFullGalleryCategory = (category: FullGalleryCategory) => {
+    setActiveFullGalleryCategory(category);
+    window.requestAnimationFrame(() => {
+      loadMotionModules()
+        .then(({ ScrollTrigger }) => ScrollTrigger.refresh())
+        .catch(() => undefined);
+    });
+  };
 
   useEffect(() => {
     const fallback = window.setTimeout(() => {
       settleHeroReveal();
       setShowLoader(false);
-    }, 6200);
+    }, 3600);
     return () => window.clearTimeout(fallback);
+  }, []);
+
+  useEffect(() => {
+    const nav = document.querySelector<HTMLElement>(".site-nav");
+    if (!nav) return;
+
+    const updateNavSurface = () => {
+      nav.classList.toggle("is-scrolled", window.scrollY > 24);
+    };
+
+    updateNavSurface();
+    window.addEventListener("scroll", updateNavSurface, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateNavSurface);
   }, []);
 
   useEffect(() => {
     let alive = true;
 
-    function animateMenu() {
+    async function animateMenu() {
+      if (!menuOpen && !hasAnimatedMenu.current) return;
+
+      const { gsap } = await loadMotionModules();
       if (!alive) return;
 
       if (menuOpen) {
+        hasAnimatedMenu.current = true;
         gsap.set(".site-menu", { autoAlpha: 1, pointerEvents: "auto" });
         gsap.fromTo(
           ".menu-left",
@@ -291,18 +585,21 @@ export default function Home() {
       try {
         if (!alive) return;
 
-          const reduceMotion = window.matchMedia(
-            "(prefers-reduced-motion: reduce)"
-          ).matches;
+        const reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
 
-          if (reduceMotion) {
-            document.documentElement.classList.add("motion-reduced");
-            settleHeroReveal();
-            setShowLoader(false);
-            const bd = document.querySelector<HTMLElement>(".bg-dissolve");
-            if (bd) bd.style.background = "var(--paper)";
-            return;
-          }
+        if (reduceMotion) {
+          document.documentElement.classList.add("motion-reduced");
+          settleHeroReveal();
+          setShowLoader(false);
+          const bd = document.querySelector<HTMLElement>(".bg-dissolve");
+          if (bd) bd.style.background = "var(--paper)";
+          return;
+        }
+
+        const { gsap, ScrollTrigger, Lenis } = await loadMotionModules();
+        if (!alive) return;
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -410,7 +707,7 @@ export default function Home() {
 
         const context = gsap.context(() => {
 
-          // ─── Loader (preserved exactly) ──────────────────────────────
+          // ─── Loader ─────────────────────────────────────────────────
           const loaderCircle = document.querySelector<SVGCircleElement>(".loader-circle");
           const circleLength = loaderCircle?.getTotalLength() ?? 0;
 
@@ -421,93 +718,109 @@ export default function Home() {
             });
           }
 
+          gsap.set(".hero-logo-text", {
+            animation: "none",
+            strokeDashoffset: 900,
+            fillOpacity: 0,
+          });
+
           gsap
             .timeline({
               onComplete: () => {
-                if (alive) setShowLoader(false);
                 ScrollTrigger.refresh();
               },
             })
             .to('[data-loader="panel-line"]', {
               yPercent: (index) => (index % 2 === 0 ? 100 : -100),
-              duration: 1.3,
+              duration: 0.6,
               ease: "expo.inOut",
-              stagger: 0.1,
+              stagger: 0.05,
             })
             .to('[data-loader="line-mid"]', {
               yPercent: (index) => (index % 2 === 0 ? -100 : 100),
-              duration: 1.5,
+              duration: 0.7,
               ease: "power4.inOut",
-              stagger: 0.1,
+              stagger: 0.05,
             }, "<")
             .to(".loader-circle", {
               strokeDashoffset: circleLength,
-              duration: 1.2,
+              duration: 0.75,
               ease: "expo.inOut",
-            }, "<+0.35")
-            .to(".loader-kanji", { autoAlpha: 0, duration: 0.4, ease: "sine.out" }, "<+0.6")
-            .to(".loader-circle", { autoAlpha: 0, duration: 0.4, ease: "sine.out" }, "<+0.2")
+            }, "<+0.12")
+            .to(".loader-kanji", { autoAlpha: 0, duration: 0.25, ease: "sine.out" }, "<+0.34")
+            .to(".loader-circle", { autoAlpha: 0, duration: 0.25, ease: "sine.out" }, "<+0.12")
+            .add("doors", 0.82)
+            .to(".loader-logo", {
+              autoAlpha: 0,
+              scale: 0.9,
+              duration: 0.32,
+              ease: "power2.out",
+            }, "doors")
             .to(".loader-panel", {
               xPercent: (index) => (index % 2 === 0 ? -100 : 100),
-              duration: 1.4,
+              rotateY: (index) => (index % 2 === 0 ? -8 : 8),
+              duration: 1.05,
               ease: "expo.inOut",
-            }, ">")
-            .from(".hero-logo-text", {
-              strokeDashoffset: 900,
-              fillOpacity: 0,
-              duration: 3.5,
+            }, "doors")
+            .to(".loader", { autoAlpha: 0, duration: 0.16, ease: "sine.out" }, "doors+=0.98")
+            .set(".loader", { display: "none" }, "doors+=1.14")
+            .add(() => {
+              if (alive) setShowLoader(false);
+              ScrollTrigger.refresh();
+            }, "doors+=1.14")
+            .to(".hero-logo-text", {
+              strokeDashoffset: 0,
+              duration: 2.15,
               ease: "power2.inOut",
-              stagger: 0.15,
-            }, "<+0.1")
+              stagger: 0.1,
+            }, "doors+=0.78")
             .to(".hero-logo-text", {
               fillOpacity: 1,
-              duration: 2.5,
+              duration: 1.2,
               ease: "sine.out",
-            }, "<+2.0")
+            }, "<+1.05")
             .fromTo('[data-loader="overlay"]', { opacity: 1 }, {
               opacity: 0.65,
-              duration: 1.5,
+              duration: 0.95,
               ease: "sine.out",
-            }, "<+0.3")
+            }, "doors+=0.82")
             .fromTo('[data-loader="home-svg-small"]', { autoAlpha: 0 }, {
               autoAlpha: 1,
-              duration: 1.5,
+              duration: 0.9,
               ease: "sine.out",
-            }, "<+0.2")
+            }, "doors+=1.28")
             .from('[data-loader="para-line"]', {
               yPercent: 100,
               stagger: 0.045,
-              duration: 1.5,
+              duration: 0.95,
               ease: "power4.out",
-            }, "<")
+            }, "doors+=1.28")
             .from('[data-loader="nav-line"]', {
               scaleX: 0,
-              duration: 1.5,
+              duration: 1.0,
               ease: "expo.inOut",
-            }, "<")
+            }, "doors+=0.98")
             .from('[data-loader="nav-logo"]', {
               yPercent: 100,
-              duration: 1.5,
+              duration: 0.95,
               ease: "power3.out",
-            }, "<+0.2")
+            }, "doors+=1.1")
             .from('[data-loader="nav-est"]', {
               yPercent: 100,
-              duration: 1.5,
+              duration: 0.95,
               ease: "power3.out",
-            }, "<+0.2")
+            }, "doors+=1.1")
             .from('[data-loader="nav-btn-line"]', {
               xPercent: -100,
-              duration: 1.5,
+              duration: 0.95,
               ease: "power3.out",
               stagger: 0.2,
-            }, "<+0.2")
+            }, "doors+=1.1")
             .from('[data-loader="scroll-txt"]', {
               yPercent: 100,
-              duration: 1.5,
+              duration: 0.9,
               ease: "power3.out",
-            }, "<+0.25")
-            .to(".loader", { autoAlpha: 0, duration: 0.01 })
-            .set(".loader", { display: "none" });
+            }, "doors+=1.42");
 
           // ─── Hero parallax ────────────────────────────────────────────
           gsap.to(".hero-bg img", {
@@ -702,41 +1015,51 @@ export default function Home() {
           const filmCopies = gsap.utils.toArray<HTMLElement>(".film-copy");
 
           if (filmFramesEls.length > 0) {
-            gsap.set(filmFramesEls, { clipPath: "inset(100% 0 0 0)", scale: 1.05 });
-            gsap.set(filmFramesEls[0], { clipPath: "inset(0% 0 0 0)", scale: 1 });
+            const filmSegment = 0.8;
+            const filmTotalDuration = filmFramesEls.length * filmSegment;
+            const filmImages = filmFramesEls
+              .map((frame) => frame.querySelector<HTMLElement>("img"))
+              .filter((image): image is HTMLElement => Boolean(image));
+
+            gsap.set(filmFramesEls, { clipPath: "inset(100% 0 0 0)" });
+            gsap.set(filmFramesEls[0], { clipPath: "inset(0% 0 0 0)" });
+            gsap.set(filmImages, { scale: 1.06 });
+            gsap.set(filmImages[0], { scale: 1.035 });
             gsap.set(filmCopies.slice(1), { autoAlpha: 0, y: 44 });
 
             const filmTimeline = gsap.timeline({
               scrollTrigger: {
                 trigger: ".film-sequence",
                 start: "top top",
-                end: `+=${filmFramesEls.length * 115}%`,
+                end: `+=${filmFramesEls.length * 80}%`,
                 pin: ".film-pin",
-                scrub: 1,
+                scrub: 0.75,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
               },
             });
 
+            filmImages.forEach((image, index) => {
+              filmTimeline.to(image, {
+                scale: 1.015,
+                duration: filmSegment,
+                ease: "none",
+              }, index * filmSegment);
+            });
+
             filmFramesEls.forEach((frame, index) => {
               if (index === 0) return;
-              const position = index;
+              const position = index * filmSegment;
               filmTimeline
                 .to(frame, {
                   clipPath: "inset(0% 0 0 0)",
-                  scale: 1,
-                  duration: 1,
+                  duration: filmSegment,
                   ease: "power3.inOut",
-                }, position)
-                .to(filmFramesEls[index - 1], {
-                  scale: 1.08,
-                  duration: 1,
-                  ease: "none",
                 }, position)
                 .to(filmCopies[index - 1], {
                   autoAlpha: 0,
                   y: -34,
-                  duration: 0.42,
+                  duration: 0.26,
                   ease: "power2.in",
                 }, position)
                 .fromTo(filmCopies[index], {
@@ -745,14 +1068,14 @@ export default function Home() {
                 }, {
                   autoAlpha: 1,
                   y: 0,
-                  duration: 0.62,
+                  duration: 0.42,
                   ease: "power3.out",
-                }, position + 0.22);
+                }, position + 0.14);
             });
 
             filmTimeline.to(".film-progress-fill", {
               scaleX: 1,
-              duration: filmFramesEls.length,
+              duration: filmTotalDuration,
               ease: "none",
             }, 0);
           }
@@ -761,7 +1084,7 @@ export default function Home() {
           const stayPanels = gsap.utils.toArray<HTMLElement>(".stay-panel");
           const revealStayPanel = (
             panel: HTMLElement,
-            containerAnimation?: gsap.core.Animation,
+            containerAnimation?: GsapTween,
           ) => {
             const image = panel.querySelector<HTMLElement>(".stay-panel-image");
             const copy = panel.querySelector<HTMLElement>(".stay-panel-copy");
@@ -922,6 +1245,59 @@ export default function Home() {
             scrollTrigger: { trigger: ".dining-details", start: "top 82%", once: true },
           });
 
+          // ─── Full gallery: scroll-scrubbed image motion ───────────────
+          gsap.from(".full-gallery-heading > *", {
+            y: 44,
+            autoAlpha: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            stagger: 0.09,
+            scrollTrigger: { trigger: ".full-gallery-heading", start: "top 82%", once: true },
+          });
+
+          gsap.fromTo(".full-gallery-feature", {
+            clipPath: "inset(0 100% 0 0)",
+          }, {
+            clipPath: "inset(0 0% 0 0)",
+            duration: 1.25,
+            ease: "expo.inOut",
+            scrollTrigger: { trigger: ".full-gallery-feature", start: "top 82%", once: true },
+          });
+
+          gsap.utils.toArray<HTMLElement>(".full-gallery-card").forEach((card) => {
+            const image = card.querySelector<HTMLElement>("img");
+
+            gsap.fromTo(card, {
+              y: 70,
+              autoAlpha: 0,
+              clipPath: "inset(14% 0 0 0)",
+            }, {
+              y: 0,
+              autoAlpha: 1,
+              clipPath: "inset(0% 0 0 0)",
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: { trigger: card, start: "top 86%", once: true },
+            });
+
+            if (image) {
+              gsap.fromTo(image, {
+                yPercent: -7,
+                scale: 1.12,
+              }, {
+                yPercent: 7,
+                scale: 1.025,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 0.8,
+                },
+              });
+            }
+          });
+
           // ─── Visual journal rails ─────────────────────────────────────
           gsap.utils.toArray<HTMLElement>(".journal-row").forEach((row) => {
             const reverse = row.classList.contains("is-reverse");
@@ -1054,6 +1430,9 @@ export default function Home() {
         <span className="nav-est">
           <span data-loader="nav-est">EST - Private Villa</span>
         </span>
+        <a className="nav-book-cta" href="#book">
+          Check availability <ArrowUpRight size={14} strokeWidth={1.9} />
+        </a>
         <button
           className="nav-menu"
           type="button"
@@ -1097,6 +1476,12 @@ export default function Home() {
         </div>
       </aside>
 
+      <a className="floating-booking-cta" href="#book" aria-label="Check room availability">
+        <span>Book your stay</span>
+        <strong>Check availability</strong>
+        <ArrowUpRight size={16} strokeWidth={1.9} />
+      </a>
+
 
 
       <section className="hero" aria-labelledby="hero-title" data-theme="dark">
@@ -1106,6 +1491,7 @@ export default function Home() {
             alt="Aerial view of Riverwood Villa beside the river"
             fill
             priority
+            fetchPriority="high"
             sizes="100vw"
           />
           <div data-loader="overlay" className="hero-overlay" />
@@ -1307,8 +1693,8 @@ export default function Home() {
             <div className="river-visual-stack" data-cursor="river">
               <figure className="river-scene">
                 <FillImage
-                  src="/villa/villa-exterior-side-sunset.jpg"
-                  alt="Riverwood Villa beside the river at first light"
+                  src="/villa/villa-exterior-side-river.jpg"
+                  alt="Riverwood Villa beside the river in daylight"
                   sizes="(max-width: 980px) 100vw, 50vw"
                 />
               </figure>
@@ -1411,7 +1797,17 @@ export default function Home() {
         <header className="journal-header">
           <span className="section-index">06 / Visual journal</span>
           <h2 id="gallery-title">Small scenes from a <em>slower kind of day.</em></h2>
-          <p>Architecture, landscape, wildlife, and the spaces between.</p>
+          <div className="journal-header-actions">
+            <p>Architecture, landscape, wildlife, and the spaces between.</p>
+            <button
+              className="gallery-view-all"
+              type="button"
+              onClick={openFullGallery}
+              data-magnetic
+            >
+              View all images <ArrowDownRight size={15} />
+            </button>
+          </div>
         </header>
 
         <div className="journal-viewport">
@@ -1432,6 +1828,78 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        <section
+          ref={fullGalleryRef}
+          id="full-gallery"
+          className={`full-gallery-panel ${fullGalleryExpanded ? "is-open" : ""}`}
+          aria-labelledby="full-gallery-title"
+          aria-hidden={!fullGalleryExpanded}
+        >
+          <div className="full-gallery-heading">
+            <span className="section-index">Gallery full</span>
+            <h3 id="full-gallery-title">Every angle of the villa, sorted by the way you want to explore.</h3>
+            <p>
+              Images are grouped by what they actually show, not only by file name: river,
+              rooms, balconies, dining, exterior, wildlife, and amenities.
+            </p>
+          </div>
+
+          <div className="full-gallery-feature" data-cursor="scan">
+            <FillImage
+              src="/villa/villa-riverside.webp"
+              alt="Aerial view of Riverwood Villa on the river bend"
+              sizes="(max-width: 980px) 100vw, 72vw"
+            />
+            <div className="full-gallery-feature-copy">
+              <span>Scroll gallery</span>
+              <strong>{fullGalleryItems.length} images</strong>
+            </div>
+          </div>
+
+          <div className="full-gallery-tools" aria-label="Gallery categories">
+            {fullGalleryCategories.map((category) => (
+              <button
+                type="button"
+                key={category}
+                className={activeFullGalleryCategory === category ? "is-active" : ""}
+                disabled={!fullGalleryExpanded}
+                onClick={() => selectFullGalleryCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          <div className="full-gallery-grid">
+            {fullGalleryItems.map((item, index) => {
+              const isFilteredOut =
+                activeFullGalleryCategory !== "All" && item.category !== activeFullGalleryCategory;
+
+              return (
+              <figure
+                className={`full-gallery-card ${item.shape ? `is-${item.shape}` : ""} ${isFilteredOut ? "is-filtered-out" : ""}`}
+                key={`${item.image}-${item.category}`}
+                data-cursor="view"
+                aria-hidden={isFilteredOut}
+              >
+                <div className="full-gallery-media">
+                  <FillImage
+                    src={item.image}
+                    alt={item.alt}
+                    sizes="(max-width: 720px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
+                <figcaption>
+                  <span>{String(index + 1).padStart(2, "0")} / {item.category}</span>
+                  <strong>{item.title}</strong>
+                  <p>{item.caption}</p>
+                </figcaption>
+              </figure>
+              );
+            })}
+          </div>
+        </section>
       </section>
 
       <section
@@ -1471,13 +1939,7 @@ export default function Home() {
             Share your dates, group size, and the kind of escape you are imagining.
             We will shape a relaxed Riverwood experience around you.
           </p>
-          <a
-            className="booking-button"
-            href="mailto:hello@riverwoodvilla.com?subject=Riverwood%20Villa%20booking%20enquiry"
-            data-magnetic
-          >
-            <span>Start a booking</span><ArrowUpRight size={20} />
-          </a>
+          <BookingSearch />
         </div>
 
         <figure className="booking-visual media-frame" data-parallax data-cursor="arrive">

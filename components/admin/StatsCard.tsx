@@ -10,19 +10,19 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, icon: Icon, trend, color }: StatsCardProps) {
   return (
-    <div className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-3">
-        <div className={`p-2 rounded-lg ${color}`}>
-          <Icon className="w-5 h-5 text-white" />
+    <div className="admin-card admin-stat-card p-5">
+      <div className="relative z-10 flex items-center justify-between mb-5">
+        <div className={`admin-icon-pill ${color}`}>
+          <Icon className="w-5 h-5" />
         </div>
         {trend && (
-          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+          <span className="rounded-full bg-[#e8ebe3] px-2 py-1 text-xs font-bold text-[#465143]">
             {trend}
           </span>
         )}
       </div>
-      <p className="text-2xl font-bold text-slate-900">{value}</p>
-      <p className="text-sm text-slate-500 mt-1">{title}</p>
+      <p className="relative z-10 text-3xl font-bold tracking-[-0.04em] text-[#151512]">{value}</p>
+      <p className="relative z-10 mt-1 text-sm font-semibold text-[#6f746a]">{title}</p>
     </div>
   );
 }

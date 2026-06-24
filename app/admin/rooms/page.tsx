@@ -30,8 +30,8 @@ export default function RoomsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl font-bold text-slate-900">LOADING ROOMS...</div>
+      <div className="admin-loading">
+        <div>Loading rooms</div>
         <Spinner size="lg" />
       </div>
     );
@@ -47,22 +47,26 @@ export default function RoomsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Rooms</h1>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <span className="admin-page-kicker">Inventory</span>
+          <h1 className="admin-page-title">Rooms</h1>
+          <p className="admin-page-subtitle">Shape room listings with polished images, guest capacity, rates, and availability.</p>
+        </div>
         <Link
           href="/admin/rooms/new"
-          className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
+          className="admin-primary-button"
         >
           <Plus className="w-4 h-4" /> Add Room
         </Link>
       </div>
 
       {rooms.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-dashed border-slate-300 rounded-xl">
-          <p className="text-slate-500 mb-4">No rooms found</p>
+        <div className="admin-empty-state py-16 text-center">
+          <p className="mb-4 font-semibold text-[#6f746a]">No rooms found</p>
           <Link
             href="/admin/rooms/new"
-            className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 font-medium"
+            className="admin-secondary-button"
           >
             <Plus className="w-4 h-4" /> Create your first room
           </Link>

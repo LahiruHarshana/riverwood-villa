@@ -9,6 +9,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { setSessionCookie } from "@/lib/auth";
 import { Spinner } from "@/components/ui/Spinner";
+import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -21,6 +22,7 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -46,29 +48,48 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-slate-900">Riverwood Admin</h1>
-            <p className="text-slate-500 mt-2">Sign in to manage your property</p>
+    <div className="grid min-h-screen place-items-center p-4 md:p-8">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-[#151512]/10 bg-[#fffdf7]/70 shadow-[0_30px_90px_rgba(70,81,67,0.18)] backdrop-blur-xl md:grid-cols-[1.1fr_0.9fr]">
+        <div className="relative hidden min-h-[620px] overflow-hidden bg-[#151512] p-10 text-[#fffdf7] md:block">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(132,147,131,0.42),transparent_28rem),radial-gradient(circle_at_80%_80%,rgba(178,123,66,0.28),transparent_24rem)]" />
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div>
+              <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-full border border-white/20 font-serif text-3xl">
+                R
+              </div>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#c7c9bd]">Riverwood Villa</p>
+              <h1 className="mt-4 max-w-md font-serif text-6xl font-medium leading-[0.9] tracking-[-0.06em]">
+                Quiet control for a slower stay.
+              </h1>
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-[#d8d6cc]">
+              Manage rooms, bookings, and guest conversations from a private panel that now carries the same mood as the villa website.
+            </p>
+          </div>
+        </div>
+
+        <div className="p-6 md:p-10">
+          <div className="mb-8">
+            <span className="admin-page-kicker">Admin access</span>
+            <h1 className="mt-3 font-serif text-4xl font-medium tracking-[-0.05em] text-[#151512]">Welcome back</h1>
+            <p className="mt-2 text-sm leading-6 text-[#6f746a]">Sign in to manage your property.</p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-3">
+              <p className="text-sm font-semibold text-red-600">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="mb-2 block text-sm font-bold text-[#465143]">
                 Email
               </label>
               <input
                 type="email"
                 {...register("email")}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                className="admin-input"
                 placeholder="admin@riverwood.com"
                 autoComplete="email"
               />
@@ -78,16 +99,26 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="mb-2 block text-sm font-bold text-[#465143]">
                 Password
               </label>
-              <input
-                type="password"
-                {...register("password")}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                  className="admin-input pr-12"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-[#6f746a] transition-colors hover:bg-[#e8ebe3] hover:text-[#151512]"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
               )}
@@ -96,7 +127,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              className="admin-primary-button w-full disabled:opacity-50"
             >
               {isSubmitting ? <><Spinner size="sm" /> Signing in...</> : "Sign In"}
             </button>

@@ -33,16 +33,7 @@ export default function DashboardPage() {
           (b) => b.status === "confirmed" && new Date(b.createdAt) >= startOfMonth
         );
 
-        const revenueThisMonth = confirmedThisMonth.reduce((total, booking) => {
-          const nights = Math.max(
-            1,
-            Math.ceil(
-              (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) /
-                (1000 * 60 * 60 * 24)
-            )
-          );
-          return total; // We don't have price per night in booking, so revenue is 0 for now
-        }, 0);
+        const revenueThisMonth = 0; // Bookings do not currently store price snapshots.
 
         const next7Days = new Date();
         next7Days.setDate(next7Days.getDate() + 7);
@@ -73,8 +64,8 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl font-bold text-slate-900">LOADING DASHBOARD...</div>
+      <div className="admin-loading">
+        <div>Preparing dashboard</div>
         <Spinner size="lg" />
       </div>
     );
@@ -82,36 +73,52 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-slate-900">Dashboard Overview</h1>
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <span className="admin-page-kicker">Overview</span>
+          <h1 className="admin-page-title">Villa operations</h1>
+          <p className="admin-page-subtitle">
+            A calm snapshot of rooms, requests, and the guest arrivals that need attention this week.
+          </p>
+        </div>
+        <div className="rounded-full border border-[#151512]/10 bg-[#fffdf7]/70 px-4 py-2 text-sm font-bold text-[#465143] shadow-sm">
+          {new Date().toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+        </div>
+      </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatsCard title="Total Rooms" value={stats.totalRooms} icon={BedDouble} color="bg-sky-500" />
-        <StatsCard title="Total Bookings" value={stats.totalBookings} icon={CalendarCheck} color="bg-slate-600" />
-        <StatsCard title="Pending Bookings" value={stats.pendingBookings} icon={Clock} color="bg-amber-500" />
-        <StatsCard title="Confirmed (This Month)" value={stats.confirmedThisMonth} icon={Users} color="bg-green-500" />
-        <StatsCard title="Est. Revenue" value={`$${stats.revenueThisMonth}`} icon={DollarSign} color="bg-emerald-500" />
+        <StatsCard title="Total Rooms" value={stats.totalRooms} icon={BedDouble} color="bg-[#e8ebe3]" />
+        <StatsCard title="Total Bookings" value={stats.totalBookings} icon={CalendarCheck} color="bg-[#efe7dc]" />
+        <StatsCard title="Pending Bookings" value={stats.pendingBookings} icon={Clock} color="bg-[#f3dfb7]" />
+        <StatsCard title="Confirmed Month" value={stats.confirmedThisMonth} icon={Users} color="bg-[#dfe9dc]" />
+        <StatsCard title="Est. Revenue" value={`$${stats.revenueThisMonth}`} icon={DollarSign} color="bg-[#dae9e1]" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Bookings */}
-        <div className="bg-white border border-[#e2e8f0] rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Recent Bookings</h2>
+        <div className="admin-panel p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6f7d6c]">Requests</p>
+              <h2 className="mt-1 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Recent bookings</h2>
+            </div>
+            <ArrowUpRight className="h-5 w-5 text-[#6f7d6c]" />
+          </div>
           {recentBookings.length === 0 ? (
-            <p className="text-slate-500">No recent bookings</p>
+            <p className="text-[#6f746a]">No recent bookings</p>
           ) : (
             <div className="space-y-3">
               {recentBookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                  className="flex items-center justify-between rounded-2xl border border-[#151512]/10 bg-[#fffdf7]/70 p-4"
                 >
                   <div>
-                    <p className="font-medium text-slate-900">{booking.guestName}</p>
-                    <p className="text-sm text-slate-500">{booking.roomName}</p>
+                    <p className="font-bold text-[#151512]">{booking.guestName}</p>
+                    <p className="text-sm text-[#6f746a]">{booking.roomName}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <BookingStatusBadge status={booking.status} />
-                    <ArrowUpRight className="w-4 h-4 text-slate-400" />
+                    <ArrowUpRight className="w-4 h-4 text-[#6f7d6c]" />
                   </div>
                 </div>
               ))}
@@ -119,21 +126,23 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Upcoming Check-ins */}
-        <div className="bg-white border border-[#e2e8f0] rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Upcoming Check-ins</h2>
+        <div className="admin-panel p-6">
+          <div className="mb-5">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6f7d6c]">Next 7 days</p>
+            <h2 className="mt-1 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Upcoming check-ins</h2>
+          </div>
           {upcomingCheckins.length === 0 ? (
-            <p className="text-slate-500">No upcoming check-ins in the next 7 days</p>
+            <p className="text-[#6f746a]">No upcoming check-ins in the next 7 days</p>
           ) : (
             <div className="space-y-3">
               {upcomingCheckins.map((booking) => (
                 <div
                   key={booking.id}
-                  className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                  className="flex items-center justify-between rounded-2xl border border-[#151512]/10 bg-[#fffdf7]/70 p-4"
                 >
                   <div>
-                    <p className="font-medium text-slate-900">{booking.guestName}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="font-bold text-[#151512]">{booking.guestName}</p>
+                    <p className="text-sm text-[#6f746a]">
                       {new Date(booking.checkIn).toLocaleDateString()} · {booking.roomName}
                     </p>
                   </div>

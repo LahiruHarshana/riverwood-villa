@@ -2,24 +2,245 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add some minimal resets for the admin section since we disabled preflight */
 .admin-app {
-  /* Minimal reset scoped to admin */
-  h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-  }
-  p {
-    margin: 0;
-  }
-  input, button, select, textarea {
-    font-family: inherit;
-    font-size: 100%;
-    margin: 0;
-  }
-  button {
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
+  --admin-paper: #f6f5f1;
+  --admin-paper-raised: rgba(255, 253, 247, 0.86);
+  --admin-ink: #151512;
+  --admin-muted: rgba(21, 21, 18, 0.62);
+  --admin-line: rgba(21, 21, 18, 0.12);
+  --admin-sage: #6f7d6c;
+  --admin-sage-deep: #465143;
+  --admin-sage-soft: #e8ebe3;
+  --admin-amber: #b27b42;
+  --admin-shadow: 0 24px 70px rgba(70, 81, 67, 0.14);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(132, 147, 131, 0.28), transparent 32rem),
+    radial-gradient(circle at 85% 18%, rgba(178, 123, 66, 0.13), transparent 24rem),
+    var(--admin-paper);
+  color: var(--admin-ink);
+  font-family: var(--font-body), Manrope, Arial, sans-serif;
+}
+
+.admin-app h1,
+.admin-app h2,
+.admin-app h3,
+.admin-app h4,
+.admin-app h5,
+.admin-app h6,
+.admin-app p {
+  margin: 0;
+}
+
+.admin-app input,
+.admin-app button,
+.admin-app select,
+.admin-app textarea {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+}
+
+.admin-app button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.admin-main {
+  position: relative;
+}
+
+.admin-main::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.admin-content {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.admin-page-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--admin-sage-deep);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.admin-page-kicker::before {
+  content: "";
+  width: 1.8rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.admin-page-title {
+  margin-top: 0.6rem;
+  color: var(--admin-ink);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 4.4rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+}
+
+.admin-page-subtitle {
+  max-width: 34rem;
+  margin-top: 0.8rem;
+  color: var(--admin-muted);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.admin-panel,
+.admin-card,
+.admin-empty-state {
+  border: 1px solid var(--admin-line);
+  background: var(--admin-paper-raised);
+  box-shadow: var(--admin-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.admin-panel,
+.admin-card {
+  border-radius: 1.5rem;
+}
+
+.admin-card {
+  overflow: hidden;
+}
+
+.admin-empty-state {
+  border-style: dashed;
+  border-radius: 1.5rem;
+}
+
+.admin-button,
+.admin-primary-button,
+.admin-secondary-button,
+.admin-danger-button,
+.admin-input {
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease,
+    box-shadow 180ms ease, transform 180ms ease;
+}
+
+.admin-primary-button,
+.admin-secondary-button,
+.admin-danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.admin-primary-button {
+  background: var(--admin-ink);
+  color: #fffdf7;
+  box-shadow: 0 14px 34px rgba(21, 21, 18, 0.18);
+}
+
+.admin-primary-button:hover {
+  background: var(--admin-sage-deep);
+  transform: translateY(-1px);
+}
+
+.admin-secondary-button {
+  border: 1px solid var(--admin-line);
+  background: rgba(255, 253, 247, 0.72);
+  color: var(--admin-ink);
+}
+
+.admin-secondary-button:hover {
+  border-color: rgba(70, 81, 67, 0.36);
+  background: #fffdf7;
+}
+
+.admin-danger-button {
+  background: #fff1ee;
+  color: #a43d2f;
+}
+
+.admin-danger-button:hover {
+  background: #ffe2dc;
+}
+
+.admin-input {
+  width: 100%;
+  border: 1px solid var(--admin-line);
+  border-radius: 1rem;
+  background: rgba(255, 253, 247, 0.78);
+  color: var(--admin-ink);
+  padding: 0.8rem 1rem;
+  outline: none;
+}
+
+.admin-input:focus {
+  border-color: rgba(70, 81, 67, 0.54);
+  box-shadow: 0 0 0 4px rgba(111, 125, 108, 0.16);
+}
+
+.admin-icon-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 999px;
+  background: var(--admin-sage-soft);
+  color: var(--admin-sage-deep);
+}
+
+.admin-loading {
+  display: flex;
+  min-height: 18rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  color: var(--admin-sage-deep);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin-stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::after {
+  content: "";
+  position: absolute;
+  right: -3rem;
+  top: -3rem;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  background: rgba(132, 147, 131, 0.13);
+}
+
+@media (max-width: 767px) {
+  .admin-content {
+    padding-top: 5rem;
   }
 }

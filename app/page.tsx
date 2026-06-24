@@ -977,13 +977,13 @@ export default function Home() {
             scrollTrigger: { trigger: ".booking-section-v2", start: "top 74%", once: true },
           });
 
-          gsap.from(".footer-v2 > *", {
+          gsap.from(".footer-v3 > *", {
             y: 48,
             autoAlpha: 0,
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.12,
-            scrollTrigger: { trigger: ".footer-v2", start: "top 86%", once: true },
+            scrollTrigger: { trigger: ".footer-v3", start: "top 86%", once: true },
           });
         });
 
@@ -1494,26 +1494,50 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="footer footer-v2" data-theme="light" data-bg="#89A894">
-        <div className="footer-v2-top">
-          <a href="#home" className="footer-v2-brand">Riverwood</a>
-          <p>Private riverside living, hosted with warmth.</p>
+      <footer className="footer-v3" data-theme="light" data-bg="#89A894">
+        <div className="footer-v3-top">
+          <a href="#home" className="footer-v3-brand" aria-label="Riverwood Villa home">
+            Riverwood
+          </a>
+          <div className="footer-v3-intro">
+            <span>07 / 07</span>
+            <p>Private riverside living, hosted with warmth.</p>
+          </div>
         </div>
 
-        <nav className="footer-v2-nav" aria-label="Footer navigation">
-          {navItems.map(([label, href], index) => (
-            <a href={href} key={href}><span>0{index + 1}</span>{label}</a>
-          ))}
-        </nav>
-
-        <div className="footer-v2-contact">
-          <div><span>Email</span><a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a></div>
-          <div><span>Phone</span><a href="tel:+94770000000">+94 77 000 0000</a></div>
-          <div><span>Location</span><p>Riverside Road, Sri Lanka</p></div>
-          <div><span>Social</span><p><a href="#">Instagram</a> · <a href="#">Facebook</a></p></div>
+        <div className="footer-v3-explore">
+          <span className="footer-v3-explore-label">Explore</span>
+          <nav className="footer-v3-nav" aria-label="Footer navigation">
+            {navItems.map(([label, href], index) => (
+              <a href={href} key={href}>
+                <span className="footer-v3-nav-index">0{index + 1}</span>
+                <span className="footer-v3-nav-text">{label}</span>
+                <ArrowUpRight className="footer-v3-nav-arrow" size={14} strokeWidth={1.8} />
+              </a>
+            ))}
+          </nav>
         </div>
 
-        <div className="footer-v2-bottom">
+        <div className="footer-v3-contact">
+          <div className="footer-v3-contact-item is-email">
+            <span>Email</span>
+            <a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a>
+          </div>
+          <div className="footer-v3-contact-item is-phone">
+            <span>Phone</span>
+            <a href="tel:+94770000000">+94 77 000 0000</a>
+          </div>
+          <div className="footer-v3-contact-item is-location">
+            <span>Location</span>
+            <p>Riverside Road, Sri Lanka</p>
+          </div>
+          <div className="footer-v3-contact-item is-social">
+            <span>Social</span>
+            <p><a href="#">Instagram</a><span aria-hidden="true"> · </span><a href="#">Facebook</a></p>
+          </div>
+        </div>
+
+        <div className="footer-v3-bottom">
           <span>© {new Date().getFullYear()} Riverwood Villa</span>
           <span>Designed for slower days</span>
           <a href="#home">Back to top <ArrowUpRight size={13} /></a>

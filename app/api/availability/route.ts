@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { ObjectId } from "mongodb";
+import { getMongoDb } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
 
@@ -31,15 +32,29 @@ function enumerateNightKeys(checkIn: Date, checkOut: Date) {
   return keys;
 }
 
-function chunk<T>(items: T[], size: number) {
-  const chunks: T[][] = [];
+type RoomDocument = {
+  _id: ObjectId;
+  name?: string;
+  slug?: string;
+  description?: string;
+  shortDescription?: string;
+  pricePerNight?: number;
+  currency?: string;
+  maxGuests?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  amenities?: unknown;
+  images?: unknown;
+  isAvailable?: boolean;
+  sortOrder?: number;
+  status?: string;
+};
 
-  for (let index = 0; index < items.length; index += size) {
-    chunks.push(items.slice(index, index + size));
-  }
-
-  return chunks;
-}
+type RoomBlockDocument = {
+  roomId?: string;
+  dateKey?: string;
+  active?: boolean;
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -68,38 +83,33 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const roomsSnapshot = await adminDb
-      .collection("rooms")
-      .where("isAvailable", "==", true)
-      .get();
+    const db = await getMongoDb();
+    const roomsCollectionName = process.env.MONGODB_ROOMS_COLLECTION || "rooms";
 
-    const blockSnapshots = await Promise.all(
-      chunk(nightKeys, 30).map((keys) =>
-        adminDb.collection("roomBlocks").where("dateKey", "in", keys).get()
-      )
-    );
+    const [roomDocuments, blockDocuments] = await Promise.all([
+      db.collection<RoomDocument>(roomsCollectionName).find({ isAvailable: true }).toArray(),
+      db.collection<RoomBlockDocument>("roomBlocks")
+        .find({ dateKey: { $in: nightKeys }, active: { $ne: false } })
+        .toArray(),
+    ]);
 
     const blockedRoomIds = new Set<string>();
 
-    blockSnapshots.forEach((snapshot) => {
-      snapshot.docs.forEach((doc) => {
-        const block = doc.data();
-
-        if (block.active === false || !nightKeys.includes(block.dateKey)) return;
-        if (typeof block.roomId === "string") blockedRoomIds.add(block.roomId);
-      });
+    blockDocuments.forEach((block) => {
+      if (block.active === false || !block.dateKey || !nightKeys.includes(block.dateKey)) return;
+      if (typeof block.roomId === "string") blockedRoomIds.add(block.roomId);
     });
 
     const nights = nightKeys.length;
-    const rooms = roomsSnapshot.docs
-      .map((doc) => {
-        const room = doc.data();
+    const rooms = roomDocuments
+      .map((room) => {
+        const id = room._id.toString();
         const pricePerNight = Number(room.pricePerNight || 0);
 
         return {
-          id: doc.id,
+          id,
           name: room.name || "Room",
-          slug: room.slug || doc.id,
+          slug: room.slug || id,
           description: room.description || "",
           shortDescription: room.shortDescription || room.description || "",
           pricePerNight,

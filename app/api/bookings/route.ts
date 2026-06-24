@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
-import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { MongoServerError, ObjectId } from "mongodb";
+import { getMongoClient, getMongoDb } from "@/lib/mongodb";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -27,6 +27,16 @@ const bookingSchema = z.object({
 });
 
 type BookingRequest = z.infer<typeof bookingSchema>;
+
+type RoomDocument = {
+  _id: ObjectId;
+  name?: string;
+  isAvailable?: boolean;
+  status?: string;
+  maxGuests?: number;
+  pricePerNight?: number;
+  currency?: string;
+};
 
 class ApiError extends Error {
   constructor(message: string, public status: number) {
@@ -189,12 +199,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const bookingRef = adminDb.collection("bookings").doc();
+    const bookingId = new ObjectId();
     let notificationPayload: Awaited<ReturnType<typeof createBookingTransaction>>;
 
     notificationPayload = await createBookingTransaction({
-      bookingId: bookingRef.id,
-      bookingRefPath: bookingRef.path,
+      bookingId,
       validatedData,
       checkIn,
       checkOut,
@@ -218,7 +227,7 @@ export async function POST(request: Request) {
       ),
     ]);
 
-    return NextResponse.json({ bookingId: bookingRef.id, status: "pending" }, { status: 201 });
+    return NextResponse.json({ bookingId: bookingId.toString(), status: "pending" }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
@@ -235,107 +244,141 @@ export async function POST(request: Request) {
 
 async function createBookingTransaction({
   bookingId,
-  bookingRefPath,
   validatedData,
   checkIn,
   checkOut,
   nightKeys,
 }: {
-  bookingId: string;
-  bookingRefPath: string;
+  bookingId: ObjectId;
   validatedData: BookingRequest;
   checkIn: Date;
   checkOut: Date;
   nightKeys: string[];
 }) {
-  return adminDb.runTransaction(async (transaction) => {
-    const roomRef = adminDb.collection("rooms").doc(validatedData.roomId);
-    const bookingRef = adminDb.doc(bookingRefPath);
-    const roomBlockRefs = nightKeys.map((key) =>
-      adminDb.collection("roomBlocks").doc(`${validatedData.roomId}_${key}`)
-    );
+  if (!ObjectId.isValid(validatedData.roomId)) {
+    throw new ApiError("Selected room was not found.", 404);
+  }
 
-    const roomSnapshot = await transaction.get(roomRef);
+  const client = await getMongoClient();
+  const db = await getMongoDb();
+  const roomsCollectionName = process.env.MONGODB_ROOMS_COLLECTION || "rooms";
+  const roomsCollection = db.collection<RoomDocument>(roomsCollectionName);
+  const bookingsCollection = db.collection("bookings");
+  const roomBlocksCollection = db.collection("roomBlocks");
+  const roomObjectId = new ObjectId(validatedData.roomId);
 
-    if (!roomSnapshot.exists) {
-      throw new ApiError("Selected room was not found.", 404);
-    }
+  await roomBlocksCollection.createIndex(
+    { roomId: 1, dateKey: 1 },
+    { unique: true, partialFilterExpression: { active: true } }
+  );
 
-    const room = roomSnapshot.data() || {};
-    const maxGuests = Number(room.maxGuests || 1);
-    const roomStatus = room.status || "active";
+  const session = client.startSession();
 
-    if (room.isAvailable === false || roomStatus !== "active") {
-      throw new ApiError("Selected room is not available for booking.", 409);
-    }
+  try {
+    let result: { roomName: string; nights: number; total: number; currency: string } | undefined;
 
-    if (validatedData.guests > maxGuests) {
-      throw new ApiError(`Selected room allows a maximum of ${maxGuests} guests.`, 400);
-    }
+    await session.withTransaction(async () => {
+      const room = await roomsCollection.findOne({ _id: roomObjectId }, { session });
 
-    const existingBlocks = await Promise.all(roomBlockRefs.map((ref) => transaction.get(ref)));
-    const conflictingBlock = existingBlocks.find((snapshot) => {
-      if (!snapshot.exists) return false;
-      const block = snapshot.data();
-      return block?.active !== false;
+      if (!room) {
+        throw new ApiError("Selected room was not found.", 404);
+      }
+
+      const maxGuests = Number(room.maxGuests || 1);
+      const roomStatus = room.status || "active";
+
+      if (room.isAvailable === false || roomStatus !== "active") {
+        throw new ApiError("Selected room is not available for booking.", 409);
+      }
+
+      if (validatedData.guests > maxGuests) {
+        throw new ApiError(`Selected room allows a maximum of ${maxGuests} guests.`, 400);
+      }
+
+      const existingBlock = await roomBlocksCollection.findOne(
+        { roomId: validatedData.roomId, dateKey: { $in: nightKeys }, active: { $ne: false } },
+        { session }
+      );
+
+      if (existingBlock) {
+        throw new ApiError("This room is no longer available for the selected dates.", 409);
+      }
+
+      const roomName = String(room.name || "Room");
+      const nights = nightKeys.length;
+      const pricePerNight = Number(room.pricePerNight || 0);
+      const currency = String(room.currency || process.env.NEXT_PUBLIC_BOOKING_CURRENCY || "USD");
+      const subtotal = pricePerNight * nights;
+      const taxes = 0;
+      const total = subtotal + taxes;
+      const now = new Date();
+
+      await bookingsCollection.insertOne(
+        {
+          _id: bookingId,
+          roomId: validatedData.roomId,
+          roomObjectId,
+          roomName,
+          guestName: validatedData.guestName,
+          guestEmail: validatedData.guestEmail,
+          guestPhone: validatedData.guestPhone,
+          checkIn,
+          checkOut,
+          checkInKey: dateKey(checkIn),
+          checkOutKey: dateKey(checkOut),
+          nightKeys,
+          guests: validatedData.guests,
+          nights,
+          pricePerNight,
+          subtotal,
+          taxes,
+          total,
+          currency,
+          paymentMethod: validatedData.paymentMethod,
+          paymentStatus: "unpaid",
+          status: "pending",
+          source: "website",
+          specialRequests: validatedData.specialRequests || "",
+          whatsappSent: false,
+          createdAt: now,
+          updatedAt: now,
+        },
+        { session }
+      );
+
+      await roomBlocksCollection.insertMany(
+        nightKeys.map((key) => ({
+          roomId: validatedData.roomId,
+          roomObjectId,
+          roomName,
+          bookingId: bookingId.toString(),
+          bookingObjectId: bookingId,
+          dateKey: key,
+          type: "booking",
+          status: "pending",
+          active: true,
+          source: "website",
+          createdAt: now,
+          updatedAt: now,
+        })),
+        { session }
+      );
+
+      result = { roomName, nights, total, currency };
     });
 
-    if (conflictingBlock) {
+    if (!result) {
+      throw new ApiError("Failed to create booking.", 500);
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof MongoServerError && error.code === 11000) {
       throw new ApiError("This room is no longer available for the selected dates.", 409);
     }
 
-    const roomName = String(room.name || "Room");
-    const nights = nightKeys.length;
-    const pricePerNight = Number(room.pricePerNight || 0);
-    const currency = String(room.currency || process.env.NEXT_PUBLIC_BOOKING_CURRENCY || "USD");
-    const subtotal = pricePerNight * nights;
-    const taxes = 0;
-    const total = subtotal + taxes;
-    const now = FieldValue.serverTimestamp();
-
-    transaction.set(bookingRef, {
-      roomId: validatedData.roomId,
-      roomName,
-      guestName: validatedData.guestName,
-      guestEmail: validatedData.guestEmail,
-      guestPhone: validatedData.guestPhone,
-      checkIn: Timestamp.fromDate(checkIn),
-      checkOut: Timestamp.fromDate(checkOut),
-      checkInKey: dateKey(checkIn),
-      checkOutKey: dateKey(checkOut),
-      nightKeys,
-      guests: validatedData.guests,
-      nights,
-      pricePerNight,
-      subtotal,
-      taxes,
-      total,
-      currency,
-      paymentMethod: validatedData.paymentMethod,
-      paymentStatus: "unpaid",
-      status: "pending",
-      source: "website",
-      specialRequests: validatedData.specialRequests || "",
-      whatsappSent: false,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    roomBlockRefs.forEach((ref, index) => {
-      transaction.set(ref, {
-        roomId: validatedData.roomId,
-        roomName,
-        bookingId,
-        dateKey: nightKeys[index],
-        type: "booking",
-        status: "pending",
-        active: true,
-        source: "website",
-        createdAt: now,
-        updatedAt: now,
-      });
-    });
-
-    return { roomName, nights, total, currency };
-  });
+    throw error;
+  } finally {
+    await session.endSession();
+  }
 }

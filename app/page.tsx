@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, X } from "lucide-react";
 import { BookingSearch } from "@/components/booking/BookingSearch";
+import { StickyBookingBar } from "@/components/booking/StickyBookingBar";
 
 type MotionModules = {
   gsap: typeof import("gsap").gsap;
@@ -1430,8 +1431,8 @@ export default function Home() {
         <span className="nav-est">
           <span data-loader="nav-est">EST - Private Villa</span>
         </span>
-        <a className="nav-book-cta" href="#book">
-          Check availability <ArrowUpRight size={14} strokeWidth={1.9} />
+        <a className="nav-book-cta" href="#book" aria-label="Book your Riverwood Villa stay">
+          Book now <ArrowUpRight size={14} strokeWidth={1.9} />
         </a>
         <button
           className="nav-menu"
@@ -1476,13 +1477,7 @@ export default function Home() {
         </div>
       </aside>
 
-      <a className="floating-booking-cta" href="#book" aria-label="Check room availability">
-        <span>Book your stay</span>
-        <strong>Check availability</strong>
-        <ArrowUpRight size={16} strokeWidth={1.9} />
-      </a>
-
-
+      <StickyBookingBar />
 
       <section className="hero" aria-labelledby="hero-title" data-theme="dark">
         <figure className="hero-bg">
@@ -1527,6 +1522,13 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+        <div className="hero-booking-widget" id="hero-booking">
+          <BookingSearch
+            variant="hero"
+            eyebrow="Riverwood stay"
+            title="Book direct"
+          />
         </div>
       </section>
 

@@ -1,11 +1,14 @@
 "use client";
 
-import { type FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { type FormEvent, useEffect, useEffectEvent, useRef, useState } from "react";
 import { BedDouble, CalendarDays, Check, Minus, Plus, Search, Users } from "lucide-react";
 
 type AvailableRoom = {
   id: string;
   name: string;
+  slug: string;
   description: string;
   shortDescription: string;
   pricePerNight: number;
@@ -69,6 +72,17 @@ function addDays(value: string, days: number) {
   return toDateInputValue(date);
 }
 
+function createRoomHref(room: AvailableRoom, checkIn: string, checkOut: string, guests: number) {
+  const params = new URLSearchParams();
+
+  if (checkIn) params.set("checkIn", checkIn);
+  if (checkOut) params.set("checkOut", checkOut);
+  params.set("guests", String(guests));
+  params.set("room", room.slug);
+
+  return `/rooms/${room.slug}?${params.toString()}`;
+}
+
 type BookingSearchProps = {
   className?: string;
   eyebrow?: string;
@@ -82,6 +96,8 @@ export function BookingSearch({
   title = "Find your riverside room",
   variant = "default",
 }: BookingSearchProps) {
+  const searchParams = useSearchParams();
+  const hasHydratedFromUrl = useRef(false);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(2);
@@ -113,6 +129,78 @@ export function BookingSearch({
     setBookingStatus("");
     setIsRequestFormOpen(false);
   };
+
+  const runAvailabilitySearch = async ({
+    nextCheckIn,
+    nextCheckOut,
+    nextGuests,
+    preferredRoomSlug,
+  }: {
+    nextCheckIn: string;
+    nextCheckOut: string;
+    nextGuests: number;
+    preferredRoomSlug?: string | null;
+  }) => {
+    setErrorMessage("");
+    setStatusMessage("");
+    clearBookingState();
+
+    if (!nextCheckIn || !nextCheckOut) {
+      setErrorMessage("Choose your arrival and departure dates to search availability.");
+      return;
+    }
+
+    if (nextCheckOut <= nextCheckIn) {
+      setErrorMessage("Departure must be after arrival.");
+      return;
+    }
+
+    const params = new URLSearchParams({
+      checkIn: nextCheckIn,
+      checkOut: nextCheckOut,
+      guests: String(nextGuests),
+    });
+
+    setIsSearching(true);
+
+    try {
+      const response = await fetch(`/api/availability?${params.toString()}`);
+      const data = (await response.json()) as AvailabilityResponse;
+
+      if (!response.ok) {
+        throw new Error(data.error || "Availability search failed.");
+      }
+
+      const roomCount = data.rooms?.length ?? 0;
+      const nights = data.nights ?? 0;
+      const rooms = data.rooms || [];
+      const preferredRoom = preferredRoomSlug ? rooms.find((room) => room.slug === preferredRoomSlug) : null;
+
+      setAvailableRooms(rooms);
+      setSelectedRoomId(preferredRoom?.id || rooms[0]?.id || "");
+      setIsRequestFormOpen(false);
+      setStatusMessage(
+        roomCount > 0
+          ? `${roomCount} room${roomCount === 1 ? "" : "s"} available for ${nights} night${nights === 1 ? "" : "s"}.`
+          : "No rooms are currently available for those dates. Try adjusting your stay."
+      );
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Availability search failed.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const restoreSearchFromUrl = useEffectEvent(
+    async (nextCheckIn: string, nextCheckOut: string, nextGuests: number, preferredRoomSlug?: string | null) => {
+      await runAvailabilitySearch({
+        nextCheckIn,
+        nextCheckOut,
+        nextGuests,
+        preferredRoomSlug,
+      });
+    }
+  );
 
   const adjustGuests = (direction: 1 | -1) => {
     setGuests((current) => Math.min(MAX_GUESTS, Math.max(MIN_GUESTS, current + direction)));
@@ -148,49 +236,34 @@ export function BookingSearch({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setErrorMessage("");
-    setStatusMessage("");
-    clearBookingState();
-
-    if (!checkIn || !checkOut) {
-      setErrorMessage("Choose your arrival and departure dates to search availability.");
-      return;
-    }
-
-    if (checkOut <= checkIn) {
-      setErrorMessage("Departure must be after arrival.");
-      return;
-    }
-
-    const params = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });
-    setIsSearching(true);
-
-    try {
-      const response = await fetch(`/api/availability?${params.toString()}`);
-      const data = (await response.json()) as AvailabilityResponse;
-
-      if (!response.ok) {
-        throw new Error(data.error || "Availability search failed.");
-      }
-
-      const roomCount = data.rooms?.length ?? 0;
-      const nights = data.nights ?? 0;
-      const rooms = data.rooms || [];
-
-      setAvailableRooms(rooms);
-      setSelectedRoomId(rooms[0]?.id || "");
-      setIsRequestFormOpen(false);
-      setStatusMessage(
-        roomCount > 0
-          ? `${roomCount} room${roomCount === 1 ? "" : "s"} available for ${nights} night${nights === 1 ? "" : "s"}.`
-          : "No rooms are currently available for those dates. Try adjusting your stay."
-      );
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Availability search failed.");
-    } finally {
-      setIsSearching(false);
-    }
+    await runAvailabilitySearch({
+      nextCheckIn: checkIn,
+      nextCheckOut: checkOut,
+      nextGuests: guests,
+      preferredRoomSlug: searchParams.get("room"),
+    });
   };
+
+  useEffect(() => {
+    if (hasHydratedFromUrl.current) return;
+    hasHydratedFromUrl.current = true;
+
+    const nextCheckIn = searchParams.get("checkIn") || "";
+    const nextCheckOut = searchParams.get("checkOut") || "";
+    const nextGuestsValue = Number(searchParams.get("guests") || guests);
+    const nextGuests = Number.isInteger(nextGuestsValue)
+      ? Math.min(MAX_GUESTS, Math.max(MIN_GUESTS, nextGuestsValue))
+      : 2;
+    const preferredRoomSlug = searchParams.get("room");
+
+    if (nextCheckIn) setCheckIn(nextCheckIn);
+    if (nextCheckOut) setCheckOut(nextCheckOut);
+    setGuests(nextGuests);
+
+    if (nextCheckIn && nextCheckOut) {
+      void restoreSearchFromUrl(nextCheckIn, nextCheckOut, nextGuests, preferredRoomSlug);
+    }
+  }, [guests, restoreSearchFromUrl, searchParams]);
 
   const handleBookingSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -359,14 +432,19 @@ export function BookingSearch({
                     <strong>{selectedRoom.name}</strong>
                     <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
                   </div>
-                  <button
-                    type="button"
-                    className="ms-request-toggle"
-                    onClick={() => setIsRequestFormOpen((current) => !current)}
-                    aria-expanded={isRequestFormOpen}
-                  >
-                    {isRequestFormOpen ? "Hide form" : "Request room"}
-                  </button>
+                  <div className="ms-request-actions">
+                    <Link className="ms-room-link" href={createRoomHref(selectedRoom, checkIn, checkOut, guests)}>
+                      View room details
+                    </Link>
+                    <button
+                      type="button"
+                      className="ms-request-toggle"
+                      onClick={() => setIsRequestFormOpen((current) => !current)}
+                      aria-expanded={isRequestFormOpen}
+                    >
+                      {isRequestFormOpen ? "Hide form" : "Request room"}
+                    </button>
+                  </div>
                 </div>
 
                 {(bookingError || bookingStatus) && (
@@ -530,8 +608,13 @@ export function BookingSearch({
           {selectedRoom && (
             <form className="ms-request-form" onSubmit={handleBookingSubmit}>
               <div className="ms-request-summary">
-                <strong>Request {selectedRoom.name}</strong>
-                <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
+                <div>
+                  <strong>Request {selectedRoom.name}</strong>
+                  <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
+                </div>
+                <Link className="ms-room-link" href={createRoomHref(selectedRoom, checkIn, checkOut, guests)}>
+                  View room details
+                </Link>
               </div>
 
               <div className="ms-request-grid">

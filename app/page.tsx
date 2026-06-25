@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, X } from "lucide-react";
 import { BookingSearch } from "@/components/booking/BookingSearch";
+import { PublicRoomsSection } from "@/components/rooms/PublicRoomsSection";
 import { StickyBookingBar } from "@/components/booking/StickyBookingBar";
 
 type MotionModules = {
@@ -32,7 +33,7 @@ function loadMotionModules() {
 const navItems = [
   ["Home", "#home"],
   ["Story", "#story"],
-  ["Stay", "#stay"],
+  ["Rooms", "#rooms"],
   ["River", "#river"],
   ["Dining", "#dining"],
   ["Gallery", "#gallery"],
@@ -1524,11 +1525,13 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-booking-widget" id="hero-booking">
-          <BookingSearch
-            variant="hero"
-            eyebrow="Riverwood stay"
-            title="Book direct"
-          />
+          <Suspense fallback={null}>
+            <BookingSearch
+              variant="hero"
+              eyebrow="Riverwood stay"
+              title="Book direct"
+            />
+          </Suspense>
         </div>
       </section>
 
@@ -1682,12 +1685,14 @@ export default function Home() {
         </div>
       </section>
 
+      <PublicRoomsSection />
+
       <section
         id="river"
         className="river-section-v2 rv-cinematic"
         data-theme="light"
         data-bg="#FFFFFF"
-        data-chapter="04"
+        data-chapter="05"
         aria-labelledby="river-title"
       >
         <div className="river-grid">
@@ -1723,7 +1728,7 @@ export default function Home() {
 
           <div className="river-copy-column">
             <header className="river-header">
-              <span className="section-index">04 / The river</span>
+              <span className="section-index">05 / The river</span>
               <h2 id="river-title">A landscape that changes <em>with every hour.</em></h2>
               <p>
                 The water is not scenery behind the villa. It is the rhythm that connects every room,
@@ -1750,11 +1755,11 @@ export default function Home() {
         className="dining-section-v2 rv-cinematic"
         data-theme="light"
         data-bg="#89A894"
-        data-chapter="05"
+        data-chapter="06"
         aria-labelledby="dining-title"
       >
         <header className="dining-header">
-          <span className="section-index">05 / Hosted moments</span>
+          <span className="section-index">06 / Hosted moments</span>
           <p>One unhurried day, arranged around you.</p>
         </header>
 
@@ -1793,11 +1798,11 @@ export default function Home() {
         className="journal-section-v2 rv-cinematic"
         data-theme="light"
         data-bg="#FFFFFF"
-        data-chapter="06"
+        data-chapter="07"
         aria-labelledby="gallery-title"
       >
         <header className="journal-header">
-          <span className="section-index">06 / Visual journal</span>
+          <span className="section-index">07 / Visual journal</span>
           <h2 id="gallery-title">Small scenes from a <em>slower kind of day.</em></h2>
           <div className="journal-header-actions">
             <p>Architecture, landscape, wildlife, and the spaces between.</p>
@@ -1908,7 +1913,7 @@ export default function Home() {
         className="manifesto-section rv-cinematic"
         data-theme="light"
         data-bg="#89A894"
-        data-chapter="06"
+        data-chapter="07"
         aria-label="Riverwood Villa philosophy"
       >
         <span className="manifesto-index">The Riverwood philosophy</span>
@@ -1931,17 +1936,19 @@ export default function Home() {
         className="booking-section-v2 rv-cinematic"
         data-theme="light"
         data-bg="#FFFFFF"
-        data-chapter="07"
+        data-chapter="08"
         aria-labelledby="book-title"
       >
         <div className="booking-copy">
-          <span className="section-index">07 / Your stay</span>
+          <span className="section-index">08 / Your stay</span>
           <h2 id="book-title">Come stay <em>where the river slows everything down.</em></h2>
           <p>
             Share your dates, group size, and the kind of escape you are imagining.
             We will shape a relaxed Riverwood experience around you.
           </p>
-          <BookingSearch />
+          <Suspense fallback={null}>
+            <BookingSearch />
+          </Suspense>
         </div>
 
         <figure className="booking-visual media-frame" data-parallax data-cursor="arrive">
@@ -1964,7 +1971,7 @@ export default function Home() {
             Riverwood
           </a>
           <div className="footer-v3-intro">
-            <span>07 / 07</span>
+            <span>08 / 08</span>
             <p>Private riverside living, hosted with warmth.</p>
           </div>
         </div>

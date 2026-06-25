@@ -1,8 +1,7 @@
 "use client";
 
 import { type FormEvent, useEffect, useState } from "react";
-import { BedDouble, CalendarDays, Check, Leaf, Minus, Plus, Search, Users } from "lucide-react";
-import { DateRangePicker } from "@/components/booking/DateRangePicker";
+import { BedDouble, CalendarDays, Check, Minus, Plus, Search, Users } from "lucide-react";
 
 type AvailableRoom = {
   id: string;
@@ -61,7 +60,6 @@ function toDateInputValue(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-
   return `${year}-${month}-${day}`;
 }
 
@@ -107,7 +105,6 @@ export function BookingSearch({
   const selectedRoom = availableRooms.find((room) => room.id === selectedRoomId) || null;
   const today = toDateInputValue(new Date());
   const checkoutMin = checkIn ? addDays(checkIn, 1) : addDays(today, 1);
-  const hasHeroSearchState = Boolean(checkIn || checkOut || statusMessage || errorMessage || availableRooms.length > 0);
 
   const clearBookingState = () => {
     setAvailableRooms([]);
@@ -129,7 +126,6 @@ export function BookingSearch({
   const updateCheckIn = (value: string) => {
     setCheckIn(value);
     clearBookingState();
-
     if (value && checkOut && checkOut <= value) {
       setCheckOut("");
     }
@@ -166,13 +162,7 @@ export function BookingSearch({
       return;
     }
 
-    const params = new URLSearchParams({
-      checkIn,
-      checkOut,
-      guests: String(guests),
-    });
-
-    console.log("Searching availability", { checkIn, checkOut, guests });
+    const params = new URLSearchParams({ checkIn, checkOut, guests: String(guests) });
     setIsSearching(true);
 
     try {
@@ -195,8 +185,6 @@ export function BookingSearch({
           ? `${roomCount} room${roomCount === 1 ? "" : "s"} available for ${nights} night${nights === 1 ? "" : "s"}.`
           : "No rooms are currently available for those dates. Try adjusting your stay."
       );
-
-      console.log("Availability results", data);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Availability search failed.");
     } finally {
@@ -255,106 +243,96 @@ export function BookingSearch({
 
   if (variant === "hero") {
     return (
-      <div className={`hero-booking-flow ${className}`.trim()}>
-        <form className={`hero-booking-card ${isReady ? 'is-loaded' : ''}`} onSubmit={handleSubmit} aria-busy={!isReady}>
-          <div className="hero-booking-loader" aria-hidden="true">
-            <span className="hero-booking-loader-ring" />
+      <div className={`ms-hero ${className}`.trim()} data-ready={isReady}>
+        {!isReady && (
+          <div className="ms-hero-skeleton" aria-hidden="true">
+            <div className="ms-hero-skeleton-row">
+              <div className="ms-hero-skeleton-block" />
+              <div className="ms-hero-skeleton-block" />
+              <div className="ms-hero-skeleton-block is-narrow" />
+            </div>
+            <div className="ms-hero-skeleton-btn" />
           </div>
-          <div className="hero-booking-intro">
-            <span className="hero-booking-mark" aria-hidden="true">
-              <Leaf size={16} strokeWidth={1.8} />
-            </span>
-            <div>
-              <p>{eyebrow}</p>
-              <strong>{title}</strong>
+        )}
+
+        <form className="ms-hero-card" onSubmit={handleSubmit}>
+          <div className="ms-hero-fields">
+            <label className="ms-hero-field">
+              <span className="ms-hero-field-label">Arrival</span>
+              <span className="ms-hero-field-control">
+                <CalendarDays size={16} />
+                <input
+                  type="date"
+                  value={checkIn}
+                  min={today}
+                  onChange={(e) => updateCheckIn(e.target.value)}
+                  aria-label="Check-in date"
+                  required
+                />
+              </span>
+            </label>
+
+            <label className="ms-hero-field">
+              <span className="ms-hero-field-label">Departure</span>
+              <span className="ms-hero-field-control">
+                <CalendarDays size={16} />
+                <input
+                  type="date"
+                  value={checkOut}
+                  min={checkoutMin}
+                  onChange={(e) => updateCheckOut(e.target.value)}
+                  aria-label="Check-out date"
+                  required
+                />
+              </span>
+            </label>
+
+            <div className="ms-hero-field ms-hero-guest-field">
+              <span className="ms-hero-field-label">Guests</span>
+              <div className="ms-hero-field-control">
+                <Users size={16} />
+                <button type="button" onClick={() => adjustGuests(-1)} disabled={guests <= MIN_GUESTS} aria-label="Decrease guests">
+                  <Minus size={13} />
+                </button>
+                <span className="ms-hero-guest-count">{guests}</span>
+                <button type="button" onClick={() => adjustGuests(1)} disabled={guests >= MAX_GUESTS} aria-label="Increase guests">
+                  <Plus size={13} />
+                </button>
+              </div>
             </div>
           </div>
 
-          <label className="hero-booking-field">
-            <span>Arrival</span>
-            <span className="hero-booking-control">
-              <CalendarDays size={17} strokeWidth={1.7} />
-              <input
-                type="date"
-                value={checkIn}
-                min={today}
-                onChange={(event) => updateCheckIn(event.target.value)}
-                aria-label="Check-in date"
-                required
-              />
-            </span>
-          </label>
-
-          <label className="hero-booking-field">
-            <span>Departure</span>
-            <span className="hero-booking-control">
-              <CalendarDays size={17} strokeWidth={1.7} />
-              <input
-                type="date"
-                value={checkOut}
-                min={checkoutMin}
-                onChange={(event) => updateCheckOut(event.target.value)}
-                aria-label="Check-out date"
-                required
-              />
-            </span>
-          </label>
-
-          <div className="hero-booking-field hero-booking-guests" aria-label="Guest count selector">
-            <span>Guests</span>
-            <div className="hero-booking-control">
-              <Users size={17} strokeWidth={1.7} />
-              <button
-                type="button"
-                onClick={() => adjustGuests(-1)}
-                disabled={guests <= MIN_GUESTS}
-                aria-label="Decrease guests"
-              >
-                <Minus size={13} />
-              </button>
-              <strong>{guests}</strong>
-              <button
-                type="button"
-                onClick={() => adjustGuests(1)}
-                disabled={guests >= MAX_GUESTS}
-                aria-label="Increase guests"
-              >
-                <Plus size={13} />
-              </button>
-            </div>
-          </div>
-
-          <button className="hero-booking-submit" type="submit" disabled={isSearching}>
-            <span>{isSearching ? "Checking" : "Check availability"}</span>
-            <Search size={17} strokeWidth={1.8} />
+          <button className="ms-hero-submit" type="submit" disabled={isSearching}>
+            <span>{isSearching ? "Checking..." : "Check availability"}</span>
+            <Search size={16} />
           </button>
         </form>
 
         {(errorMessage || (statusMessage && availableRooms.length === 0)) && (
-          <p className={errorMessage ? "hero-booking-note is-error" : "hero-booking-note"}>
+          <p className={`ms-note ${errorMessage ? "is-error" : ""}`}>
             {errorMessage || statusMessage}
           </p>
         )}
 
-        {hasHeroSearchState && (
-          <button className="hero-booking-reset" type="button" onClick={resetSearch}>
+        {(checkIn || checkOut || statusMessage || errorMessage || availableRooms.length > 0) && (
+          <button className="ms-reset-btn" type="button" onClick={resetSearch}>
             Reset search
           </button>
         )}
 
         {availableRooms.length > 0 && (
-          <div className="hero-booking-result">
-            <div className="hero-booking-result-header">
-              <span className="hero-booking-result-label">Choose your room</span>
-              <span className="hero-booking-result-meta">{checkIn} → {checkOut} · {guests} guest{guests === 1 ? "" : "s"}</span>
+          <div className="ms-hero-results">
+            <div className="ms-hero-results-header">
+              <span className="ms-hero-results-label">Choose your room</span>
+              <span className="ms-hero-results-meta">{checkIn} → {checkOut} · {guests} guest{guests === 1 ? "" : "s"}</span>
             </div>
 
-            <div className="hero-booking-room-list">
+            <div className="ms-room-list">
               {availableRooms.map((room) => (
                 <button
                   key={room.id}
                   type="button"
-                  className={room.id === selectedRoomId ? "hero-booking-room is-selected" : "hero-booking-room"}
+                  className={`ms-room-option ${room.id === selectedRoomId ? "is-selected" : ""}`}
                   onClick={() => {
                     setSelectedRoomId(room.id);
                     setBookingError("");
@@ -362,28 +340,28 @@ export function BookingSearch({
                     setIsRequestFormOpen(false);
                   }}
                 >
-                  <span className="hero-booking-room-thumb">
+                  <span className="ms-room-thumb">
                     {room.images[0] ? <img src={room.images[0]} alt="" /> : <BedDouble size={20} />}
                   </span>
-                  <span className="hero-booking-room-body">
+                  <span className="ms-room-info">
                     <strong>{room.name}</strong>
-                    <em>{room.maxGuests} guests · {room.bedrooms} bedroom · {formatMoney(room.total, room.currency)} total</em>
+                    <span>{room.maxGuests} guests · {room.bedrooms} bedroom · {formatMoney(room.total, room.currency)} total</span>
                   </span>
-                  {room.id === selectedRoomId && <Check className="hero-booking-room-check" size={16} />}
+                  {room.id === selectedRoomId && <Check size={16} className="ms-room-check" />}
                 </button>
               ))}
             </div>
 
             {selectedRoom && (
-              <div className="hero-booking-request">
-                <div className="hero-booking-request-summary">
+              <div className="ms-request">
+                <div className="ms-request-summary">
                   <div>
-                    <strong>Selected: {selectedRoom.name}</strong>
+                    <strong>{selectedRoom.name}</strong>
                     <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
                   </div>
                   <button
-                    className="hero-booking-request-toggle"
                     type="button"
+                    className="ms-request-toggle"
                     onClick={() => setIsRequestFormOpen((current) => !current)}
                     aria-expanded={isRequestFormOpen}
                   >
@@ -392,17 +370,17 @@ export function BookingSearch({
                 </div>
 
                 {(bookingError || bookingStatus) && (
-                  <p className={bookingError ? "hero-booking-note is-error" : "hero-booking-note"}>
+                  <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
                     {bookingError || bookingStatus}
                   </p>
                 )}
 
                 {isRequestFormOpen && (
-                  <form className="hero-booking-request-form" onSubmit={handleBookingSubmit}>
-                    <div className="hero-booking-request-grid">
+                  <form className="ms-request-form" onSubmit={handleBookingSubmit}>
+                    <div className="ms-request-grid">
                       <input
                         value={bookingForm.guestName}
-                        onChange={(event) => updateBookingForm("guestName", event.target.value)}
+                        onChange={(e) => updateBookingForm("guestName", e.target.value)}
                         placeholder="Full name"
                         autoComplete="name"
                         required
@@ -410,36 +388,34 @@ export function BookingSearch({
                       <input
                         type="email"
                         value={bookingForm.guestEmail}
-                        onChange={(event) => updateBookingForm("guestEmail", event.target.value)}
+                        onChange={(e) => updateBookingForm("guestEmail", e.target.value)}
                         placeholder="Email address"
                         autoComplete="email"
                         required
                       />
                       <input
                         value={bookingForm.guestPhone}
-                        onChange={(event) => updateBookingForm("guestPhone", event.target.value)}
+                        onChange={(e) => updateBookingForm("guestPhone", e.target.value)}
                         placeholder="Phone / WhatsApp"
                         autoComplete="tel"
                         required
                       />
                       <select
                         value={bookingForm.paymentMethod}
-                        onChange={(event) => updateBookingForm("paymentMethod", event.target.value)}
+                        onChange={(e) => updateBookingForm("paymentMethod", e.target.value)}
                       >
                         <option value="pay_at_hotel">Pay at hotel</option>
                         <option value="bank_transfer">Bank transfer</option>
                       </select>
                     </div>
-
                     <textarea
                       value={bookingForm.specialRequests}
-                      onChange={(event) => updateBookingForm("specialRequests", event.target.value)}
+                      onChange={(e) => updateBookingForm("specialRequests", e.target.value)}
                       placeholder="Special requests, arrival time, or questions"
                       rows={2}
                     />
-
-                    <button className="hero-booking-request-submit" type="submit" disabled={isBooking}>
-                      {isBooking ? "Sending request" : "Send booking request"}
+                    <button className="ms-request-submit" type="submit" disabled={isBooking}>
+                      {isBooking ? "Sending request..." : "Send booking request"}
                     </button>
                   </form>
                 )}
@@ -452,125 +428,135 @@ export function BookingSearch({
   }
 
   return (
-    <div className={`booking-flow ${className}`.trim()}>
-      <form className="booking-search-card" onSubmit={handleSubmit}>
-        <div className="booking-search-header">
-          <span className="booking-search-mark" aria-hidden="true">
-            <Leaf size={17} strokeWidth={1.8} />
-          </span>
-          <div>
-            <p className="booking-search-eyebrow">{eyebrow}</p>
-            <h3>{title}</h3>
-          </div>
+    <div className={`ms ${className}`.trim()}>
+      <form className="ms-card" onSubmit={handleSubmit}>
+        <div className="ms-header">
+          <span className="ms-eyebrow">{eyebrow}</span>
+          <h3>{title}</h3>
         </div>
 
-        <DateRangePicker
-          checkIn={checkIn}
-          checkOut={checkOut}
-          onCheckInChange={updateCheckIn}
-          onCheckOutChange={updateCheckOut}
-        />
+        <div className="ms-date-grid">
+          <label className="ms-field">
+            <span className="ms-field-label">Arrival</span>
+            <span className="ms-field-control">
+              <CalendarDays size={17} />
+              <input
+                type="date"
+                value={checkIn}
+                min={today}
+                onChange={(e) => updateCheckIn(e.target.value)}
+                aria-label="Check-in date"
+                required
+              />
+            </span>
+          </label>
 
-        <div className="booking-search-bottom">
-          <div className="booking-guest-card" aria-label="Guest count selector">
-            <span className="booking-field-kicker">Guests</span>
-            <div className="booking-guest-control">
-              <Users size={18} strokeWidth={1.7} />
-              <button
-                type="button"
-                onClick={() => adjustGuests(-1)}
-                disabled={guests <= MIN_GUESTS}
-                aria-label="Decrease guests"
-              >
+          <label className="ms-field">
+            <span className="ms-field-label">Departure</span>
+            <span className="ms-field-control">
+              <CalendarDays size={17} />
+              <input
+                type="date"
+                value={checkOut}
+                min={checkoutMin}
+                onChange={(e) => updateCheckOut(e.target.value)}
+                aria-label="Check-out date"
+                required
+              />
+            </span>
+          </label>
+        </div>
+
+        <div className="ms-bottom">
+          <div className="ms-guest-field">
+            <span className="ms-field-label">Guests</span>
+            <div className="ms-guest-control">
+              <Users size={17} />
+              <button type="button" onClick={() => adjustGuests(-1)} disabled={guests <= MIN_GUESTS} aria-label="Decrease guests">
                 <Minus size={14} />
               </button>
               <strong>{guests}</strong>
-              <button
-                type="button"
-                onClick={() => adjustGuests(1)}
-                disabled={guests >= MAX_GUESTS}
-                aria-label="Increase guests"
-              >
+              <button type="button" onClick={() => adjustGuests(1)} disabled={guests >= MAX_GUESTS} aria-label="Increase guests">
                 <Plus size={14} />
               </button>
             </div>
           </div>
 
-          <button className="booking-search-submit" type="submit" disabled={isSearching}>
-            <span>{isSearching ? "Searching" : "Search availability"}</span>
-            <Search size={18} strokeWidth={1.8} />
+          <button className="ms-submit" type="submit" disabled={isSearching}>
+            <span>{isSearching ? "Searching..." : "Search availability"}</span>
+            <Search size={17} />
           </button>
         </div>
 
         {(statusMessage || errorMessage) && (
-          <p className={errorMessage ? "booking-search-note is-error" : "booking-search-note"}>
+          <p className={`ms-note ${errorMessage ? "is-error" : ""}`}>
             {errorMessage || statusMessage}
           </p>
         )}
       </form>
 
       {availableRooms.length > 0 && (
-        <div className="booking-results-card">
-          <div className="booking-results-header">
-            <span className="booking-search-eyebrow">Choose a room</span>
+        <div className="ms-results">
+          <div className="ms-results-header">
+            <span className="ms-eyebrow">Choose a room</span>
             <p>{checkIn} to {checkOut} · {guests} guest{guests === 1 ? "" : "s"}</p>
           </div>
 
-          <div className="booking-room-list">
+          <div className="ms-room-list">
             {availableRooms.map((room) => (
               <button
                 key={room.id}
                 type="button"
-                className={room.id === selectedRoomId ? "booking-room-option is-selected" : "booking-room-option"}
+                className={`ms-room-option ${room.id === selectedRoomId ? "is-selected" : ""}`}
                 onClick={() => {
                   setSelectedRoomId(room.id);
                   setBookingError("");
                   setBookingStatus("");
                 }}
               >
-                <span className="booking-room-thumb">
+                <span className="ms-room-thumb">
                   {room.images[0] ? <img src={room.images[0]} alt="" /> : <BedDouble size={22} />}
                 </span>
-                <span className="booking-room-body">
+                <span className="ms-room-info">
                   <strong>{room.name}</strong>
                   <small>{room.shortDescription || room.description}</small>
-                  <em>{room.maxGuests} guests · {room.bedrooms} bedroom · {formatMoney(room.total, room.currency)} total</em>
+                  <span>{room.maxGuests} guests · {room.bedrooms} bedroom · {formatMoney(room.total, room.currency)} total</span>
                 </span>
-                {room.id === selectedRoomId && <Check className="booking-room-check" size={18} />}
+                {room.id === selectedRoomId && <Check size={18} className="ms-room-check" />}
               </button>
             ))}
           </div>
 
           {selectedRoom && (
-            <form className="booking-request-form" onSubmit={handleBookingSubmit}>
-              <div className="booking-request-summary">
+            <form className="ms-request-form" onSubmit={handleBookingSubmit}>
+              <div className="ms-request-summary">
                 <strong>Request {selectedRoom.name}</strong>
                 <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
               </div>
 
-              <div className="booking-request-grid">
+              <div className="ms-request-grid">
                 <input
                   value={bookingForm.guestName}
-                  onChange={(event) => updateBookingForm("guestName", event.target.value)}
+                  onChange={(e) => updateBookingForm("guestName", e.target.value)}
                   placeholder="Full name"
                   autoComplete="name"
                 />
                 <input
                   type="email"
                   value={bookingForm.guestEmail}
-                  onChange={(event) => updateBookingForm("guestEmail", event.target.value)}
+                  onChange={(e) => updateBookingForm("guestEmail", e.target.value)}
                   placeholder="Email address"
                   autoComplete="email"
                 />
                 <input
                   value={bookingForm.guestPhone}
-                  onChange={(event) => updateBookingForm("guestPhone", event.target.value)}
+                  onChange={(e) => updateBookingForm("guestPhone", e.target.value)}
                   placeholder="Phone / WhatsApp"
                   autoComplete="tel"
                 />
                 <select
                   value={bookingForm.paymentMethod}
-                  onChange={(event) => updateBookingForm("paymentMethod", event.target.value)}
+                  onChange={(e) => updateBookingForm("paymentMethod", e.target.value)}
                 >
                   <option value="pay_at_hotel">Pay at hotel</option>
                   <option value="bank_transfer">Bank transfer</option>
@@ -579,19 +565,19 @@ export function BookingSearch({
 
               <textarea
                 value={bookingForm.specialRequests}
-                onChange={(event) => updateBookingForm("specialRequests", event.target.value)}
+                onChange={(e) => updateBookingForm("specialRequests", e.target.value)}
                 placeholder="Special requests, arrival time, or questions"
                 rows={3}
               />
 
               {(bookingError || bookingStatus) && (
-                <p className={bookingError ? "booking-search-note is-error" : "booking-search-note"}>
+                <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
                   {bookingError || bookingStatus}
                 </p>
               )}
 
-              <button className="booking-request-submit" type="submit" disabled={isBooking}>
-                {isBooking ? "Sending request" : "Request this room"}
+              <button className="ms-request-submit" type="submit" disabled={isBooking}>
+                {isBooking ? "Sending request..." : "Request this room"}
               </button>
             </form>
           )}

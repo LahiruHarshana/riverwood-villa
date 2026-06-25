@@ -1,17 +1,3 @@
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  updateDoc,
-  query,
-  where,
-  orderBy,
-  Timestamp,
-} from "firebase/firestore";
-
 export type BookingStatus = "pending" | "confirmed" | "cancelled";
 
 export type Booking = {
@@ -27,112 +13,89 @@ export type Booking = {
   specialRequests: string;
   status: BookingStatus;
   whatsappSent: boolean;
+  total?: number;
   createdAt: Date;
 };
 
 export type BookingFormData = Omit<Booking, "id" | "createdAt" | "status" | "whatsappSent">;
 
-const bookingsCollection = collection(db, "bookings");
+type BookingPayload = Omit<Booking, "checkIn" | "checkOut" | "createdAt"> & {
+  checkIn: string;
+  checkOut: string;
+  createdAt: string;
+};
+
+async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+function toBooking(booking: BookingPayload): Booking {
+  return {
+    ...booking,
+    checkIn: new Date(booking.checkIn),
+    checkOut: new Date(booking.checkOut),
+    createdAt: new Date(booking.createdAt),
+  };
+}
 
 export async function getBookings(filters?: { status?: string; roomId?: string }): Promise<Booking[]> {
-  try {
-    let q = query(bookingsCollection, orderBy("createdAt", "desc"));
+  const params = new URLSearchParams();
 
-    if (filters?.status) {
-      q = query(q, where("status", "==", filters.status));
-    }
+  if (filters?.status) params.set("status", filters.status);
+  if (filters?.roomId) params.set("roomId", filters.roomId);
 
-    if (filters?.roomId) {
-      q = query(q, where("roomId", "==", filters.roomId));
-    }
+  const query = params.toString();
+  const data = await requestJson<{ bookings: BookingPayload[] }>(
+    `/api/admin/bookings${query ? `?${query}` : ""}`
+  );
 
-    const snapshot = await getDocs(q);
-
-    return snapshot.docs.map((docItem) => {
-      const data = docItem.data();
-      return {
-        id: docItem.id,
-        ...data,
-        checkIn: data.checkIn?.toDate() || new Date(),
-        checkOut: data.checkOut?.toDate() || new Date(),
-        createdAt: data.createdAt?.toDate() || new Date(),
-      } as Booking;
-    });
-  } catch (error) {
-    console.error("Error getting bookings:", error);
-    throw error;
-  }
+  return data.bookings.map(toBooking);
 }
 
 export async function getBookingById(id: string): Promise<Booking | null> {
-  try {
-    const docRef = doc(db, "bookings", id);
-    const docSnap = await getDoc(docRef);
+  const response = await fetch(`/api/admin/bookings/${id}`, { cache: "no-store" });
 
-    if (!docSnap.exists()) return null;
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
 
-    const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      ...data,
-      checkIn: data.checkIn?.toDate() || new Date(),
-      checkOut: data.checkOut?.toDate() || new Date(),
-      createdAt: data.createdAt?.toDate() || new Date(),
-    } as Booking;
-  } catch (error) {
-    console.error("Error getting booking:", error);
-    throw error;
-  }
+  const data = (await response.json()) as { booking: BookingPayload };
+  return toBooking(data.booking);
 }
 
 export async function createBooking(data: BookingFormData): Promise<string> {
-  try {
-    const docRef = await addDoc(bookingsCollection, {
+  const result = await requestJson<{ bookingId: string }>("/api/bookings", {
+    method: "POST",
+    body: JSON.stringify({
       ...data,
-      status: "pending",
-      whatsappSent: false,
-      createdAt: Timestamp.now(),
-    });
-    return docRef.id;
-  } catch (error) {
-    console.error("Error creating booking:", error);
-    throw error;
-  }
+      checkIn: data.checkIn.toISOString(),
+      checkOut: data.checkOut.toISOString(),
+    }),
+  });
+
+  return result.bookingId;
 }
 
 export async function updateBookingStatus(id: string, status: "confirmed" | "cancelled"): Promise<void> {
-  try {
-    const docRef = doc(db, "bookings", id);
-    await updateDoc(docRef, { status });
-  } catch (error) {
-    console.error("Error updating booking status:", error);
-    throw error;
-  }
+  await requestJson(`/api/admin/bookings/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
 }
 
 export async function getBookingsByDateRange(start: Date, end: Date): Promise<Booking[]> {
-  try {
-    const q = query(
-      bookingsCollection,
-      where("checkIn", ">=", Timestamp.fromDate(start)),
-      where("checkIn", "<=", Timestamp.fromDate(end)),
-      orderBy("checkIn", "asc")
-    );
-
-    const snapshot = await getDocs(q);
-
-    return snapshot.docs.map((docItem) => {
-      const data = docItem.data();
-      return {
-        id: docItem.id,
-        ...data,
-        checkIn: data.checkIn?.toDate() || new Date(),
-        checkOut: data.checkOut?.toDate() || new Date(),
-        createdAt: data.createdAt?.toDate() || new Date(),
-      } as Booking;
-    });
-  } catch (error) {
-    console.error("Error getting bookings by date range:", error);
-    throw error;
-  }
+  const bookings = await getBookings();
+  return bookings.filter((booking) => booking.checkIn >= start && booking.checkIn <= end);
 }

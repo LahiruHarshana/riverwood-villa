@@ -1,99 +1,83 @@
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  Timestamp,
-} from "firebase/firestore";
-
 export type Room = {
   id: string;
   name: string;
   slug: string;
   description: string;
+  shortDescription?: string;
   pricePerNight: number;
+  currency?: string;
   maxGuests: number;
   bedrooms: number;
   bathrooms: number;
   amenities: string[];
   images: string[];
   isAvailable: boolean;
+  status?: string;
+  sortOrder?: number;
   createdAt: Date;
 };
 
 export type RoomFormData = Omit<Room, "id" | "createdAt">;
 
-const roomsCollection = collection(db, "rooms");
+type RoomPayload = Omit<Room, "createdAt"> & { createdAt: string };
+
+async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+function toRoom(room: RoomPayload): Room {
+  return {
+    ...room,
+    createdAt: new Date(room.createdAt),
+  };
+}
 
 export async function getRooms(): Promise<Room[]> {
-  try {
-    const snapshot = await getDocs(roomsCollection);
-    return snapshot.docs.map((docItem) => ({
-      id: docItem.id,
-      ...docItem.data(),
-      createdAt: docItem.data().createdAt?.toDate() || new Date(),
-    })) as Room[];
-  } catch (error) {
-    console.error("Error getting rooms:", error);
-    throw error;
-  }
+  const data = await requestJson<{ rooms: RoomPayload[] }>("/api/admin/rooms");
+  return data.rooms.map(toRoom);
 }
 
 export async function getRoomById(id: string): Promise<Room | null> {
-  try {
-    const docRef = doc(db, "rooms", id);
-    const docSnap = await getDoc(docRef);
+  const response = await fetch(`/api/admin/rooms/${id}`, { cache: "no-store" });
 
-    if (!docSnap.exists()) return null;
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
 
-    return {
-      id: docSnap.id,
-      ...docSnap.data(),
-      createdAt: docSnap.data()?.createdAt?.toDate() || new Date(),
-    } as Room;
-  } catch (error) {
-    console.error("Error getting room:", error);
-    throw error;
-  }
+  const data = (await response.json()) as { room: RoomPayload };
+  return toRoom(data.room);
 }
 
 export async function createRoom(data: RoomFormData): Promise<string> {
-  try {
-    const docRef = await addDoc(roomsCollection, {
-      ...data,
-      createdAt: Timestamp.now(),
-    });
-    return docRef.id;
-  } catch (error) {
-    console.error("Error creating room:", error);
-    throw error;
-  }
+  const result = await requestJson<{ room: RoomPayload }>("/api/admin/rooms", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+  return result.room.id;
 }
 
 export async function updateRoom(id: string, data: Partial<RoomFormData>): Promise<void> {
-  try {
-    const docRef = doc(db, "rooms", id);
-    await updateDoc(docRef, data);
-  } catch (error) {
-    console.error("Error updating room:", error);
-    throw error;
-  }
+  await requestJson(`/api/admin/rooms/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
 }
 
 export async function deleteRoom(id: string): Promise<void> {
-  try {
-    const docRef = doc(db, "rooms", id);
-    await deleteDoc(docRef);
-  } catch (error) {
-    console.error("Error deleting room:", error);
-    throw error;
-  }
+  await requestJson(`/api/admin/rooms/${id}`, { method: "DELETE" });
 }
 
 export async function checkRoomAvailability(
@@ -101,33 +85,15 @@ export async function checkRoomAvailability(
   checkIn: Date,
   checkOut: Date
 ): Promise<boolean> {
-  try {
-    const bookingsCollection = collection(db, "bookings");
-    const q = query(
-      bookingsCollection,
-      where("roomId", "==", roomId),
-      where("status", "==", "confirmed")
-    );
+  const params = new URLSearchParams({
+    checkIn: checkIn.toISOString().slice(0, 10),
+    checkOut: checkOut.toISOString().slice(0, 10),
+    guests: "1",
+  });
+  const response = await fetch(`/api/availability?${params.toString()}`, { cache: "no-store" });
 
-    const snapshot = await getDocs(q);
-    const bookings = snapshot.docs.map((docItem) => docItem.data());
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
 
-    const checkInTime = checkIn.getTime();
-    const checkOutTime = checkOut.getTime();
-
-    return !bookings.some((booking: any) => {
-      const bookingStart = booking.checkIn.toDate().getTime();
-      const bookingEnd = booking.checkOut.toDate().getTime();
-
-      // Check if the requested dates overlap with existing confirmed booking
-      return (
-        (checkInTime >= bookingStart && checkInTime < bookingEnd) ||
-        (checkOutTime > bookingStart && checkOutTime <= bookingEnd) ||
-        (checkInTime <= bookingStart && checkOutTime >= bookingEnd)
-      );
-    });
-  } catch (error) {
-    console.error("Error checking room availability:", error);
-    throw error;
-  }
+  const data = (await response.json()) as { rooms: Array<{ id: string }> };
+  return data.rooms.some((room) => room.id === roomId);
 }

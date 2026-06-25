@@ -6739,3 +6739,859 @@ html.lenis body {
     transition: none !important;
   }
 }
+
+/* ═══ MODERN BOOKING SEARCH — default variant ═══ */
+.ms {
+  display: grid;
+  width: min(100%, 44rem);
+  gap: 1rem;
+}
+
+.ms-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  background: #fff;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ms-header {
+  margin-bottom: 1.25rem;
+}
+
+.ms-eyebrow {
+  display: block;
+  color: #666;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ms-header h3 {
+  margin-top: 0.35rem;
+  color: #111;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.ms-date-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.ms-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.ms-field-label {
+  color: #666;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ms-field-control,
+.ms-guest-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.6rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 0 0.85rem;
+  color: #111;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-field:focus-within .ms-field-control,
+.ms-guest-field:focus-within .ms-guest-control {
+  border-color: #111;
+  background: #fff;
+}
+
+.ms-field-control svg,
+.ms-guest-control svg {
+  flex: 0 0 auto;
+  color: #999;
+}
+
+.ms-field-control input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.ms-field-control input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.ms-bottom {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.7fr) 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.ms-guest-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ms-guest-control {
+  justify-content: space-between;
+}
+
+.ms-guest-control strong {
+  min-width: 1.2rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ms-guest-control button {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e5e5;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-guest-control button:not(:disabled):hover {
+  border-color: #111;
+  background: #f5f5f5;
+}
+
+.ms-guest-control button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.ms-submit {
+  display: inline-flex;
+  min-height: 3.6rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  align-self: end;
+  border: 0;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 180ms ease, opacity 180ms ease;
+}
+
+.ms-submit:not(:disabled):hover {
+  background: #333;
+}
+
+.ms-submit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.ms-note {
+  margin-top: 0.85rem;
+  color: #444;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ms-note.is-error {
+  color: #c0392b;
+}
+
+/* ── Results ── */
+
+.ms-results {
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  background: #fff;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ms-results-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #eee;
+}
+
+.ms-results-header p {
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ms-room-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.ms-room-option {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #fafafa;
+  color: #111;
+  padding: 0.65rem;
+  text-align: left;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-room-option:hover {
+  border-color: #ddd;
+  background: #f5f5f5;
+}
+
+.ms-room-option.is-selected {
+  border-color: #111;
+  background: #fff;
+}
+
+.ms-room-thumb {
+  display: flex;
+  height: 3.8rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #eee;
+  color: #888;
+}
+
+.ms-room-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ms-room-info {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.ms-room-info strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.ms-room-info small {
+  color: #666;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-room-info span {
+  color: #888;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ms-room-check {
+  color: #111;
+  flex: 0 0 auto;
+}
+
+.ms-reset-btn {
+  display: flex;
+  width: fit-content;
+  margin-top: 0.5rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 999px;
+  background: #fff;
+  color: #666;
+  padding: 0.45rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+
+.ms-reset-btn:hover {
+  border-color: #111;
+  color: #111;
+}
+
+/* ── Booking request form ── */
+
+.ms-request-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eee;
+}
+
+.ms-request-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #111;
+  font-size: 0.9rem;
+}
+
+.ms-request-summary span {
+  color: #666;
+  font-weight: 700;
+}
+
+.ms-request-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.ms-request-form input,
+.ms-request-form select,
+.ms-request-form textarea {
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fafafa;
+  color: #111;
+  font: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  padding: 0.75rem 0.9rem;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-request-form input::placeholder,
+.ms-request-form textarea::placeholder {
+  color: #aaa;
+}
+
+.ms-request-form textarea {
+  resize: vertical;
+  min-height: 2.5rem;
+}
+
+.ms-request-form input:focus,
+.ms-request-form select:focus,
+.ms-request-form textarea:focus {
+  border-color: #111;
+  background: #fff;
+}
+
+.ms-request-form select {
+  cursor: pointer;
+}
+
+.ms-request-submit {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 180ms ease, opacity 180ms ease;
+}
+
+.ms-request-submit:not(:disabled):hover {
+  background: #333;
+}
+
+.ms-request-submit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* ═══ MODERN BOOKING SEARCH — hero variant ═══ */
+
+.ms-hero {
+  width: 100%;
+}
+
+.ms-hero-card {
+  display: grid;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.ms-hero-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(8rem, 0.75fr);
+  gap: 0.4rem;
+  align-items: end;
+}
+
+.ms-hero-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ms-hero-field-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.15rem;
+}
+
+.ms-hero-field-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0 0.75rem;
+  color: #fff;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-hero-field:focus-within .ms-hero-field-control {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ms-hero-field-control svg {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ms-hero-field-control input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  color-scheme: dark;
+}
+
+.ms-hero-field-control input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1);
+  opacity: 0.6;
+}
+
+.ms-hero-guest-field .ms-hero-field-control {
+  justify-content: space-between;
+}
+
+.ms-hero-guest-count {
+  font-size: 0.95rem;
+  font-weight: 700;
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+.ms-hero-field-control button {
+  display: inline-flex;
+  width: 1.8rem;
+  height: 1.8rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-hero-field-control button:not(:disabled):hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ms-hero-field-control button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.ms-hero-submit {
+  display: inline-flex;
+  min-height: 3.2rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 180ms ease, opacity 180ms ease;
+}
+
+.ms-hero-submit:not(:disabled):hover {
+  background: #e5e5e5;
+}
+
+.ms-hero-submit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* ── Hero skeleton loader ── */
+
+.ms-hero[data-ready="false"] .ms-hero-card {
+  display: none;
+}
+
+.ms-hero[data-ready="true"] .ms-hero-skeleton {
+  display: none;
+}
+
+.ms-hero-skeleton {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.ms-hero-skeleton-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(8rem, 0.75fr);
+  gap: 0.4rem;
+}
+
+.ms-hero-skeleton-block {
+  height: 3.6rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  animation: ms-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.ms-hero-skeleton-block.is-narrow {
+  height: 3.6rem;
+}
+
+.ms-hero-skeleton-btn {
+  height: 3.2rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  animation: ms-skeleton-pulse 1.5s ease-in-out 0.2s infinite;
+}
+
+@keyframes ms-skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ── Hero entrance animation ── */
+
+.ms-hero[data-ready="true"] .ms-hero-card > * {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: ms-hero-enter 0.6s ease forwards;
+}
+
+.ms-hero[data-ready="true"] .ms-hero-card > *:nth-child(1) { animation-delay: 0.05s; }
+.ms-hero[data-ready="true"] .ms-hero-card > *:nth-child(2) { animation-delay: 0.12s; }
+.ms-hero[data-ready="true"] .ms-hero-card > *:nth-child(3) { animation-delay: 0.19s; }
+.ms-hero[data-ready="true"] .ms-hero-card > *:nth-child(4) { animation-delay: 0.26s; }
+
+@keyframes ms-hero-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ms-hero .ms-note {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ms-hero .ms-note.is-error {
+  color: #ff6b6b;
+}
+
+.ms-hero .ms-reset-btn {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ms-hero .ms-reset-btn:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+/* ── Hero results ── */
+
+.ms-hero-results {
+  width: 100%;
+  margin-top: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.85rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.ms-hero-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ms-hero-results-label {
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ms-hero-results-meta {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.65rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ms-hero .ms-room-list {
+  max-height: 12rem;
+  overflow-y: auto;
+  padding-right: 0.1rem;
+}
+
+.ms-hero .ms-room-option {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.ms-hero .ms-room-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ms-hero .ms-room-option.is-selected {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ms-hero .ms-room-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ms-hero .ms-room-info strong {
+  color: #fff;
+}
+
+.ms-hero .ms-room-info small,
+.ms-hero .ms-room-info span {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ms-hero .ms-room-check {
+  color: #fff;
+}
+
+/* ── Hero request ── */
+
+.ms-hero .ms-request {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ms-hero .ms-request-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.ms-hero .ms-request-summary > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.ms-hero .ms-request-summary strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-hero .ms-request-summary span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.ms-request-toggle {
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 0.55rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.ms-request-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ms-hero .ms-request-form {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.ms-hero .ms-request-form input,
+.ms-hero .ms-request-form select,
+.ms-hero .ms-request-form textarea {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.ms-hero .ms-request-form input::placeholder,
+.ms-hero .ms-request-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ms-hero .ms-request-form input:focus,
+.ms-hero .ms-request-form select:focus,
+.ms-hero .ms-request-form textarea:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ms-hero .ms-request-form select option {
+  background: #111;
+  color: #fff;
+}
+
+.ms-hero .ms-request-submit {
+  background: #fff;
+  color: #111;
+}
+
+.ms-hero .ms-request-submit:not(:disabled):hover {
+  background: #e5e5e5;
+}
+
+.ms-hero .ms-request-submit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .ms-hero-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ms-date-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ms-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .ms-request-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ms-room-option {
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  }
+
+  .ms-room-thumb {
+    height: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ms-card {
+    padding: 1rem;
+  }
+
+  .ms-results {
+    padding: 1rem;
+  }
+
+  .ms-hero-results-header {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.3rem;
+  }
+}

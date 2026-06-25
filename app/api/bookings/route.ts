@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { MongoServerError, ObjectId } from "mongodb";
-import { getMongoClient, getMongoDb } from "@/lib/mongodb";
+import { ensureMongoIndexes, getMongoClient, getMongoDb } from "@/lib/mongodb";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -267,10 +267,7 @@ async function createBookingTransaction({
   const roomBlocksCollection = db.collection("roomBlocks");
   const roomObjectId = new ObjectId(validatedData.roomId);
 
-  await roomBlocksCollection.createIndex(
-    { roomId: 1, dateKey: 1 },
-    { unique: true, partialFilterExpression: { active: true } }
-  );
+  await ensureMongoIndexes();
 
   const session = client.startSession();
 

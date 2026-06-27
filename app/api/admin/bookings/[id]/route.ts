@@ -64,6 +64,41 @@ function serializeBooking(booking: BookingDocument) {
   };
 }
 
+export async function DELETE(_request: NextRequest, context: RouteContext) {
+  if (!(await requireAdminSession())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const bookingId = await getBookingId(context);
+
+  if (!bookingId) {
+    return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+  }
+
+  try {
+    await ensureMongoIndexes();
+
+    const db = await getMongoDb();
+    const booking = await db.collection("bookings").findOne({ _id: bookingId });
+
+    if (!booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (booking.status !== "cancelled") {
+      return NextResponse.json({ error: "Only cancelled bookings can be removed" }, { status: 400 });
+    }
+
+    await db.collection("bookings").deleteOne({ _id: bookingId });
+    await db.collection("roomBlocks").deleteMany({ bookingId: bookingId.toString() });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Admin booking deletion failed:", error);
+    return NextResponse.json({ error: "Failed to remove booking" }, { status: 500 });
+  }
+}
+
 export async function GET(_request: NextRequest, context: RouteContext) {
   if (!(await requireAdminSession())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

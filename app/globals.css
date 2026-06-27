@@ -897,10 +897,251 @@ figure {
   filter: saturate(0.86) contrast(1.02);
 }
 
+/* ── Hero Carousel Slides ──────────────────────────────────────── */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 0;
+  isolation: isolate;
+  will-change: opacity;
+}
+
+.hero-slide img {
+  object-fit: cover;
+}
+
+/* Active slide: blur-in + Ken Burns (unique direction per slide) */
+.hero-slide.is-active {
+  z-index: 1;
+  animation: hero-slide-fade-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-slide:nth-child(1).is-active img {
+  transform-origin: 35% 42%;
+  animation:
+    hero-kb-tl     7.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+    hero-img-sharpen 1.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.hero-slide:nth-child(2).is-active img {
+  transform-origin: 66% 58%;
+  animation:
+    hero-kb-br     7.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+    hero-img-sharpen 1.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.hero-slide:nth-child(3).is-active img {
+  transform-origin: 68% 32%;
+  animation:
+    hero-kb-tr     7.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+    hero-img-sharpen 1.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.hero-slide:nth-child(4).is-active img {
+  transform-origin: 32% 68%;
+  animation:
+    hero-kb-bl     7.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+    hero-img-sharpen 1.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Light-glare sweep on enter */
+.hero-slide.is-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    112deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.07) 48%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.07) 52%,
+    transparent 70%
+  );
+  animation: hero-light-sweep 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+  pointer-events: none;
+}
+
+/* Leaving slide: blur-scale-out exit */
+.hero-slide.is-leaving {
+  z-index: 2;
+  animation: hero-slide-fade-out 1.55s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.hero-slide.is-leaving img {
+  animation: hero-img-blur-out 1.55s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────── */
+@keyframes hero-slide-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes hero-img-sharpen {
+  0%   { filter: saturate(0.5)  contrast(1.1)  brightness(1.45) blur(22px); }
+  40%  { filter: saturate(0.75) contrast(1.06) brightness(1.12) blur(5px);  }
+  100% { filter: saturate(0.88) contrast(1.04) brightness(1)    blur(0px);  }
+}
+
+@keyframes hero-kb-tl {
+  0%   { transform: scale(1.12) translate( 0.8%,  0.6%); }
+  100% { transform: scale(1.0)  translate( 0%,    0%);   }
+}
+@keyframes hero-kb-br {
+  0%   { transform: scale(1.12) translate(-0.8%, -0.6%); }
+  100% { transform: scale(1.0)  translate( 0%,    0%);   }
+}
+@keyframes hero-kb-tr {
+  0%   { transform: scale(1.12) translate(-0.8%,  0.6%); }
+  100% { transform: scale(1.0)  translate( 0%,    0%);   }
+}
+@keyframes hero-kb-bl {
+  0%   { transform: scale(1.12) translate( 0.8%, -0.6%); }
+  100% { transform: scale(1.0)  translate( 0%,    0%);   }
+}
+
+@keyframes hero-slide-fade-out {
+  0%   { opacity: 1; }
+  15%  { opacity: 0.88; }
+  100% { opacity: 0; }
+}
+
+@keyframes hero-img-blur-out {
+  0%   { transform: scale(1);    filter: saturate(0.88) contrast(1.04) brightness(1)    blur(0px);  }
+  100% { transform: scale(1.05); filter: saturate(0.6)  contrast(1.06) brightness(1.3)  blur(14px); }
+}
+
+@keyframes hero-light-sweep {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(120%);  opacity: 0; }
+}
+
+/* ── Hero Frame Border ─────────────────────────────────────────── */
+.hero-frame-border {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.hero-frame-rect {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 4896;
+  stroke-dashoffset: 4896;
+  animation: hero-frame-draw 2s cubic-bezier(0.87, 0, 0.13, 1) 0.05s forwards;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.18));
+}
+
+@keyframes hero-frame-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Backward direction: sweep right → left */
+.hero-slide[data-direction="bwd"].is-active::after {
+  animation: hero-light-sweep-bwd 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+@keyframes hero-light-sweep-bwd {
+  0%   { transform: translateX(120%);  opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(-120%); opacity: 0; }
+}
+
+
+/* ── Carousel Indicators ───────────────────────────────────────── */
+.hero-carousel-indicators {
+  position: absolute;
+  bottom: 2.4rem;
+  left: var(--gutter, 2.4rem);
+  z-index: 7;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.hero-carousel-dot {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.hero-carousel-dot.is-active {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.hero-carousel-dot:hover {
+  opacity: 0.9;
+}
+
+.hero-carousel-dot-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.hero-carousel-dot-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 2;
+}
+
+.hero-carousel-dot-progress {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 87.96; /* 2π × 14 */
+  stroke-dashoffset: 87.96;
+  animation: hero-dot-progress 6s linear forwards;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.6));
+}
+
+@keyframes hero-dot-progress {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hero-carousel-dot-inner {
+  display: block;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  transition: transform 0.35s ease;
+  flex-shrink: 0;
+}
+
+.hero-carousel-dot.is-active .hero-carousel-dot-inner {
+  background: #fff;
+  transform: scale(1.3);
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 5;
   opacity: 1;
   background: var(--dark);
   animation: hero-overlay-reveal 1.5s ease 2.35s forwards;
@@ -3331,6 +3572,21 @@ figure {
 
   .hero-content p {
     max-width: 32ch;
+  }
+
+  /* ── Carousel indicators: move to bottom-right on mobile to avoid
+     overlapping the SCROLL text that sits bottom-left ─────────── */
+  .hero-carousel-indicators {
+    left: auto;
+    right: 1.25rem;
+    bottom: 2.8rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hero-carousel-dot {
+    width: 1.85rem;
+    height: 1.85rem;
   }
 
   .menu-left strong {
@@ -7780,13 +8036,16 @@ html.lenis body {
 }
 
 .ms-hero .ms-room-list {
-  max-height: 12.8rem;
+  max-height: 24rem;
   overflow-y: auto;
-  padding-right: 0.4rem;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+  padding-right: 0.5rem;
+  transform: translateZ(0);
 }
 
 .ms-hero .ms-room-list::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 
 .ms-hero .ms-room-list::-webkit-scrollbar-track {

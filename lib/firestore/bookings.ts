@@ -95,6 +95,12 @@ export async function updateBookingStatus(id: string, status: "confirmed" | "can
   });
 }
 
+export async function deleteBooking(id: string): Promise<void> {
+  await requestJson(`/api/admin/bookings/${id}`, {
+    method: "DELETE",
+  });
+}
+
 export async function getBookingsByDateRange(start: Date, end: Date): Promise<Booking[]> {
   const bookings = await getBookings();
   return bookings.filter((booking) => booking.checkIn >= start && booking.checkIn <= end);

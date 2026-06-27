@@ -108,7 +108,7 @@ const rooms = [
     amenities: ["Queen bed", "Air conditioning", "Private bathroom", "Wi-Fi", "Garden view"],
     images: [
       "/villa/villa-bedroom-high-ceiling.jpg",
-      "/villa/villa-balcony-palms.jpg",
+      "/villa/villa-balcony-palms.webp",
       "/villa/villa-hallway.webp",
     ],
     isAvailable: true,
@@ -150,7 +150,7 @@ const rooms = [
     amenities: ["King bed", "Sofa bed", "Air conditioning", "Private bathroom", "Wi-Fi", "Forest view", "Mini fridge"],
     images: [
       "/villa/villa-bedroom-desk.jpg",
-      "/villa/villa-balcony-palms.jpg",
+      "/villa/villa-balcony-palms.webp",
     ],
     isAvailable: true,
     status: "active",
@@ -309,7 +309,7 @@ const rooms = [
     bathrooms: 1,
     amenities: ["Two single beds", "Air conditioning", "Private bathroom", "Wi-Fi", "Garden access"],
     images: [
-      "/villa/villa-balcony-palms.jpg",
+      "/villa/villa-balcony-palms.webp",
       "/villa/villa-bedroom-high-ceiling.jpg",
     ],
     isAvailable: true,

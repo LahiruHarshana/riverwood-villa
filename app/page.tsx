@@ -255,7 +255,7 @@ const fullGalleryItems: Array<{
     shape: "tall",
   },
   {
-    image: "/villa/villa-balcony-palms.jpg",
+    image: "/villa/villa-balcony-palms.webp",
     title: "Palm-view balcony",
     category: "Balconies",
     alt: "Wooden chair and table on balcony facing palm trees",
@@ -342,7 +342,7 @@ const filmFrames = [
     eyebrow: "Morning",
     title: "Wake inside the river light.",
     copy: "Balcony doors open, palms move softly, and the first hours of the day arrive without a schedule.",
-    image: "/villa/villa-balcony-palms.jpg",
+    image: "/villa/villa-balcony-palms.webp",
     alt: "Morning palms seen from a Riverwood Villa balcony",
   },
   {
@@ -438,6 +438,150 @@ function HeroLogo() {
         VILLA
       </text>
     </svg>
+  );
+}
+
+// ─── Hero Carousel ───────────────────────────────────────────────────────────
+const HERO_SLIDES = [
+  {
+    src: "/villa/hero.png",
+    alt: "Aerial view of Riverwood Villa beside the river",
+    priority: true,
+  },
+  {
+    src: "/villa/villa-hero.webp",
+    alt: "Riverwood Villa in daylight surrounded by lush greenery",
+    priority: false,
+  },
+  {
+    src: "/villa/villa-night.webp",
+    alt: "Riverwood Villa illuminated at night",
+    priority: false,
+  },
+  {
+    src: "/villa/drone-night-villa.webp",
+    alt: "Drone view of Riverwood Villa at night",
+    priority: false,
+  },
+] as const;
+
+const SLIDE_DURATION = 6000; // ms
+
+function HeroCarousel() {
+  const [active, setActive] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
+  const [animKey, setAnimKey] = useState(0);
+  const [direction, setDirection] = useState<"fwd" | "bwd">("fwd");
+  const [paused, setPaused] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const goTo = (index: number, dir?: "fwd" | "bwd") => {
+    if (index === active) return;
+    setDirection(dir ?? (index > active ? "fwd" : "bwd"));
+    setPrev(active);
+    setActive(index);
+    setAnimKey((k) => k + 1);
+  };
+
+  useEffect(() => {
+    if (paused) return;
+    timerRef.current = setTimeout(() => {
+      const next = (active + 1) % HERO_SLIDES.length;
+      setDirection("fwd");
+      setPrev(active);
+      setActive(next);
+      setAnimKey((k) => k + 1);
+    }, SLIDE_DURATION);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [active, paused]);
+
+  return (
+    <figure
+      className="hero-bg"
+      aria-hidden="true"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Slides */}
+      {HERO_SLIDES.map((slide, i) => (
+        <div
+          key={slide.src}
+          className={[
+            "hero-slide",
+            i === active ? "is-active" : "",
+            i === prev ? "is-leaving" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          data-direction={i === active ? direction : undefined}
+        >
+          <Image
+            src={slide.src}
+            alt={slide.alt}
+            fill
+            priority={slide.priority}
+            fetchPriority={slide.priority ? "high" : "low"}
+            sizes="100vw"
+          />
+        </div>
+      ))}
+
+      {/* Overlay */}
+      <div data-loader="overlay" className="hero-overlay" />
+
+      {/* Slide indicators */}
+      <div className="hero-carousel-indicators" role="tablist" aria-label="Hero slides">
+        {HERO_SLIDES.map((slide, i) => (
+          <button
+            key={i}
+            role="tab"
+            aria-selected={i === active}
+            aria-label={`Slide ${i + 1}: ${slide.alt}`}
+            className={["hero-carousel-dot", i === active ? "is-active" : ""].filter(Boolean).join(" ")}
+            onClick={() => goTo(i)}
+          >
+            <svg
+              className="hero-carousel-dot-ring"
+              viewBox="0 0 36 36"
+              aria-hidden="true"
+            >
+              <circle cx="18" cy="18" r="14" className="hero-carousel-dot-track" />
+              {i === active && (
+                <circle
+                  key={animKey}
+                  cx="18"
+                  cy="18"
+                  r="14"
+                  className="hero-carousel-dot-progress"
+                />
+              )}
+            </svg>
+            <span className="hero-carousel-dot-inner" />
+          </button>
+        ))}
+      </div>
+
+      {/* SVG border-draw frame that reanimates on every slide */}
+      <svg
+        key={animKey}
+        className="hero-frame-border"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <rect
+          className="hero-frame-rect"
+          x="24"
+          y="24"
+          width="1392"
+          height="852"
+          rx="6"
+          ry="6"
+        />
+      </svg>
+    </figure>
   );
 }
 
@@ -825,7 +969,7 @@ export default function Home() {
             }, "doors+=1.42");
 
           // ─── Hero parallax ────────────────────────────────────────────
-          gsap.to(".hero-bg img", {
+          gsap.to(".hero-slide img", {
             scale: 1.14,
             yPercent: 16,
             ease: "none",
@@ -1526,17 +1670,7 @@ export default function Home() {
       <StickyBookingBar />
 
       <section className="hero" aria-labelledby="hero-title" data-theme="dark">
-        <figure className="hero-bg">
-          <Image
-            src="/villa/hero.png"
-            alt="Aerial view of Riverwood Villa beside the river"
-            fill
-            priority
-            fetchPriority="high"
-            sizes="100vw"
-          />
-          <div data-loader="overlay" className="hero-overlay" />
-        </figure>
+        <HeroCarousel />
         <div className="hero-container">
           <div className="hero-layout">
             <div className="hero-logo-wrap">

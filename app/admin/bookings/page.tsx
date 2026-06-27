@@ -4,12 +4,22 @@ import { useState } from "react";
 import { useBookings } from "@/hooks/useBookings";
 import { BookingTable } from "@/components/admin/BookingTable";
 import { Spinner } from "@/components/ui/Spinner";
+import { deleteBooking } from "@/lib/firestore/bookings";
 import { Filter, Search, SlidersHorizontal, CalendarDays } from "lucide-react";
 
 export default function BookingsPage() {
-  const { bookings, loading, error } = useBookings();
+  const { bookings, loading, error, refetch } = useBookings();
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteBooking(id);
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete booking:", error);
+    }
+  };
 
   const filteredBookings = bookings.filter((b) => {
     const matchesStatus = statusFilter === "all" || b.status === statusFilter;
@@ -91,7 +101,7 @@ export default function BookingsPage() {
         </div>
       ) : (
         <div className="admin-card overflow-hidden p-6">
-          <BookingTable data={filteredBookings} />
+          <BookingTable data={filteredBookings} onDelete={handleDelete} />
         </div>
       )}
     </div>

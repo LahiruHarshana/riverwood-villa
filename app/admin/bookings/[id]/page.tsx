@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getBookingById, updateBookingStatus, Booking } from "@/lib/firestore/bookings";
+import { getBookingById, updateBookingStatus, deleteBooking, Booking } from "@/lib/firestore/bookings";
 import { Spinner } from "@/components/ui/Spinner";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { WhatsAppButton } from "@/components/admin/WhatsAppButton";
-import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, ArrowLeft, DollarSign } from "lucide-react";
+import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, ArrowLeft, DollarSign, Trash2 } from "lucide-react";
 
 export default function BookingDetailPage() {
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function BookingDetailPage() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirmAction, setConfirmAction] = useState<"confirmed" | "cancelled" | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const customMsgRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -39,6 +40,19 @@ export default function BookingDetailPage() {
     const diff = new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime();
     return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }, [booking]);
+
+  const handleDelete = async () => {
+    if (!booking) return;
+    if (!confirm("Remove this cancelled booking permanently? This action cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      await deleteBooking(booking.id);
+      router.push("/admin/bookings");
+    } catch (error) {
+      console.error("Failed to delete booking:", error);
+      setDeleting(false);
+    }
+  };
 
   const handleStatusChange = async (status: "confirmed" | "cancelled") => {
     if (!booking) return;
@@ -202,6 +216,16 @@ export default function BookingDetailPage() {
               {confirmAction === "cancelled" ? <Spinner size="sm" /> : <XCircle className="w-4 h-4" />}
               {booking.status === "cancelled" ? "Already Cancelled" : "Cancel Booking"}
             </button>
+            {booking.status === "cancelled" && (
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px] !border-red-600 !text-red-600 hover:!bg-red-600 hover:!text-white"
+              >
+                {deleting ? <Spinner size="sm" /> : <Trash2 className="w-4 h-4" />}
+                Remove Booking
+              </button>
+            )}
           </div>
         </div>
 

@@ -13,15 +13,16 @@ import {
 } from "@tanstack/react-table";
 import { Booking } from "@/lib/firestore/bookings";
 import { BookingStatusBadge } from "./BookingStatusBadge";
-import { ChevronLeft, ChevronRight, ChevronsUpDown, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsUpDown, Eye, Trash2 } from "lucide-react";
 
 interface BookingTableProps {
   data: Booking[];
+  onDelete?: (id: string) => void;
 }
 
 const columnHelper = createColumnHelper<Booking>();
 
-export function BookingTable({ data }: BookingTableProps) {
+export function BookingTable({ data, onDelete }: BookingTableProps) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -56,6 +57,28 @@ export function BookingTable({ data }: BookingTableProps) {
     columnHelper.accessor("status", {
       header: "Status",
       cell: (info) => <BookingStatusBadge status={info.getValue()} dot />,
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: "",
+      cell: (info) => {
+        const booking = info.row.original;
+        if (booking.status !== "cancelled") return null;
+        return (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm("Remove this cancelled booking permanently? This action cannot be undone.")) {
+                onDelete?.(booking.id);
+              }
+            }}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+            title="Remove booking"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        );
+      },
     }),
   ];
 

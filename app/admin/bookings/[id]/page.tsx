@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/Spinner";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { WhatsAppButton } from "@/components/admin/WhatsAppButton";
 import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, ArrowLeft, DollarSign, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 
 export default function BookingDetailPage() {
   const router = useRouter();
@@ -43,7 +44,16 @@ export default function BookingDetailPage() {
 
   const handleDelete = async () => {
     if (!booking) return;
-    if (!confirm("Remove this cancelled booking permanently? This action cannot be undone.")) return;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Remove this cancelled booking permanently? This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#ef4444',
+      confirmButtonText: 'Yes, remove it!'
+    });
+    if (!result.isConfirmed) return;
     setDeleting(true);
     try {
       await deleteBooking(booking.id);
@@ -56,11 +66,29 @@ export default function BookingDetailPage() {
 
   const handleStatusChange = async (status: "confirmed" | "cancelled") => {
     if (!booking) return;
-    if (status === "cancelled" && !confirm("Cancel this booking? This will notify the guest.")) return;
+    if (status === "cancelled") {
+      const result = await Swal.fire({
+        title: 'Cancel Booking?',
+        text: "Cancel this booking? This will notify the guest.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, cancel it!'
+      });
+      if (!result.isConfirmed) return;
+    }
     setConfirmAction(status);
     try {
       await updateBookingStatus(booking.id, status);
       setBooking((prev) => (prev ? { ...prev, status } : null));
+      Swal.fire({
+        title: 'Success!',
+        text: `Booking has been ${status}.`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error("Failed to update status:", error);
     } finally {

@@ -14,6 +14,7 @@ import {
 import { Booking } from "@/lib/firestore/bookings";
 import { BookingStatusBadge } from "./BookingStatusBadge";
 import { ChevronLeft, ChevronRight, ChevronsUpDown, Eye, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 
 interface BookingTableProps {
   data: Booking[];
@@ -66,9 +67,18 @@ export function BookingTable({ data, onDelete }: BookingTableProps) {
         if (booking.status !== "cancelled") return null;
         return (
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              if (confirm("Remove this cancelled booking permanently? This action cannot be undone.")) {
+              const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Remove this cancelled booking permanently? This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, remove it!'
+              });
+              if (result.isConfirmed) {
                 onDelete?.(booking.id);
               }
             }}

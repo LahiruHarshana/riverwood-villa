@@ -7,6 +7,7 @@ import { RoomCard } from "@/components/admin/RoomCard";
 import { deleteRoom } from "@/lib/firestore/rooms";
 import { Spinner } from "@/components/ui/Spinner";
 import { Plus, Search, SlidersHorizontal, BedDouble } from "lucide-react";
+import Swal from "sweetalert2";
 
 export default function RoomsPage() {
   const { rooms, loading, error, refetch } = useRooms();
@@ -18,14 +19,28 @@ export default function RoomsPage() {
   );
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this room? This action cannot be undone.")) {
-      return;
-    }
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Are you sure you want to delete this room? This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#ef4444',
+      confirmButtonText: 'Yes, delete it!'
+    });
+    if (!result.isConfirmed) return;
 
     setDeletingId(id);
     try {
       await deleteRoom(id);
       refetch();
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Room has been deleted.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (err) {
       console.error("Failed to delete room:", err);
     } finally {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { RoomForm } from "@/components/admin/RoomForm";
-import { getRoomById, updateRoom, Room } from "@/lib/firestore/rooms";
+import { getRoomById, updateRoom, Room, RoomFormData } from "@/lib/firestore/rooms";
 import { Spinner } from "@/components/ui/Spinner";
 
 export default function EditRoomPage() {
@@ -36,7 +36,7 @@ export default function EditRoomPage() {
     fetchRoom();
   }, [id, router]);
 
-  const handleSubmit = async (data: Omit<Room, "id" | "createdAt">) => {
+  const handleSubmit = async (data: RoomFormData) => {
     if (!id) return;
 
     setIsSubmitting(true);
@@ -52,7 +52,6 @@ export default function EditRoomPage() {
   if (loading) {
     return (
       <div className="admin-loading">
-        <div>Loading room</div>
         <Spinner size="lg" />
       </div>
     );
@@ -60,14 +59,17 @@ export default function EditRoomPage() {
 
   if (!room) {
     return (
-      <div className="text-center py-12">
-        <p className="text-slate-500">Room not found.</p>
+      <div className="flex flex-col items-center justify-center py-24 text-center admin-fade-in">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-400">
+          <Spinner size="sm" />
+        </div>
+        <p className="font-semibold text-gray-900">Room not found</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-3xl admin-fade-in">
       <div className="mb-6">
         <span className="admin-page-kicker">Inventory</span>
         <h1 className="admin-page-title">Edit room</h1>

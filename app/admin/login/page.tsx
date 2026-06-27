@@ -9,7 +9,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { setSessionCookie } from "@/lib/auth";
 import { Spinner } from "@/components/ui/Spinner";
-import { Eye, EyeOff } from "lucide-react";
+import { ArrowRight, BadgeCheck, Eye, EyeOff, KeyRound, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -42,96 +42,130 @@ export default function AdminLoginPage() {
       await setSessionCookie(idToken);
       router.push("/admin");
     } catch {
-      setError("Invalid credentials");
+      setError("Invalid email or password");
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="grid min-h-screen place-items-center p-4 md:p-8">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-[#151512]/10 bg-[#fffdf7]/70 shadow-[0_30px_90px_rgba(70,81,67,0.18)] backdrop-blur-xl md:grid-cols-[1.1fr_0.9fr]">
-        <div className="relative hidden min-h-[620px] overflow-hidden bg-[#151512] p-10 text-[#fffdf7] md:block">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(132,147,131,0.42),transparent_28rem),radial-gradient(circle_at_80%_80%,rgba(178,123,66,0.28),transparent_24rem)]" />
-          <div className="relative z-10 flex h-full flex-col justify-between">
+    <div className="admin-login-shell">
+      <div className="admin-login-orb is-left" />
+      <div className="admin-login-orb is-right" />
+
+      <div className="admin-login-card">
+        {/* Left - Brand Panel */}
+        <div className="admin-login-brand-panel">
+          <div className="admin-login-brand-glow" />
+          <div className="relative z-10 flex h-full flex-col justify-between gap-10">
             <div>
-              <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-full border border-white/20 font-serif text-3xl">
-                R
+              <div className="admin-login-brand-topline">
+                <div className="admin-login-logo">R</div>
+                <span>Riverwood Villa</span>
               </div>
-              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#c7c9bd]">Riverwood Villa</p>
-              <h1 className="mt-4 max-w-md font-serif text-6xl font-medium leading-[0.9] tracking-[-0.06em]">
-                Quiet control for a slower stay.
-              </h1>
+
+              <div className="mt-12">
+                <span className="admin-login-pill"><Sparkles className="h-3.5 w-3.5" /> Private operations</span>
+                <h1 className="admin-login-headline">Command every stay with calm precision.</h1>
+                <p className="admin-login-copy">
+                  Secure access for managing reservations, rooms, and guest communication from a focused modern workspace.
+                </p>
+              </div>
             </div>
-            <p className="max-w-sm text-sm leading-6 text-[#d8d6cc]">
-              Manage rooms, bookings, and guest conversations from a private panel that now carries the same mood as the villa website.
-            </p>
+
+            <div className="admin-login-insights">
+              <div>
+                <BadgeCheck className="h-4 w-4" />
+                <span>Live room inventory</span>
+              </div>
+              <div>
+                <ShieldCheck className="h-4 w-4" />
+                <span>Protected admin access</span>
+              </div>
+              <div>
+                <KeyRound className="h-4 w-4" />
+                <span>Session secured by Firebase</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="p-6 md:p-10">
+        {/* Right - Form */}
+        <div className="admin-login-form-panel">
+          <div className="admin-login-mobile-brand">
+            <div className="admin-login-logo">R</div>
+            <div>
+              <p>Riverwood Villa</p>
+              <span>Admin Panel</span>
+            </div>
+          </div>
+
           <div className="mb-8">
-            <span className="admin-page-kicker">Admin access</span>
-            <h1 className="mt-3 font-serif text-4xl font-medium tracking-[-0.05em] text-[#151512]">Welcome back</h1>
-            <p className="mt-2 text-sm leading-6 text-[#6f746a]">Sign in to manage your property.</p>
+            <span className="admin-page-kicker">Welcome back</span>
+            <h1 className="admin-login-form-title">Sign in to your account</h1>
+            <p className="admin-login-form-copy">
+              Enter your credentials to access the admin panel.
+            </p>
           </div>
 
           {error && (
-            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-3">
-              <p className="text-sm font-semibold text-red-600">{error}</p>
+            <div className="mb-6 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 shadow-sm">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold">!</div>
+              <p className="text-sm font-medium text-red-700">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm font-bold text-[#465143]">
-                Email
-              </label>
-              <input
-                type="email"
-                {...register("email")}
-                className="admin-input"
-                placeholder="admin@riverwood.com"
-                autoComplete="email"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-              )}
+            <div className="admin-login-field">
+              <label>Email</label>
+              <div className="relative">
+                <Mail className="admin-login-input-icon" />
+                <input
+                  type="email"
+                  {...register("email")}
+                  className="admin-input admin-login-input !pl-11 transition-all duration-300 hover:border-emerald-400 focus:!border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
+                  placeholder="admin@riverwood.com"
+                  autoComplete="email"
+                />
+              </div>
+              {errors.email && <p className="text-xs font-medium text-red-600">{errors.email.message}</p>}
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-bold text-[#465143]">
-                Password
-              </label>
+            <div className="admin-login-field">
+              <label>Password</label>
               <div className="relative">
+                <Lock className="admin-login-input-icon" />
                 <input
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
-                  className="admin-input pr-12"
+                  className="admin-input admin-login-input !pl-11 !pr-12 transition-all duration-300 hover:border-emerald-400 focus:!border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-[#6f746a] transition-colors hover:bg-[#e8ebe3] hover:text-[#151512]"
+                  className="admin-login-toggle"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-xs font-medium text-red-600">{errors.password.message}</p>}
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="admin-primary-button w-full disabled:opacity-50"
+              className="admin-primary-button admin-login-submit w-full disabled:opacity-40"
             >
-              {isSubmitting ? <><Spinner size="sm" /> Signing in...</> : "Sign In"}
+              {isSubmitting ? <><Spinner size="sm" /> Signing in...</> : <>Sign In <ArrowRight className="h-4 w-4" /></>}
             </button>
           </form>
+
+          <div className="admin-login-footnote">
+            <ShieldCheck className="h-4 w-4" />
+            <span>Access is restricted to authorized villa administrators.</span>
+          </div>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Room } from "@/lib/firestore/rooms";
 import { Spinner } from "@/components/ui/Spinner";
 import { MessageCircle } from "lucide-react";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const bookingFormSchema = z.object({
   roomId: z.string().min(1, "Please select a room"),
@@ -69,9 +70,10 @@ export function BookingForm({ rooms }: BookingFormProps) {
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94782902200";
   const waLink =
     whatsappNumber && bookingData && selectedRoom
-      ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-          `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${bookingData.checkIn} to ${bookingData.checkOut}\n*Guests:* ${bookingData.guests}\n\n*Name:* ${bookingData.guestName}\n*Email:* ${bookingData.guestEmail}\n*Phone:* ${bookingData.guestPhone}\n*Payment Method:* ${bookingData.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Pay at Hotel'}${bookingData.specialRequests ? `\n*Special Requests:* ${bookingData.specialRequests}` : ''}`
-        )}`
+      ? getWhatsAppUrl(
+          whatsappNumber,
+          `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${bookingData.checkIn} to ${bookingData.checkOut}\n*Guests:* ${bookingData.guests}\n\n*Name:* ${bookingData.guestName}\n*Email:* ${bookingData.guestEmail}\n*Phone:* ${bookingData.guestPhone}${bookingData.specialRequests ? `\n*Special Requests:* ${bookingData.specialRequests}` : ''}`
+        )
       : null;
 
   if (submitted && bookingData) {

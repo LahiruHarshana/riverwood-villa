@@ -12,6 +12,13 @@ build/
 .DS_Store
 *.pem
 
+# testing
+playwright-report/
+test-results/
+tests/
+playwright.config.ts
+.env.test
+
 # debug
 npm-debug.log*
 yarn-debug.log*

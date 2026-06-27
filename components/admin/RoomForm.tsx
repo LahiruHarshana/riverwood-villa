@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -48,18 +48,29 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
   const { register, handleSubmit, watch, setValue, formState: { errors } } = form;
   const amenities = watch("amenities") || [];
   const images = watch("images") || [];
+  const slugTouched = useRef(false);
 
-  const addAmenity = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const input = e.currentTarget;
-      const value = input.value.trim();
-      if (value && !amenities.includes(value)) {
-        setValue("amenities", [...amenities, value]);
-        input.value = "";
-      }
+  const addAmenity = useCallback((value: string) => {
+    if (value && !amenities.includes(value)) {
+      setValue("amenities", [...amenities, value]);
     }
   }, [amenities, setValue]);
+
+  const handleAmenityKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addAmenity(e.currentTarget.value.trim());
+      e.currentTarget.value = "";
+    }
+  }, [addAmenity]);
+
+  const handleAmenityClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const input = e.currentTarget.parentElement?.querySelector("input");
+    if (input) {
+      addAmenity(input.value.trim());
+      input.value = "";
+    }
+  }, [addAmenity]);
 
   const removeAmenity = (index: number) => {
     setValue("amenities", amenities.filter((_, i) => i !== index));
@@ -71,140 +82,160 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Room Name */}
-        <div className="space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Room Name</label>
-          <input
-            {...register("name", {
-              onChange: (e) => {
-                if (!defaultValues) {
-                  setValue("slug", autoSlug(e.target.value));
-                }
-              },
-            })}
-            className="admin-input"
-          />
-          {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
-        </div>
-
-        {/* Slug */}
-        <div className="space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Slug</label>
-          <input
-            {...register("slug")}
-            className="admin-input"
-          />
-          {errors.slug && <p className="text-red-500 text-xs">{errors.slug.message}</p>}
-        </div>
-
-        {/* Description */}
-        <div className="md:col-span-2 space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Description</label>
-          <textarea
-            {...register("description")}
-            rows={4}
-            className="admin-input"
-          />
-          {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
-        </div>
-
-        {/* Price */}
-        <div className="space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Price Per Night (USD)</label>
-          <input
-            type="number"
-            {...register("pricePerNight", { valueAsNumber: true })}
-            className="admin-input"
-          />
-          {errors.pricePerNight && <p className="text-red-500 text-xs">{errors.pricePerNight.message}</p>}
-        </div>
-
-        {/* Max Guests */}
-        <div className="space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Max Guests</label>
-          <input
-            type="number"
-            {...register("maxGuests", { valueAsNumber: true })}
-            className="admin-input"
-          />
-          {errors.maxGuests && <p className="text-red-500 text-xs">{errors.maxGuests.message}</p>}
-        </div>
-
-        {/* Bedrooms */}
-        <div className="space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Bedrooms</label>
-          <input
-            type="number"
-            {...register("bedrooms", { valueAsNumber: true })}
-            className="admin-input"
-          />
-          {errors.bedrooms && <p className="text-red-500 text-xs">{errors.bedrooms.message}</p>}
-        </div>
-
-        {/* Bathrooms */}
-        <div className="space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Bathrooms</label>
-          <input
-            type="number"
-            {...register("bathrooms", { valueAsNumber: true })}
-            className="admin-input"
-          />
-          {errors.bathrooms && <p className="text-red-500 text-xs">{errors.bathrooms.message}</p>}
-        </div>
-
-        {/* Amenities */}
-        <div className="md:col-span-2 space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Amenities</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {amenities.map((amenity, index) => (
-              <span key={index} className="inline-flex items-center gap-1 rounded-full bg-[#e8ebe3] px-2.5 py-1 text-sm font-bold text-[#465143]">
-                {amenity}
-                <button type="button" onClick={() => removeAmenity(index)}>
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
+      <div className="admin-panel p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Room Name */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Room Name</label>
             <input
-              onKeyDown={addAmenity}
-              placeholder="Type and press Enter to add"
-              className="admin-input flex-1"
+              {...register("name", {
+                onChange: (e) => {
+                  if (!defaultValues && !slugTouched.current) {
+                    setValue("slug", autoSlug(e.target.value));
+                  }
+                },
+              })}
+              className="admin-input"
+              placeholder="e.g. River View Suite"
             />
-            <div className="p-2 text-[#6f7d6c]">
-              <Plus className="w-5 h-5" />
+            {errors.name && <p className="text-xs font-medium text-red-600">{errors.name.message}</p>}
+          </div>
+
+          {/* Slug */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Slug</label>
+            <input
+              {...register("slug", {
+                onChange: () => { slugTouched.current = true; },
+              })}
+              className="admin-input"
+              placeholder="e.g. river-view-suite"
+            />
+            {errors.slug && <p className="text-xs font-medium text-red-600">{errors.slug.message}</p>}
+          </div>
+
+          {/* Description */}
+          <div className="md:col-span-2 space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Description</label>
+            <textarea
+              {...register("description")}
+              rows={4}
+              className="admin-input"
+              placeholder="Describe the room, its features, and what makes it special..."
+            />
+            {errors.description && <p className="text-xs font-medium text-red-600">{errors.description.message}</p>}
+          </div>
+
+          {/* Price */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Price Per Night (USD)</label>
+            <input
+              type="number"
+              {...register("pricePerNight", { valueAsNumber: true })}
+              className="admin-input"
+            />
+            {errors.pricePerNight && <p className="text-xs font-medium text-red-600">{errors.pricePerNight.message}</p>}
+          </div>
+
+          {/* Max Guests */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Max Guests</label>
+            <input
+              type="number"
+              {...register("maxGuests", { valueAsNumber: true })}
+              className="admin-input"
+            />
+            {errors.maxGuests && <p className="text-xs font-medium text-red-600">{errors.maxGuests.message}</p>}
+          </div>
+
+          {/* Bedrooms */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Bedrooms</label>
+            <input
+              type="number"
+              {...register("bedrooms", { valueAsNumber: true })}
+              className="admin-input"
+            />
+            {errors.bedrooms && <p className="text-xs font-medium text-red-600">{errors.bedrooms.message}</p>}
+          </div>
+
+          {/* Bathrooms */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Bathrooms</label>
+            <input
+              type="number"
+              {...register("bathrooms", { valueAsNumber: true })}
+              className="admin-input"
+            />
+            {errors.bathrooms && <p className="text-xs font-medium text-red-600">{errors.bathrooms.message}</p>}
+          </div>
+
+          {/* Amenities */}
+          <div className="md:col-span-2 space-y-2">
+            <label className="text-sm font-medium text-gray-700">Amenities</label>
+            {amenities.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {amenities.map((amenity, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-500/20"
+                  >
+                    {amenity}
+                    <button type="button" onClick={() => removeAmenity(index)} className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <input
+                onKeyDown={handleAmenityKeyDown}
+                placeholder="Type and press Enter to add"
+                className="admin-input flex-1"
+              />
+              <button
+                type="button"
+                onClick={handleAmenityClick}
+                className="flex h-[38px] w-[38px] items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-700"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
             </div>
           </div>
-        </div>
 
-        {/* Images */}
-        <div className="md:col-span-2 space-y-1.5">
-          <label className="text-sm font-bold text-[#465143]">Images</label>
-          <ImageUploader value={images} onChange={(urls) => setValue("images", urls)} />
-        </div>
+          {/* Images */}
+          <div className="md:col-span-2 space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Images</label>
+            <ImageUploader value={images} onChange={(urls) => setValue("images", urls)} />
+          </div>
 
-        {/* Available */}
-        <div className="md:col-span-2 flex items-center gap-3 rounded-2xl border border-[#151512]/10 bg-[#fffdf7]/70 p-4">
-          <input
-            type="checkbox"
-            {...register("isAvailable")}
-            id="isAvailable"
-            className="h-5 w-5 accent-[#465143]"
-          />
-          <label htmlFor="isAvailable" className="cursor-pointer text-sm font-bold text-[#465143]">
-            Room is available for booking
-          </label>
+          {/* Available */}
+          <div className="md:col-span-2">
+            <label className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 cursor-pointer transition-colors hover:bg-gray-100">
+              <input
+                type="checkbox"
+                {...register("isAvailable")}
+                id="isAvailable"
+                className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500/20"
+              />
+              <span className="text-sm font-medium text-gray-700 cursor-pointer">
+                Room is available for booking
+              </span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="admin-primary-button w-full disabled:opacity-50"
-      >
-        {isSubmitting ? <> <Spinner size="sm" /> Saving...</> : "Save Room"}
-      </button>
+      <div className="flex gap-2.5">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="admin-primary-button flex-1 disabled:opacity-40"
+        >
+          {isSubmitting ? <><Spinner size="sm" /> Saving...</> : "Save Room"}
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { getBookingById, updateBookingStatus, Booking } from "@/lib/firestore/bookings";
 import { Spinner } from "@/components/ui/Spinner";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { WhatsAppButton } from "@/components/admin/WhatsAppButton";
-import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle } from "lucide-react";
+import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, ArrowLeft, DollarSign } from "lucide-react";
 
 export default function BookingDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [confirmAction, setConfirmAction] = useState<"confirmed" | "cancelled" | null>(null);
+  const customMsgRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -39,18 +42,21 @@ export default function BookingDetailPage() {
 
   const handleStatusChange = async (status: "confirmed" | "cancelled") => {
     if (!booking) return;
+    if (status === "cancelled" && !confirm("Cancel this booking? This will notify the guest.")) return;
+    setConfirmAction(status);
     try {
       await updateBookingStatus(booking.id, status);
       setBooking((prev) => (prev ? { ...prev, status } : null));
     } catch (error) {
       console.error("Failed to update status:", error);
+    } finally {
+      setConfirmAction(null);
     }
   };
 
   if (loading) {
     return (
       <div className="admin-loading">
-        <div>Loading booking</div>
         <Spinner size="lg" />
       </div>
     );
@@ -58,8 +64,11 @@ export default function BookingDetailPage() {
 
   if (!booking) {
     return (
-      <div className="text-center py-12">
-        <p className="text-slate-500">Booking not found.</p>
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-400">
+          <Calendar className="h-6 w-6" />
+        </div>
+        <p className="font-semibold text-gray-900">Booking not found</p>
       </div>
     );
   }
@@ -80,93 +89,131 @@ export default function BookingDetailPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 admin-fade-in">
+      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
+          <button
+            onClick={() => router.back()}
+            className="mb-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-gray-700"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
+          </button>
           <span className="admin-page-kicker">Guest request</span>
-          <h1 className="admin-page-title">Booking details</h1>
+          <h1 className="admin-page-title">Booking Details</h1>
           <p className="admin-page-subtitle">Review the stay, update status, and send a clear message to the guest.</p>
         </div>
         <BookingStatusBadge status={booking.status} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Guest */}
         <div className="admin-panel p-6">
-          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Guest information</h2>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <User className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="font-semibold text-[#151512]">{booking.guestName}</span>
+          <div className="mb-5 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+              <User className="w-4 h-4" />
             </div>
-            <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="text-[#6f746a]">{booking.guestEmail}</span>
+            <h2 className="text-base font-semibold text-gray-900">Guest information</h2>
+          </div>
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <User className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="font-medium text-sm text-gray-900">{booking.guestName}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="text-[#6f746a]">{booking.guestPhone}</span>
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <Mail className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="text-sm text-gray-600">{booking.guestEmail}</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <Phone className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="text-sm text-gray-600">{booking.guestPhone}</span>
             </div>
           </div>
         </div>
 
+        {/* Stay */}
         <div className="admin-panel p-6">
-          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Stay information</h2>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="text-[#6f746a]">
-                Check-in: {new Date(booking.checkIn).toLocaleDateString()}
-              </span>
+          <div className="mb-5 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+              <Calendar className="w-4 h-4" />
             </div>
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="text-[#6f746a]">
-                Check-out: {new Date(booking.checkOut).toLocaleDateString()}
-              </span>
+            <h2 className="text-base font-semibold text-gray-900">Stay information</h2>
+          </div>
+          <div className="space-y-2.5">
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="rounded-lg bg-gray-50 px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Check-in</p>
+                <p className="font-medium text-sm text-gray-900">{new Date(booking.checkIn).toLocaleDateString()}</p>
+              </div>
+              <div className="rounded-lg bg-gray-50 px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Check-out</p>
+                <p className="font-medium text-sm text-gray-900">{new Date(booking.checkOut).toLocaleDateString()}</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="text-[#6f746a]">Duration: {duration} nights</span>
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <Clock className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="text-sm text-gray-600">Duration: <strong className="text-gray-900">{duration} nights</strong></span>
             </div>
-            <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-[#6f7d6c]" />
-              <span className="text-[#6f746a]">{booking.guests} guests</span>
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <Users className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="text-sm text-gray-600">{booking.guests} guests</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <DollarSign className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className="text-sm text-gray-600">Total: <strong className="text-gray-900">${(booking.total || 0).toLocaleString()}</strong></span>
             </div>
             {booking.specialRequests && (
-              <div className="flex items-start gap-3 pt-2">
-                <MessageSquare className="w-5 h-5 text-[#6f7d6c] mt-0.5" />
+              <div className="flex items-start gap-3 rounded-lg bg-amber-50 px-4 py-3 border border-amber-200/50">
+                <MessageSquare className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-bold text-[#465143]">Special Requests:</p>
-                  <p className="text-[#6f746a]">{booking.specialRequests}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-0.5">Special Requests</p>
+                  <p className="text-sm text-gray-600">{booking.specialRequests}</p>
                 </div>
               </div>
             )}
           </div>
         </div>
 
+        {/* Status Management */}
         <div className="admin-panel lg:col-span-2 p-6">
-          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">Status management</h2>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+                <CheckCircle className="w-4 h-4" />
+              </div>
+              <h2 className="text-base font-semibold text-gray-900">Status management</h2>
+            </div>
+            <BookingStatusBadge status={booking.status} />
+          </div>
+          <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
             <button
               onClick={() => handleStatusChange("confirmed")}
-              disabled={booking.status === "confirmed"}
-              className="admin-primary-button disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={booking.status === "confirmed" || confirmAction !== null}
+              className="admin-primary-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px]"
             >
-              <CheckCircle className="w-4 h-4" /> Confirm Booking
+              {confirmAction === "confirmed" ? <Spinner size="sm" /> : <CheckCircle className="w-4 h-4" />}
+              {booking.status === "confirmed" ? "Already Confirmed" : "Confirm Booking"}
             </button>
             <button
               onClick={() => handleStatusChange("cancelled")}
-              disabled={booking.status === "cancelled"}
-              className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={booking.status === "cancelled" || confirmAction !== null}
+              className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px]"
             >
-              <XCircle className="w-4 h-4" /> Cancel Booking
+              {confirmAction === "cancelled" ? <Spinner size="sm" /> : <XCircle className="w-4 h-4" />}
+              {booking.status === "cancelled" ? "Already Cancelled" : "Cancel Booking"}
             </button>
           </div>
         </div>
 
+        {/* WhatsApp */}
         <div className="admin-panel lg:col-span-2 p-6">
-          <h2 className="mb-4 font-serif text-2xl font-medium tracking-[-0.04em] text-[#151512]">WhatsApp guest</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mb-5 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+              <MessageSquare className="w-4 h-4" />
+            </div>
+            <h2 className="text-base font-semibold text-gray-900">Contact guest</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {prebuiltMessages.map((msg) => (
               <WhatsAppButton
                 key={msg.label}
@@ -176,20 +223,22 @@ export default function BookingDetailPage() {
               />
             ))}
           </div>
-          <div className="mt-4">
-            <label className="mb-2 block text-sm font-bold text-[#465143]">Custom Message</label>
-            <textarea
-              placeholder="Type your custom message here..."
-              className="admin-input mb-3"
-              rows={3}
-              id="customMessage"
-            />
-            <WhatsAppButton
-              phone={booking.guestPhone}
-              message=""
-              label="Send Custom Message"
-              customMessageId="customMessage"
-            />
+          <div className="mt-5 border-t border-gray-100 pt-5">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2.5">Custom Message</h3>
+            <div className="flex flex-col sm:flex-row gap-2.5 items-start sm:items-end">
+              <textarea
+                ref={customMsgRef}
+                placeholder="Type your custom message here..."
+                className="admin-input flex-1 min-h-[70px]"
+                rows={2}
+              />
+              <WhatsAppButton
+                phone={booking.guestPhone}
+                message=""
+                label="Send Custom"
+                customMessageRef={customMsgRef}
+              />
+            </div>
           </div>
         </div>
       </div>

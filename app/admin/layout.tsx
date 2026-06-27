@@ -12,7 +12,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (isLoginPage) {
     return (
       <AuthProvider>
-        <div className="admin-app min-h-screen">
+        <div className="admin-app min-h-screen" style={{ background: "var(--ra-paper)" }}>
           {children}
         </div>
       </AuthProvider>
@@ -21,9 +21,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AuthProvider>
-      <div className="admin-app flex min-h-screen">
+      <div className="admin-app flex min-h-screen" style={{ background: "var(--ra-paper)" }}>
         <Sidebar currentPath={pathname} />
-        <main className="admin-main flex-1 ml-0 md:ml-[272px] min-h-screen overflow-auto">
+        <main className="admin-main flex-1 ml-0 md:ml-[260px] min-h-screen">
           <div className="admin-content">{children}</div>
         </main>
       </div>

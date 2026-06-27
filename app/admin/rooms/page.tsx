@@ -6,11 +6,16 @@ import { useRooms } from "@/hooks/useRooms";
 import { RoomCard } from "@/components/admin/RoomCard";
 import { deleteRoom } from "@/lib/firestore/rooms";
 import { Spinner } from "@/components/ui/Spinner";
-import { Plus } from "lucide-react";
+import { Plus, Search, SlidersHorizontal, BedDouble } from "lucide-react";
 
 export default function RoomsPage() {
   const { rooms, loading, error, refetch } = useRooms();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredRooms = rooms.filter((room) =>
+    room.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this room? This action cannot be undone.")) {
@@ -31,7 +36,6 @@ export default function RoomsPage() {
   if (loading) {
     return (
       <div className="admin-loading">
-        <div>Loading rooms</div>
         <Spinner size="lg" />
       </div>
     );
@@ -39,42 +43,66 @@ export default function RoomsPage() {
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-500">Failed to load rooms. Please try again.</p>
+      <div className="flex flex-col items-center justify-center py-20 text-center admin-fade-in">
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl" style={{ background: "var(--ra-rose-bg)", color: "var(--ra-rose)" }}>
+          <SlidersHorizontal className="h-6 w-6" />
+        </div>
+        <p className="mt-4 font-semibold" style={{ color: "var(--ra-ink)" }}>Failed to load rooms</p>
+        <p className="text-sm mt-1" style={{ color: "var(--ra-ink-muted)" }}>Please try again later.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 admin-fade-in">
+      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <span className="admin-page-kicker">Inventory</span>
           <h1 className="admin-page-title">Rooms</h1>
-          <p className="admin-page-subtitle">Shape room listings with polished images, guest capacity, rates, and availability.</p>
+          <p className="admin-page-subtitle">Manage room listings with images, capacity, rates, and availability.</p>
         </div>
-        <Link
-          href="/admin/rooms/new"
-          className="admin-primary-button"
-        >
-          <Plus className="w-4 h-4" /> Add Room
-        </Link>
-      </div>
-
-      {rooms.length === 0 ? (
-        <div className="admin-empty-state py-16 text-center">
-          <p className="mb-4 font-semibold text-[#6f746a]">No rooms found</p>
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/admin/rooms/new"
-            className="admin-secondary-button"
+            className="admin-primary-button shrink-0"
+          >
+            <Plus className="w-4 h-4" /> Add Room
+          </Link>
+        </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search rooms..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="admin-input pl-9"
+        />
+      </div>
+
+      {/* Room Cards */}
+      {rooms.length === 0 ? (
+        <div className="admin-empty-state py-16 text-center">
+          <div className="admin-empty-icon mb-4">
+            <BedDouble className="h-6 w-6" />
+          </div>
+          <p className="mb-1 font-medium" style={{ color: "var(--ra-ink-muted)" }}>No rooms found</p>
+          <p className="text-sm mb-5" style={{ color: "var(--ra-ink-faint)" }}>Create your first room to start accepting bookings.</p>
+          <Link
+            href="/admin/rooms/new"
+            className="admin-primary-button"
           >
             <Plus className="w-4 h-4" /> Create your first room
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {rooms.map((room) => (
-            <div key={room.id} className={deletingId === room.id ? "opacity-50" : ""}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {filteredRooms.map((room) => (
+            <div key={room.id} className={deletingId === room.id ? "opacity-50 pointer-events-none transition-opacity" : "transition-opacity"}>
               <RoomCard room={room} onDelete={handleDelete} />
             </div>
           ))}

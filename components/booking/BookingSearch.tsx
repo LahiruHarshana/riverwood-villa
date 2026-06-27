@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { type FormEvent, useEffect, useEffectEvent, useRef, useState } from "react";
 import { BedDouble, CalendarDays, Check, Minus, Plus, Search, Users, MessageCircle } from "lucide-react";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 type AvailableRoom = {
   id: string;
@@ -42,6 +43,7 @@ type BookingFormState = {
 
 const MIN_GUESTS = 1;
 const MAX_GUESTS = 10;
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94782902200";
 
 const initialBookingForm: BookingFormState = {
   guestName: "",
@@ -81,6 +83,16 @@ function createRoomHref(room: AvailableRoom, checkIn: string, checkOut: string, 
   params.set("room", room.slug);
 
   return `/rooms/${room.slug}?${params.toString()}`;
+}
+
+function createBookingWhatsAppMessage(
+  room: AvailableRoom,
+  checkIn: string,
+  checkOut: string,
+  guests: number,
+  bookingForm: BookingFormState
+) {
+  return `Hi, I just submitted a booking request.\n\n*Room:* ${room.name}\n*Dates:* ${checkIn} to ${checkOut}\n*Guests:* ${guests}\n\n*Name:* ${bookingForm.guestName}\n*Email:* ${bookingForm.guestEmail}\n*Phone:* ${bookingForm.guestPhone}\n*Payment Method:* ${bookingForm.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Pay at Hotel"}${bookingForm.specialRequests ? `\n*Special Requests:* ${bookingForm.specialRequests}` : ""}`;
 }
 
 type BookingSearchProps = {
@@ -454,9 +466,10 @@ export function BookingSearch({
                     </p>
                     {bookingStatus && !bookingError && selectedRoom && (
                       <a
-                        href={`https://wa.me/94782902200?text=${encodeURIComponent(
-                          `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${checkIn} to ${checkOut}\n*Guests:* ${guests}\n\n*Name:* ${bookingForm.guestName}\n*Email:* ${bookingForm.guestEmail}\n*Phone:* ${bookingForm.guestPhone}\n*Payment Method:* ${bookingForm.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Pay at Hotel'}${bookingForm.specialRequests ? `\n*Special Requests:* ${bookingForm.specialRequests}` : ''}`
-                        )}`}
+                        href={getWhatsAppUrl(
+                          WHATSAPP_NUMBER,
+                          createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, bookingForm)
+                        )}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -686,9 +699,10 @@ export function BookingSearch({
                   </p>
                   {bookingStatus && !bookingError && selectedRoom && (
                     <a
-                      href={`https://wa.me/94782902200?text=${encodeURIComponent(
-                        `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${checkIn} to ${checkOut}\n*Guests:* ${guests}\n\n*Name:* ${bookingForm.guestName}\n*Email:* ${bookingForm.guestEmail}\n*Phone:* ${bookingForm.guestPhone}\n*Payment Method:* ${bookingForm.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Pay at Hotel'}${bookingForm.specialRequests ? `\n*Special Requests:* ${bookingForm.specialRequests}` : ''}`
-                      )}`}
+                      href={getWhatsAppUrl(
+                        WHATSAPP_NUMBER,
+                        createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, bookingForm)
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{

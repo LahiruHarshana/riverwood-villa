@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BedDouble,
@@ -11,9 +10,11 @@ import {
   LogOut,
   Menu,
   X,
+  House,
+  ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { clearSessionCookie } from "@/lib/auth";
+import gsap from "gsap";
 
 interface SidebarProps {
   currentPath: string;
@@ -26,111 +27,174 @@ const navItems = [
 ];
 
 export function Sidebar({ currentPath }: SidebarProps) {
-  const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const navRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  const handleSignOut = async () => {
-    await clearSessionCookie();
-    await logout();
-    router.push("/admin/login");
-  };
+  const handleSignOut = async () => await logout();
 
   const isActive = (path: string) => {
-    if (path === "/admin") {
-      return currentPath === "/admin";
-    }
+    if (path === "/admin") return currentPath === "/admin";
     return currentPath.startsWith(path);
   };
 
+  useEffect(() => {
+    navRefs.current.forEach((el, i) => {
+      if (el) {
+        gsap.fromTo(
+          el,
+          { opacity: 0, x: -16 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.4,
+            delay: 0.1 + i * 0.08,
+            ease: "power3.out",
+          }
+        );
+      }
+    });
+  }, []);
+
+  const userEmail = user?.email || "";
+  const userInitial = userEmail ? userEmail.charAt(0).toUpperCase() : "A";
+
   return (
     <>
-      {/* Mobile hamburger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2.5 bg-[#151512] text-[#fffdf7] rounded-full shadow-lg"
-        aria-label={isOpen ? "Close admin menu" : "Open admin menu"}
+        className="admin-mobile-menu fixed top-4 left-4 z-50 md:hidden flex h-10 w-10 items-center justify-center"
+        aria-label={isOpen ? "Close menu" : "Open menu"}
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-[#151512]/50 z-30 md:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/30 z-30 md:hidden backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Sidebar itself */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-[272px] bg-[#151512] text-[#d8d6cc] z-40
-          transform transition-transform duration-300 ease-in-out
+          fixed top-0 left-0 h-full w-[260px] z-40
+          admin-sidebar
+          transform transition-transform duration-300 ease-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
       >
-        <div className="flex h-full flex-col p-5">
-          <div className="mb-8 rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 font-serif text-xl text-[#fffdf7]">
-              R
+        <div className="flex h-full flex-col px-4 py-6">
+          {/* Brand */}
+          <Link
+            href="/admin"
+            onClick={() => setIsOpen(false)}
+            className="mb-6 px-2 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="admin-brand-mark flex h-9 w-9 shrink-0 items-center justify-center text-white font-semibold text-sm">
+                R
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-sm font-semibold text-gray-900 tracking-tight truncate">
+                  Riverwood
+                </h2>
+                <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-gray-400 mt-0.5 truncate">
+                  Admin Panel
+                </p>
+              </div>
             </div>
-            <p className="text-[0.68rem] font-bold uppercase tracking-[0.24em] text-[#9ca592]">
-              Private Villa
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-medium leading-none tracking-[-0.04em] text-[#fffdf7]">
-              Riverwood<br />Admin
-            </h2>
-          </div>
+          </Link>
 
-          <nav className="flex flex-1 flex-col gap-1">
-            {navItems.map((item) => {
+          {/* Navigation */}
+          <nav className="flex flex-1 flex-col gap-0.5">
+            {navItems.map((item, i) => {
               const active = isActive(item.path);
               const Icon = item.icon;
 
               return (
                 <Link
                   key={item.path}
+                  ref={(el) => { navRefs.current[i] = el; }}
                   href={item.path}
                   onClick={() => setIsOpen(false)}
                   className={`
-                    flex items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold transition-colors
+                    relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150
                     ${active
-                      ? "bg-[#f6f5f1] text-[#151512] shadow-sm"
-                      : "text-[#d8d6cc] hover:bg-white/10 hover:text-white"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }
                   `}
                 >
-                  <Icon className="w-5 h-5" />
-                  {item.label}
+                  {active && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-emerald-500" />
+                  )}
+                  <span className={`
+                    flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-all duration-150
+                    ${active
+                      ? "bg-emerald-100 text-emerald-700 shadow-sm"
+                      : "text-gray-400 group-hover:text-gray-600"
+                    }
+                  `}>
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <span className="truncate">{item.label}</span>
+                  {active && (
+                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-emerald-400" />
+                  )}
                 </Link>
               );
             })}
 
-            <div className="my-4 border-t border-white/10" />
+            <div className="my-3 border-t border-gray-100" />
 
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold text-[#d8d6cc] transition-colors hover:bg-white/10 hover:text-white"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-all duration-150 hover:bg-gray-50 hover:text-gray-900"
             >
-              <ExternalLink className="w-5 h-5" />
-              View Site
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400">
+                <House className="w-4 h-4" />
+              </span>
+              <span>View Site</span>
+              <ExternalLink className="w-3 h-3 ml-auto text-gray-300" />
             </a>
+
+            {/* User profile */}
+            <div className="mt-auto mb-3">
+              <div className="admin-sidebar-user">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-100 text-emerald-700 font-semibold text-xs">
+                  {userInitial}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-gray-900 truncate">
+                    {userEmail || "Admin User"}
+                  </p>
+                  <p className="text-[0.6rem] font-medium uppercase tracking-wider text-gray-400 truncate">
+                    Administrator
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <button
               onClick={handleSignOut}
-              className="mt-auto flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold text-[#d8d6cc] transition-colors hover:bg-white/10 hover:text-white"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-400 transition-all duration-150 hover:bg-red-50 hover:text-red-600"
             >
-              <LogOut className="w-5 h-5" />
-              Sign Out
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors">
+                <LogOut className="w-4 h-4" />
+              </span>
+              <span>Sign Out</span>
             </button>
           </nav>
 
-          <p className="mt-5 border-t border-white/10 pt-5 text-xs leading-5 text-[#8f9388]">
-            Calm property operations for bookings, rooms, and guest communication.
-          </p>
+          {/* Footer */}
+          <div className="mt-4 pt-4 border-t border-gray-100 px-2">
+            <p className="text-[0.65rem] font-medium leading-5 text-gray-300 tracking-wide uppercase">
+              Riverwood Villa · Private Villa
+            </p>
+          </div>
         </div>
       </aside>
     </>

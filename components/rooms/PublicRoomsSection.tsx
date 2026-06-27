@@ -118,7 +118,7 @@ export function PublicRoomsSection() {
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: header, start: "top 82%", once: true },
+            scrollTrigger: { trigger: header, start: "top 82%", toggleActions: "play none none reverse" },
           }
         );
       }
@@ -135,7 +135,7 @@ export function PublicRoomsSection() {
             duration: 0.8,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: ".rooms-grid", start: "top 78%", once: true },
+            scrollTrigger: { trigger: ".rooms-grid", start: "top 78%", toggleActions: "play none none reverse" },
             onComplete: () => {
               gsap.set(cards, { clearProps: "transform,transition" });
             },

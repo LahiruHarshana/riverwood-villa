@@ -66,11 +66,11 @@ export function BookingForm({ rooms }: BookingFormProps) {
     }
   };
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94782902200";
   const waLink =
     whatsappNumber && bookingData && selectedRoom
       ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-          `Hi, I just submitted a booking request for ${selectedRoom.name} from ${bookingData.checkIn} to ${bookingData.checkOut}. My name is ${bookingData.guestName}.`
+          `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${bookingData.checkIn} to ${bookingData.checkOut}\n*Guests:* ${bookingData.guests}\n\n*Name:* ${bookingData.guestName}\n*Email:* ${bookingData.guestEmail}\n*Phone:* ${bookingData.guestPhone}\n*Payment Method:* ${bookingData.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Pay at Hotel'}${bookingData.specialRequests ? `\n*Special Requests:* ${bookingData.specialRequests}` : ''}`
         )}`
       : null;
 

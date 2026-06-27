@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { type FormEvent, useEffect, useEffectEvent, useRef, useState } from "react";
-import { BedDouble, CalendarDays, Check, Minus, Plus, Search, Users } from "lucide-react";
+import { BedDouble, CalendarDays, Check, Minus, Plus, Search, Users, MessageCircle } from "lucide-react";
 
 type AvailableRoom = {
   id: string;
@@ -448,9 +448,35 @@ export function BookingSearch({
                 </div>
 
                 {(bookingError || bookingStatus) && (
-                  <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
-                    {bookingError || bookingStatus}
-                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
+                    <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
+                      {bookingError || bookingStatus}
+                    </p>
+                    {bookingStatus && !bookingError && selectedRoom && (
+                      <a
+                        href={`https://wa.me/94782902200?text=${encodeURIComponent(
+                          `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${checkIn} to ${checkOut}\n*Guests:* ${guests}\n\n*Name:* ${bookingForm.guestName}\n*Email:* ${bookingForm.guestEmail}\n*Phone:* ${bookingForm.guestPhone}\n*Payment Method:* ${bookingForm.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Pay at Hotel'}${bookingForm.specialRequests ? `\n*Special Requests:* ${bookingForm.specialRequests}` : ''}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.5rem",
+                          background: "#25D366",
+                          color: "#fff",
+                          padding: "0.6rem 1rem",
+                          borderRadius: "0.4rem",
+                          fontWeight: 500,
+                          textDecoration: "none",
+                          fontSize: "0.9rem"
+                        }}
+                      >
+                        <MessageCircle size={18} /> Open WhatsApp to Confirm
+                      </a>
+                    )}
+                  </div>
                 )}
 
                 {isRequestFormOpen && (
@@ -654,9 +680,35 @@ export function BookingSearch({
               />
 
               {(bookingError || bookingStatus) && (
-                <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
-                  {bookingError || bookingStatus}
-                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
+                  <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
+                    {bookingError || bookingStatus}
+                  </p>
+                  {bookingStatus && !bookingError && selectedRoom && (
+                    <a
+                      href={`https://wa.me/94782902200?text=${encodeURIComponent(
+                        `Hi, I just submitted a booking request.\n\n*Room:* ${selectedRoom.name}\n*Dates:* ${checkIn} to ${checkOut}\n*Guests:* ${guests}\n\n*Name:* ${bookingForm.guestName}\n*Email:* ${bookingForm.guestEmail}\n*Phone:* ${bookingForm.guestPhone}\n*Payment Method:* ${bookingForm.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Pay at Hotel'}${bookingForm.specialRequests ? `\n*Special Requests:* ${bookingForm.specialRequests}` : ''}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "0.5rem",
+                        background: "#25D366",
+                        color: "#fff",
+                        padding: "0.6rem 1rem",
+                        borderRadius: "0.4rem",
+                        fontWeight: 500,
+                        textDecoration: "none",
+                        fontSize: "0.9rem"
+                      }}
+                    >
+                      <MessageCircle size={18} /> Open WhatsApp to Confirm
+                    </a>
+                  )}
+                </div>
               )}
 
               <button className="ms-request-submit" type="submit" disabled={isBooking}>

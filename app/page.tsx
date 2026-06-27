@@ -926,7 +926,7 @@ export default function Home() {
                 scaleX: 1,
                 duration: 1.2,
                 ease: "expo.out",
-                scrollTrigger: { trigger: line, start: "top 90%", once: true },
+                scrollTrigger: { trigger: line, start: "top 90%", toggleActions: "play none none reverse" },
               },
             );
           });
@@ -956,7 +956,7 @@ export default function Home() {
             scrollTrigger: {
               trigger: ".prologue-section",
               start: "top 72%",
-              once: true,
+              toggleActions: "play none none reverse",
             },
           });
 
@@ -987,7 +987,7 @@ export default function Home() {
             clipPath: "inset(0 0% 0 0)",
             duration: 1.5,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".prologue-visuals", start: "top 82%", once: true },
+            scrollTrigger: { trigger: ".prologue-visuals", start: "top 82%", toggleActions: "play none none reverse" },
           });
 
           gsap.fromTo(".prologue-float-image", {
@@ -998,7 +998,7 @@ export default function Home() {
             y: 0,
             duration: 1.35,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".prologue-visuals", start: "top 72%", once: true },
+            scrollTrigger: { trigger: ".prologue-visuals", start: "top 72%", toggleActions: "play none none reverse" },
           });
 
           gsap.to(".prologue-marquee-track", {
@@ -1095,12 +1095,12 @@ export default function Home() {
                   trigger: panel,
                   containerAnimation,
                   start: "left 82%",
-                  once: true,
+                  toggleActions: "play none none reverse",
                 }
               : {
                   trigger: panel,
                   start: "top 84%",
-                  once: true,
+                  toggleActions: "play none none reverse",
                 };
 
             if (image) {
@@ -1199,7 +1199,7 @@ export default function Home() {
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: ".river-header", start: "top 78%", once: true },
+            scrollTrigger: { trigger: ".river-header", start: "top 78%", toggleActions: "play none none reverse" },
           });
 
           gsap.utils.toArray<HTMLElement>(".river-moment").forEach((moment) => {
@@ -1209,7 +1209,7 @@ export default function Home() {
               duration: 0.8,
               ease: "power3.out",
               stagger: 0.08,
-              scrollTrigger: { trigger: moment, start: "top 80%", once: true },
+              scrollTrigger: { trigger: moment, start: "top 80%", toggleActions: "play none none reverse" },
             });
           });
 
@@ -1235,7 +1235,7 @@ export default function Home() {
             clipPath: "inset(0 0% 0 0%)",
             duration: 1.35,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".dining-image-window", start: "top 80%", once: true },
+            scrollTrigger: { trigger: ".dining-image-window", start: "top 80%", toggleActions: "play none none reverse" },
           });
 
           gsap.from(".dining-detail", {
@@ -1244,7 +1244,52 @@ export default function Home() {
             duration: 0.85,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: ".dining-details", start: "top 82%", once: true },
+            scrollTrigger: { trigger: ".dining-details", start: "top 82%", toggleActions: "play none none reverse" },
+          });
+
+          // ─── Starlink section ──────────────────────────────────────────
+          gsap.from(".starlink-header > *", {
+            y: 44,
+            autoAlpha: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            stagger: 0.1,
+            scrollTrigger: { trigger: ".starlink-section", start: "top 78%", toggleActions: "play none none reverse" },
+          });
+
+          gsap.fromTo(".starlink-image-frame", {
+            clipPath: "inset(0 100% 0 0)",
+          }, {
+            clipPath: "inset(0 0% 0 0)",
+            duration: 1.35,
+            ease: "expo.inOut",
+            scrollTrigger: { trigger: ".starlink-visual-column", start: "top 80%", toggleActions: "play none none reverse" },
+          });
+
+          gsap.from(".starlink-spec", {
+            y: 40,
+            autoAlpha: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.1,
+            scrollTrigger: { trigger: ".starlink-specs", start: "top 82%", toggleActions: "play none none reverse" },
+          });
+
+          gsap.from(".starlink-speed-badge", {
+            y: 30,
+            autoAlpha: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: { trigger: ".starlink-visual-column", start: "top 75%", toggleActions: "play none none reverse" },
+          });
+
+          gsap.from(".starlink-signal-dots > span", {
+            scale: 0,
+            autoAlpha: 0,
+            duration: 0.5,
+            ease: "back.out(1.7)",
+            stagger: 0.15,
+            scrollTrigger: { trigger: ".starlink-visual-column", start: "top 78%", toggleActions: "play none none reverse" },
           });
 
           // ─── Full gallery: scroll-scrubbed image motion ───────────────
@@ -1254,7 +1299,7 @@ export default function Home() {
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.09,
-            scrollTrigger: { trigger: ".full-gallery-heading", start: "top 82%", once: true },
+            scrollTrigger: { trigger: ".full-gallery-heading", start: "top 82%", toggleActions: "play none none reverse" },
           });
 
           gsap.fromTo(".full-gallery-feature", {
@@ -1263,7 +1308,7 @@ export default function Home() {
             clipPath: "inset(0 0% 0 0)",
             duration: 1.25,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".full-gallery-feature", start: "top 82%", once: true },
+            scrollTrigger: { trigger: ".full-gallery-feature", start: "top 82%", toggleActions: "play none none reverse" },
           });
 
           gsap.utils.toArray<HTMLElement>(".full-gallery-card").forEach((card) => {
@@ -1279,7 +1324,7 @@ export default function Home() {
               clipPath: "inset(0% 0 0 0)",
               duration: 1,
               ease: "power3.out",
-              scrollTrigger: { trigger: card, start: "top 86%", once: true },
+              scrollTrigger: { trigger: card, start: "top 86%", toggleActions: "play none none reverse" },
             });
 
             if (image) {
@@ -1325,7 +1370,7 @@ export default function Home() {
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: ".journal-header", start: "top 82%", once: true },
+            scrollTrigger: { trigger: ".journal-header", start: "top 82%", toggleActions: "play none none reverse" },
           });
 
           // ─── Manifesto and booking finale ─────────────────────────────
@@ -1334,7 +1379,7 @@ export default function Home() {
             duration: 1,
             ease: "power4.out",
             stagger: 0.08,
-            scrollTrigger: { trigger: ".manifesto-section", start: "top 72%", once: true },
+            scrollTrigger: { trigger: ".manifesto-section", start: "top 72%", toggleActions: "play none none reverse" },
           });
 
           gsap.from(".booking-copy > *", {
@@ -1343,7 +1388,7 @@ export default function Home() {
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.1,
-            scrollTrigger: { trigger: ".booking-section-v2", start: "top 76%", once: true },
+            scrollTrigger: { trigger: ".booking-section-v2", start: "top 76%", toggleActions: "play none none reverse" },
           });
 
           gsap.fromTo(".booking-visual", {
@@ -1352,7 +1397,7 @@ export default function Home() {
             clipPath: "inset(0% 0 0 0)",
             duration: 1.4,
             ease: "expo.inOut",
-            scrollTrigger: { trigger: ".booking-section-v2", start: "top 74%", once: true },
+            scrollTrigger: { trigger: ".booking-section-v2", start: "top 74%", toggleActions: "play none none reverse" },
           });
 
           gsap.from(".footer-v3 > *", {
@@ -1361,7 +1406,7 @@ export default function Home() {
             duration: 0.9,
             ease: "power3.out",
             stagger: 0.12,
-            scrollTrigger: { trigger: ".footer-v3", start: "top 86%", once: true },
+            scrollTrigger: { trigger: ".footer-v3", start: "top 86%", toggleActions: "play none none reverse" },
           });
         });
 
@@ -1686,6 +1731,89 @@ export default function Home() {
       </section>
 
       <PublicRoomsSection />
+
+      <section
+        id="starlink"
+        className="starlink-section rv-cinematic"
+        data-theme="dark"
+        data-bg="#000000"
+        data-chapter="04b"
+        aria-labelledby="starlink-title"
+      >
+        <div className="starlink-grid">
+          <div className="starlink-visual-column">
+            <figure className="starlink-main-visual" data-parallax data-cursor="view">
+              <div className="starlink-image-frame">
+                <FillImage
+                  src="/villa/villa-starlink.webp"
+                  alt="Starlink speed test showing fast internet connection at Riverwood Villa"
+                  sizes="(max-width: 980px) 100vw, 50vw"
+                />
+              </div>
+              <div className="starlink-frame-decoration" aria-hidden="true" />
+              <div className="starlink-signal-dots" aria-hidden="true">
+                <span /><span /><span />
+              </div>
+              <div className="starlink-speed-badge">
+                <span className="starlink-speed-value">200<span>+</span></span>
+                <span className="starlink-speed-label">Mbps</span>
+              </div>
+            </figure>
+            <div className="starlink-coordinates">
+              <span>Satellite / Connection / Speed</span>
+              <span>Low-latency</span>
+            </div>
+          </div>
+
+          <div className="starlink-copy-column">
+            <header className="starlink-header">
+              <span className="section-index">04b / Connected</span>
+              <h2 id="starlink-title">
+                Stay connected.<br />
+                <em>Even off-grid.</em>
+              </h2>
+            </header>
+
+            <div className="starlink-intro">
+              <p>
+                Riverwood is equipped with Starlink satellite internet, so you can work,
+                stream, and stay in touch without sacrificing the tranquility of riverside living.
+              </p>
+            </div>
+
+            <div className="starlink-specs">
+              <article className="starlink-spec">
+                <span className="spec-number">01</span>
+                <div className="spec-content">
+                  <h3>High Speed</h3>
+                  <p>Fast satellite connection for video calls and streaming</p>
+                </div>
+              </article>
+              <article className="starlink-spec">
+                <span className="spec-number">02</span>
+                <div className="spec-content">
+                  <h3>Global Coverage</h3>
+                  <p>Satellite technology works wherever you are</p>
+                </div>
+              </article>
+              <article className="starlink-spec">
+                <span className="spec-number">03</span>
+                <div className="spec-content">
+                  <h3>Multiple Devices</h3>
+                  <p>Connect all your devices simultaneously</p>
+                </div>
+              </article>
+            </div>
+
+            <div className="starlink-note">
+              <span>Work from anywhere</span>
+              <a className="starlink-cta" href="#book" data-magnetic>
+                Book your stay <ArrowDownRight size={14} strokeWidth={1.9} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section
         id="river"

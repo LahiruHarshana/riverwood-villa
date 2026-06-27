@@ -4720,6 +4720,329 @@ html.lenis body {
   line-height: 1.5;
 }
 
+/* ─── 04b / Starlink Section ──────────────────────────────────────── */
+.starlink-section {
+  position: relative;
+  padding: clamp(7rem, 12vw, 14rem) var(--gutter);
+  overflow: hidden;
+  background: #000000;
+}
+
+.starlink-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 60rem;
+  height: 60rem;
+  transform: translate(-50%, -40%);
+  background: radial-gradient(ellipse at center, rgba(0, 120, 255, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.starlink-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 5fr);
+  gap: clamp(4rem, 10vw, 12rem);
+  align-items: center;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.starlink-visual-column {
+  position: sticky;
+  top: calc(var(--nav-height) + 2rem);
+}
+
+.starlink-main-visual {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+}
+
+.starlink-image-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #0a0a0a;
+  border-radius: 4px;
+}
+
+.starlink-image-frame img {
+  transition: filter 0.6s ease;
+}
+
+.starlink-image-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.06), transparent 50%, rgba(0, 200, 255, 0.03));
+  pointer-events: none;
+}
+
+.starlink-frame-decoration {
+  position: absolute;
+  top: -1rem;
+  left: -1rem;
+  right: -1rem;
+  bottom: -1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.starlink-frame-decoration::before {
+  content: "";
+  position: absolute;
+  top: -0.5rem;
+  left: -0.5rem;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  border: 1px solid rgba(0, 150, 255, 0.06);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.starlink-speed-badge {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.starlink-speed-value {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.starlink-speed-value span {
+  font-size: 0.5em;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
+  vertical-align: super;
+}
+
+.starlink-speed-label {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.starlink-signal-dots {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 2;
+}
+
+.starlink-signal-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 180, 255, 0.5);
+}
+
+.starlink-signal-dots span:nth-child(1) {
+  background: rgba(0, 180, 255, 0.3);
+}
+
+.starlink-signal-dots span:nth-child(2) {
+  background: rgba(0, 180, 255, 0.6);
+}
+
+.starlink-signal-dots span:nth-child(3) {
+  background: rgba(0, 180, 255, 0.9);
+  box-shadow: 0 0 8px rgba(0, 180, 255, 0.3);
+}
+
+.starlink-coordinates {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.starlink-copy-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 6rem);
+}
+
+.starlink-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.starlink-header h2 {
+  max-width: 14ch;
+  font-size: clamp(4rem, 8vw, 9rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.82;
+  color: #ffffff;
+}
+
+.starlink-header h2 em {
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.starlink-intro {
+  max-width: 42ch;
+}
+
+.starlink-intro p {
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.starlink-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.starlink-spec {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  column-gap: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color 0.3s ease;
+}
+
+.starlink-spec:hover {
+  border-top-color: rgba(0, 150, 255, 0.15);
+}
+
+.starlink-spec:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.starlink-spec:last-child:hover {
+  border-bottom-color: rgba(0, 150, 255, 0.15);
+}
+
+.starlink-spec .spec-number {
+  padding-top: clamp(1.5rem, 2.5vw, 2rem);
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.3s ease;
+}
+
+.starlink-spec:hover .spec-number {
+  color: rgba(0, 180, 255, 0.5);
+}
+
+.starlink-spec .spec-content h3 {
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.starlink-spec .spec-content p {
+  margin-top: 0.75rem;
+  max-width: 28ch;
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.6;
+}
+
+.starlink-note {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.starlink-note span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.starlink-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.starlink-cta:hover {
+  background: rgba(0, 150, 255, 0.12);
+  border-color: rgba(0, 150, 255, 0.2);
+}
+
+@media (max-width: 980px) {
+  .starlink-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(3rem, 8vw, 6rem);
+  }
+
+  .starlink-visual-column {
+    position: static;
+  }
+
+  .starlink-header h2 {
+    max-width: none;
+  }
+
+  .starlink-spec {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .starlink-spec .spec-number {
+    padding-top: 0;
+  }
+
+  .starlink-speed-badge {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
 /* ─── 06 / Visual journal ────────────────────────────────────────── */
 .journal-section-v2 {
   padding: clamp(7rem, 11vw, 12rem) 0;
@@ -7457,9 +7780,27 @@ html.lenis body {
 }
 
 .ms-hero .ms-room-list {
-  max-height: 12rem;
+  max-height: 12.8rem;
   overflow-y: auto;
-  padding-right: 0.1rem;
+  padding-right: 0.4rem;
+}
+
+.ms-hero .ms-room-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.ms-hero .ms-room-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.ms-hero .ms-room-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.ms-hero .ms-room-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .ms-hero .ms-room-option {

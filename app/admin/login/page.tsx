@@ -38,9 +38,16 @@ export default function AdminLoginPage() {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      const idToken = await userCredential.user.getIdToken();
-      await setSessionCookie(idToken);
-      router.push("/admin");
+      
+      try {
+        const idToken = await userCredential.user.getIdToken();
+        await setSessionCookie(idToken);
+        router.push("/admin");
+      } catch (sessionError) {
+        console.error("Session creation error:", sessionError);
+        setError("Login succeeded, but failed to create a secure session. Please check server logs or configuration.");
+        setIsSubmitting(false);
+      }
     } catch {
       setError("Invalid email or password");
       setIsSubmitting(false);

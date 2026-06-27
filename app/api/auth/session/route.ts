@@ -1,25 +1,13 @@
 import { NextResponse } from "next/server";
 import { getAuth } from "firebase-admin/auth";
 import { cookies } from "next/headers";
-import { initializeApp, getApps, cert } from "firebase-admin/app";
-
-// Ensure admin app is initialized
-if (getApps().length === 0) {
-  const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!serviceAccountEnv) {
-    throw new Error("FIREBASE_SERVICE_ACCOUNT is not defined");
-  }
-
-  const decoded = Buffer.from(serviceAccountEnv, "base64").toString("utf-8");
-  const serviceAccount = JSON.parse(decoded);
-
-  initializeApp({
-    credential: cert(serviceAccount),
-  });
-}
+import { initAdminApp } from "@/lib/firebase-admin";
 
 export async function POST(request: Request) {
   try {
+    // Initialize admin app lazily to catch configuration errors during request handling
+    initAdminApp();
+
     const { idToken } = await request.json();
 
     if (!idToken) {
@@ -43,8 +31,12 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ status: "ok" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Session error:", error);
-    return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
+    // Return the actual error message so it's easier to debug misconfigurations
+    return NextResponse.json(
+      { error: error?.message || "Failed to create session" },
+      { status: 500 }
+    );
   }
 }

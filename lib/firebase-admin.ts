@@ -3,7 +3,11 @@ import { getFirestore } from "firebase-admin/firestore";
 
 const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
 
-function initialize(): App {
+export function initAdminApp(): App {
+  if (getApps().length > 0) {
+    return getApps()[0];
+  }
+
   if (!serviceAccountEnv) {
     throw new Error("FIREBASE_SERVICE_ACCOUNT is not defined in environment variables.");
   }
@@ -21,6 +25,7 @@ function initialize(): App {
   });
 }
 
-const app = getApps().length === 0 ? initialize() : getApps()[0];
-
-export const adminDb = getFirestore(app);
+export function getAdminDb() {
+  const app = initAdminApp();
+  return getFirestore(app);
+}

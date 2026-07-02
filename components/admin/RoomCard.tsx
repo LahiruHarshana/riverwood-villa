@@ -14,9 +14,9 @@ export function RoomCard({ room, onDelete }: RoomCardProps) {
   const firstImage = room.images && room.images.length > 0 ? room.images[0] : null;
 
   return (
-    <div className="admin-card group">
+    <div className="admin-card admin-room-card group">
       {/* Image */}
-      <div className="relative h-52 bg-gray-100 overflow-hidden">
+      <div className="admin-room-card-media relative h-48 overflow-hidden bg-gray-100 sm:h-52">
         {firstImage ? (
           <Image
             src={firstImage}
@@ -45,19 +45,19 @@ export function RoomCard({ room, onDelete }: RoomCardProps) {
         </div>
       </div>
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {/* Header */}
-        <div className="flex justify-between items-start mb-3 gap-3">
-          <h3 className="text-base font-semibold text-gray-900 leading-tight">
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+          <h3 className="text-base font-semibold leading-tight text-gray-900">
             {room.name}
           </h3>
-          <span className="shrink-0 rounded-md bg-gray-50 px-2.5 py-1 text-sm font-bold text-gray-900 ring-1 ring-gray-200">
+          <span className="w-fit shrink-0 rounded-md bg-gray-50 px-2.5 py-1 text-sm font-bold text-gray-900 ring-1 ring-gray-200">
             ${room.pricePerNight}<span className="text-gray-400 font-normal text-xs">/night</span>
           </span>
         </div>
 
         {/* Meta */}
-        <div className="mb-4 flex items-center gap-2 text-xs font-medium text-gray-500">
+        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium text-gray-500">
           <span className="flex items-center gap-1.5 rounded-md bg-gray-50 px-2 py-1 ring-1 ring-gray-100">
             <BedDouble className="w-3.5 h-3.5 text-gray-400" /> {room.bedrooms}
           </span>
@@ -70,7 +70,7 @@ export function RoomCard({ room, onDelete }: RoomCardProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2.5 pt-3 border-t border-gray-100">
+        <div className="flex gap-2.5 border-t border-gray-100 pt-3">
           <Link
             href={`/admin/rooms/${room.id}/edit`}
             className="admin-secondary-button flex-1 text-sm"

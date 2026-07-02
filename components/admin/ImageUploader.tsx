@@ -17,7 +17,7 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
   return (
     <div className="space-y-3">
       <CldUploadWidget
-        uploadPreset="riverwood_rooms"
+        uploadPreset="unsigned_preset"
         onSuccess={(result) => {
           if (typeof result.info === "object" && result.info !== null) {
             const info = result.info as { secure_url?: string };
@@ -54,7 +54,7 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
               <button
                 type="button"
                 onClick={() => removeImage(index)}
-                className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-md bg-black/60 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-red-600"
+                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-md bg-black/60 text-white opacity-100 transition-all duration-200 hover:bg-red-600 sm:h-6 sm:w-6 sm:opacity-0 sm:group-hover:opacity-100"
               >
                 <X className="w-3 h-3" />
               </button>

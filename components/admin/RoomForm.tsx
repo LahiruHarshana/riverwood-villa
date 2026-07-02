@@ -188,7 +188,7 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
                 ))}
               </div>
             )}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <input
                 onKeyDown={handleAmenityKeyDown}
                 placeholder="Type and press Enter to add"
@@ -197,7 +197,7 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
               <button
                 type="button"
                 onClick={handleAmenityClick}
-                className="flex h-[38px] w-[38px] items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-700"
+                className="flex h-[42px] w-full items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-700 sm:h-[38px] sm:w-[38px]"
               >
                 <Plus className="w-4 h-4" />
               </button>

@@ -54,13 +54,13 @@ export default function BookingsPage() {
   return (
     <div className="space-y-6 admin-fade-in">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="admin-page-header flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <span className="admin-page-kicker">Reservations</span>
           <h1 className="admin-page-title">Bookings</h1>
           <p className="admin-page-subtitle">Filter enquiries, confirm guests, and keep every stay moving smoothly.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="admin-page-toolbar flex flex-wrap items-center gap-2.5">
           {/* Search */}
           <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -74,7 +74,7 @@ export default function BookingsPage() {
           </div>
 
           {/* Status filter */}
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             <select
               value={statusFilter}
@@ -100,7 +100,7 @@ export default function BookingsPage() {
           <p className="text-sm mt-1" style={{ color: "var(--ra-ink-faint)" }}>Bookings will appear here once guests start reserving.</p>
         </div>
       ) : (
-        <div className="admin-card overflow-hidden p-6">
+        <div className="admin-card overflow-hidden p-3 sm:p-5 lg:p-6">
           <BookingTable data={filteredBookings} onDelete={handleDelete} />
         </div>
       )}

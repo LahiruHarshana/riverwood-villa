@@ -71,13 +71,13 @@ export default function RoomsPage() {
   return (
     <div className="space-y-6 admin-fade-in">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="admin-page-header flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <span className="admin-page-kicker">Inventory</span>
           <h1 className="admin-page-title">Rooms</h1>
           <p className="admin-page-subtitle">Manage room listings with images, capacity, rates, and availability.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="admin-page-toolbar flex flex-wrap items-center gap-2.5">
           <Link
             href="/admin/rooms/new"
             className="admin-primary-button shrink-0"
@@ -88,7 +88,7 @@ export default function RoomsPage() {
       </div>
 
       {/* Search bar */}
-      <div className="relative max-w-sm">
+      <div className="relative max-w-sm admin-search-wrap">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
@@ -115,7 +115,7 @@ export default function RoomsPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="admin-room-grid grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
           {filteredRooms.map((room) => (
             <div key={room.id} className={deletingId === room.id ? "opacity-50 pointer-events-none transition-opacity" : "transition-opacity"}>
               <RoomCard room={room} onDelete={handleDelete} />

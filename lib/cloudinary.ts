@@ -8,5 +8,5 @@ const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
 export const CLOUDINARY_CONFIG = {
   cloudName,
-  uploadPreset: "riverwood_rooms",
+  uploadPreset: "unsigned_preset",
 };

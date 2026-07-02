@@ -63,11 +63,25 @@ export function Sidebar({ currentPath }: SidebarProps) {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="admin-mobile-menu fixed top-4 left-4 z-50 md:hidden flex h-10 w-10 items-center justify-center"
+        className="admin-mobile-menu fixed top-4 right-4 z-50 md:hidden flex h-11 w-11 items-center justify-center"
         aria-label={isOpen ? "Close menu" : "Open menu"}
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
+
+      <div className="admin-mobile-topbar fixed left-3 right-3 top-3 z-40 md:hidden">
+        <Link href="/admin" className="flex min-w-0 items-center gap-3 pr-14">
+          <div className="admin-brand-mark flex h-10 w-10 shrink-0 items-center justify-center text-sm font-semibold text-white">
+            R
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-black tracking-tight text-gray-950">Riverwood Admin</p>
+            <span className="block truncate text-[0.65rem] font-bold uppercase tracking-[0.14em] text-gray-400">
+              Villa operations
+            </span>
+          </div>
+        </Link>
+      </div>
 
       {isOpen && (
         <div
@@ -78,7 +92,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
       <aside
         className={`
-          fixed top-0 left-0 h-full w-[260px] z-40
+          fixed top-0 left-0 h-full w-[min(21.5rem,calc(100vw-1.5rem))] md:w-[260px] z-40
           admin-sidebar
           transform transition-transform duration-300 ease-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
@@ -197,6 +211,27 @@ export function Sidebar({ currentPath }: SidebarProps) {
           </div>
         </div>
       </aside>
+
+      <nav
+        className={`admin-bottom-nav fixed bottom-3 left-3 right-3 z-30 grid grid-cols-3 gap-1 transition-opacity md:hidden ${isOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}
+        aria-label="Admin mobile navigation"
+      >
+        {navItems.map((item) => {
+          const active = isActive(item.path);
+          const Icon = item.icon;
+
+          return (
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`admin-bottom-nav-item ${active ? "is-active" : ""}`}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }

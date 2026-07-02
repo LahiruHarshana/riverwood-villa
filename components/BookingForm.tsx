@@ -67,7 +67,7 @@ export function BookingForm({ rooms }: BookingFormProps) {
     }
   };
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94782902200";
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94765670128";
   const waLink =
     whatsappNumber && bookingData && selectedRoom
       ? getWhatsAppUrl(

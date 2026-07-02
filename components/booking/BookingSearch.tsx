@@ -43,7 +43,7 @@ type BookingFormState = {
 
 const MIN_GUESTS = 1;
 const MAX_GUESTS = 10;
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94782902200";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "94765670128";
 
 const initialBookingForm: BookingFormState = {
   guestName: "",

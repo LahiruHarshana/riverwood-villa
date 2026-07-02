@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin/', '/api/'],
     },
-    sitemap: 'https://riverwoodvilla.com/sitemap.xml',
+    sitemap: 'https://riverwoodvillaweligama.com/sitemap.xml',
   };
 }

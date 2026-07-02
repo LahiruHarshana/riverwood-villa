@@ -18,10 +18,11 @@ const bodoni = Bodoni_Moda({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://riverwoodvilla.com'),
-  title: "Riverwood Villa | Private Riverside Boutique Stay",
+  metadataBase: new URL('https://riverwoodvillaweligama.com'),
+  title: "Riverwood Villa | Private Riverside Boutique Stay in Weligama",
   description:
-    "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups. Sri Lanka.",
+    "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups in Weligama, Sri Lanka.",
+  keywords: ["Weligama villa", "riverside villa Sri Lanka", "boutique stay Weligama", "private villa Weligama", "Riverwood Villa", "Sri Lanka holiday rental", "Weligama accommodation"],
   icons: {
     icon: [
       { url: "/brand/favicon-32x32.png", sizes: "32x32", type: "image/png" },
@@ -32,9 +33,9 @@ export const metadata: Metadata = {
   },
   manifest: "/brand/site.webmanifest",
   openGraph: {
-    title: "Riverwood Villa | Private Riverside Boutique Stay",
-    description: "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups. Sri Lanka.",
-    url: "https://riverwoodvilla.com",
+    title: "Riverwood Villa | Private Riverside Boutique Stay in Weligama",
+    description: "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups in Weligama, Sri Lanka.",
+    url: "https://riverwoodvillaweligama.com",
     siteName: "Riverwood Villa",
     images: [
       {
@@ -70,13 +71,21 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "LodgingBusiness",
   name: "Riverwood Villa",
-  image: "https://riverwoodvilla.com/brand/riverwood-logo.png",
-  description: "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups. Sri Lanka.",
-  url: "https://riverwoodvilla.com",
+  image: "https://riverwoodvillaweligama.com/brand/riverwood-logo.png",
+  description: "A private riverside villa stay with warm rooms, open balconies, hosted meals, and calm tropical space for families, couples, and groups in Weligama, Sri Lanka.",
+  url: "https://riverwoodvillaweligama.com",
   address: {
     "@type": "PostalAddress",
+    addressLocality: "Weligama",
+    addressRegion: "Southern Province",
     addressCountry: "LK",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 5.973,
+    longitude: 80.428
+  },
+  priceRange: "$$",
 };
 
 export default function RootLayout({

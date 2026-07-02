@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://riverwoodvilla.com';
+  const baseUrl = 'https://riverwoodvillaweligama.com';
   
   return [
     {

@@ -1653,7 +1653,7 @@ export default function Home() {
           </button>
           <div>
             <p>Email</p>
-            <a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a>
+            <a href="mailto:hello@riverwoodvillaweligama.com">hello@riverwoodvillaweligama.com</a>
           </div>
           <div>
             <p>Phone</p>
@@ -2254,7 +2254,7 @@ export default function Home() {
         <div className="footer-v3-contact">
           <div className="footer-v3-contact-item is-email">
             <span>Email</span>
-            <a href="mailto:hello@riverwoodvilla.com">hello@riverwoodvilla.com</a>
+            <a href="mailto:hello@riverwoodvillaweligama.com">hello@riverwoodvillaweligama.com</a>
           </div>
           <div className="footer-v3-contact-item is-phone">
             <span>Phone</span>

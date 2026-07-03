@@ -303,7 +303,7 @@ const fullGalleryItems: Array<{
     shape: "tall",
   },
   {
-    image: "/villa/villa-riverside.webp",
+    image: "/villa/villa-hero.webp",
     title: "River bend aerial",
     category: "River",
     alt: "Aerial view of Riverwood Villa and the river bend",
@@ -1747,7 +1747,7 @@ export default function Home() {
         <div className="prologue-visuals">
           <figure className="prologue-main-image media-frame" data-parallax data-cursor="enter">
             <FillImage
-              src="/villa/villa-riverside.webp"
+              src="/villa/villa-hero.webp"
               alt="Riverwood Villa opening toward the river"
               sizes="(max-width: 980px) 100vw, 68vw"
             />
@@ -2116,7 +2116,7 @@ export default function Home() {
 
           <div className="full-gallery-feature" data-cursor="scan">
             <FillImage
-              src="/villa/villa-riverside.webp"
+              src="/villa/villa-hero.webp"
               alt="Aerial view of Riverwood Villa on the river bend"
               sizes="(max-width: 980px) 100vw, 72vw"
             />

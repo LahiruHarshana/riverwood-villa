@@ -407,35 +407,39 @@ export function BookingSearch({
 
         {availableRooms.length > 0 && (
           <div className="ms-hero-results">
-            <div className="ms-hero-results-header">
-              <span className="ms-hero-results-label">Choose your room</span>
-              <span className="ms-hero-results-meta">{checkIn} → {checkOut} · {guests} guest{guests === 1 ? "" : "s"}</span>
-            </div>
+            {!isRequestFormOpen && (
+              <>
+                <div className="ms-hero-results-header">
+                  <span className="ms-hero-results-label">Choose your room</span>
+                  <span className="ms-hero-results-meta">{checkIn} → {checkOut} · {guests} guest{guests === 1 ? "" : "s"}</span>
+                </div>
 
-            <div className="ms-room-list">
-              {availableRooms.map((room) => (
-                <button
-                  key={room.id}
-                  type="button"
-                  className={`ms-room-option ${room.id === selectedRoomId ? "is-selected" : ""}`}
-                  onClick={() => {
-                    setSelectedRoomId(room.id);
-                    setBookingError("");
-                    setBookingStatus("");
-                    setIsRequestFormOpen(false);
-                  }}
-                >
-                  <span className="ms-room-thumb">
-                    {room.images[0] ? <img src={room.images[0]} alt="" /> : <BedDouble size={20} />}
-                  </span>
-                  <span className="ms-room-info">
-                    <strong>{room.name}</strong>
-                    <span>{room.maxGuests} guests · {room.bedrooms} bedroom · {formatMoney(room.total, room.currency)} total</span>
-                  </span>
-                  {room.id === selectedRoomId && <Check size={16} className="ms-room-check" />}
-                </button>
-              ))}
-            </div>
+                <div className="ms-room-list">
+                  {availableRooms.map((room) => (
+                    <button
+                      key={room.id}
+                      type="button"
+                      className={`ms-room-option ${room.id === selectedRoomId ? "is-selected" : ""}`}
+                      onClick={() => {
+                        setSelectedRoomId(room.id);
+                        setBookingError("");
+                        setBookingStatus("");
+                        setIsRequestFormOpen(false);
+                      }}
+                    >
+                      <span className="ms-room-thumb">
+                        {room.images[0] ? <img src={room.images[0]} alt="" /> : <BedDouble size={20} />}
+                      </span>
+                      <span className="ms-room-info">
+                        <strong>{room.name}</strong>
+                        <span>{room.maxGuests} guests · {room.bedrooms} bedroom · {formatMoney(room.total, room.currency)} total</span>
+                      </span>
+                      {room.id === selectedRoomId && <Check size={16} className="ms-room-check" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
 
             {selectedRoom && (
               <div className="ms-request">

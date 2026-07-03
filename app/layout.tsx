@@ -88,6 +88,8 @@ const jsonLd = {
   priceRange: "$$",
 };
 
+import { PageTracker } from "@/components/analytics/PageTracker";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -101,7 +103,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${manrope.variable} ${bodoni.variable}`}>{children}</body>
+      <body className={`${manrope.variable} ${bodoni.variable}`}>
+        {children}
+        <PageTracker />
+      </body>
     </html>
   );
 }

@@ -7,6 +7,7 @@ import { StatsCard } from "@/components/admin/StatsCard";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { getRooms } from "@/lib/firestore/rooms";
 import { getBookings, Booking } from "@/lib/firestore/bookings";
+import { getDailyViews } from "@/lib/firestore/analytics";
 import { Spinner } from "@/components/ui/Spinner";
 import {
   ArrowRight,
@@ -21,6 +22,7 @@ import {
   Moon,
   Sparkles,
   Users,
+  Eye,
 } from "lucide-react";
 
 const statusDotClass = (status: string) => {
@@ -61,6 +63,7 @@ export default function DashboardPage() {
     cancelledBookings: 0,
     revenueThisMonth: 0,
     avgStayNights: 0,
+    viewsToday: 0,
   });
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [upcomingCheckins, setUpcomingCheckins] = useState<Booking[]>([]);
@@ -73,7 +76,12 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [rooms, bookings] = await Promise.all([getRooms(), getBookings()]);
+        const todayStr = new Date().toISOString().split("T")[0];
+        const [rooms, bookings, viewsToday] = await Promise.all([
+          getRooms(), 
+          getBookings(),
+          getDailyViews(todayStr)
+        ]);
 
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -113,6 +121,7 @@ export default function DashboardPage() {
           cancelledBookings: cancelledBookings.length,
           revenueThisMonth,
           avgStayNights,
+          viewsToday,
         });
 
         setRecentBookings(bookings.slice(0, 5));
@@ -252,7 +261,8 @@ export default function DashboardPage() {
       </section>
 
       {/* Stats Row */}
-      <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <StatsCard title="Views Today" value={stats.viewsToday} icon={Eye} color="indigo" trend="Unique" caption="Website visitors" delay={0} />
         <StatsCard title="Total Rooms" value={stats.totalRooms} icon={BedDouble} color="sage" trend={`${stats.availableRooms} live`} caption="Published inventory" delay={50} />
         <StatsCard title="Total Bookings" value={stats.totalBookings} icon={CalendarCheck} color="blue" trend="All time" caption="Requests captured" delay={100} />
         <StatsCard title="Pending Bookings" value={stats.pendingBookings} icon={Clock} color="amber" trend={`${pendingRate}%`} caption="Need confirmation" delay={150} />

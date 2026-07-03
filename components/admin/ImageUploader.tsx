@@ -4,12 +4,19 @@ import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { X, Upload } from "lucide-react";
 
+import { useRef, useEffect } from "react";
+
 interface ImageUploaderProps {
   value: string[];
   onChange: (urls: string[]) => void;
 }
 
 export function ImageUploader({ value, onChange }: ImageUploaderProps) {
+  const valueRef = useRef(value);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
   const removeImage = (indexToRemove: number) => {
     onChange(value.filter((_, index) => index !== indexToRemove));
   };
@@ -22,7 +29,9 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
           if (typeof result.info === "object" && result.info !== null) {
             const info = result.info as { secure_url?: string };
             if (info.secure_url) {
-              onChange([...value, info.secure_url]);
+              const newUrls = [...valueRef.current, info.secure_url];
+              valueRef.current = newUrls;
+              onChange(newUrls);
             }
           }
         }}

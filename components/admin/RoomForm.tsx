@@ -131,6 +131,7 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
             <label className="text-sm font-medium text-gray-700">Price Per Night (USD)</label>
             <input
               type="number"
+              step="0.01"
               {...register("pricePerNight", { valueAsNumber: true })}
               className="admin-input"
             />

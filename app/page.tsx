@@ -1593,7 +1593,7 @@ export default function Home() {
         <div className="progress-fill" />
       </div>
       <div className="progress-chapter" aria-hidden="true">
-        <em>01</em><span>/ 07</span>
+        <em>01</em><span>/ 08</span>
       </div>
       {showLoader ? (
         <div className="loader" aria-hidden="true">

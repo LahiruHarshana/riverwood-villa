@@ -64,6 +64,12 @@ export default async function RoomPage({ params, searchParams }: RoomPageProps) 
     <main className="room-page">
       <section className="room-page-hero">
         <div className="room-page-copy">
+          <Link href={browseHref} className="text-button" style={{ marginBottom: "2rem", padding: "0.5rem 1rem", fontSize: "0.7rem" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+          </Link>
           <span className="room-page-eyebrow">Riverwood Villa room</span>
           <h1>{room.name}</h1>
           <p>{room.description}</p>

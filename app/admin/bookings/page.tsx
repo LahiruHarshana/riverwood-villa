@@ -69,7 +69,7 @@ export default function BookingsPage() {
               placeholder="Search guest or room..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="admin-input pl-9 sm:w-[14rem]"
+              className="admin-input !pl-9 sm:w-[14rem]"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function BookingsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="admin-input pl-9 pr-8 appearance-none cursor-pointer min-w-[7.5rem]"
+              className="admin-input !pl-9 !pr-8 appearance-none cursor-pointer min-w-[7.5rem]"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>

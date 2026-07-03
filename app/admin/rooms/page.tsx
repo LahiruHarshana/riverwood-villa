@@ -95,7 +95,7 @@ export default function RoomsPage() {
           placeholder="Search rooms..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="admin-input pl-9"
+          className="admin-input !pl-9"
         />
       </div>
 

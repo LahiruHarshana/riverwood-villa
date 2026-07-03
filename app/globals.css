@@ -877,6 +877,7 @@ figure {
 .hero {
   position: relative;
   isolation: isolate;
+  z-index: 10;
   display: flex;
   align-items: flex-end;
   min-height: 100svh;

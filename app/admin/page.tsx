@@ -262,7 +262,7 @@ export default function DashboardPage() {
 
       {/* Stats Row */}
       <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <StatsCard title="Views Today" value={stats.viewsToday} icon={Eye} color="indigo" trend="Unique" caption="Website visitors" delay={0} />
+        <StatsCard title="Views Today" value={stats.viewsToday} icon={Eye} color="blue" trend="Unique" caption="Website visitors" delay={0} />
         <StatsCard title="Total Rooms" value={stats.totalRooms} icon={BedDouble} color="sage" trend={`${stats.availableRooms} live`} caption="Published inventory" delay={50} />
         <StatsCard title="Total Bookings" value={stats.totalBookings} icon={CalendarCheck} color="blue" trend="All time" caption="Requests captured" delay={100} />
         <StatsCard title="Pending Bookings" value={stats.pendingBookings} icon={Clock} color="amber" trend={`${pendingRate}%`} caption="Need confirmation" delay={150} />

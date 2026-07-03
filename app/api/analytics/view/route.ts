@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
-import { getAdminDb } from "@/lib/firebase-admin";
-import { FieldValue } from "firebase-admin/firestore";
+import { getMongoDb, ensureMongoIndexes } from "@/lib/mongodb";
 
 export async function POST() {
   try {
-    const db = getAdminDb();
+    await ensureMongoIndexes();
+    const db = await getMongoDb();
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const docRef = db.collection("analytics").doc(`views_${today}`);
+    const collectionName = "analytics";
 
-    await docRef.set(
+    await db.collection(collectionName).updateOne(
+      { date: today },
       {
-        date: today,
-        count: FieldValue.increment(1),
-        updatedAt: FieldValue.serverTimestamp(),
+        $inc: { count: 1 },
+        $set: { updatedAt: new Date() },
+        $setOnInsert: { date: today }
       },
-      { merge: true }
+      { upsert: true }
     );
 
     return NextResponse.json({ success: true });

@@ -1653,15 +1653,15 @@ export default function Home() {
           </button>
           <div>
             <p>Email</p>
-            <a href="mailto:hello@riverwoodvillaweligama.com">hello@riverwoodvillaweligama.com</a>
+            <a href="mailto:riverwoodvillaweligama@gmail.com">riverwoodvillaweligama@gmail.com</a>
           </div>
           <div>
             <p>Phone</p>
-            <a href="tel:+94770000000">+94 77 000 0000</a>
+            <a href="tel:+94765670128">+94 76 567 0128</a>
           </div>
           <div>
             <p>Office</p>
-            <span>Riverside Road, Sri Lanka</span>
+            <span>No. 47/7, Sri Sambuddathwa Jayanthi Mw, Pelana, 81700 Weligama, Sri Lanka</span>
           </div>
           <small>Private riverside boutique stay</small>
         </div>
@@ -2254,19 +2254,19 @@ export default function Home() {
         <div className="footer-v3-contact">
           <div className="footer-v3-contact-item is-email">
             <span>Email</span>
-            <a href="mailto:hello@riverwoodvillaweligama.com">hello@riverwoodvillaweligama.com</a>
+            <a href="mailto:riverwoodvillaweligama@gmail.com">riverwoodvillaweligama@gmail.com</a>
           </div>
           <div className="footer-v3-contact-item is-phone">
             <span>Phone</span>
-            <a href="tel:+94770000000">+94 77 000 0000</a>
+            <a href="tel:+94765670128">+94 76 567 0128</a>
           </div>
           <div className="footer-v3-contact-item is-location">
             <span>Location</span>
-            <p>Riverside Road, Sri Lanka</p>
+            <p>No. 47/7, Sri Sambuddathwa Jayanthi Mw, Pelana, 81700 Weligama, Sri Lanka</p>
           </div>
           <div className="footer-v3-contact-item is-social">
             <span>Social</span>
-            <p><a href="#">Instagram</a><span aria-hidden="true"> · </span><a href="#">Facebook</a></p>
+            <p><a href="#">Instagram</a></p>
           </div>
         </div>
 

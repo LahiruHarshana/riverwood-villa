@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getPublicRoomBySlug } from "@/lib/public-rooms";
+import { JsonLd } from "@/components/site/JsonLd";
+import { breadcrumbJsonLd, site } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -14,6 +17,35 @@ type RoomPageProps = {
     room?: string;
   }>;
 };
+
+export async function generateMetadata({ params }: RoomPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const room = await getPublicRoomBySlug(slug);
+
+  if (!room) {
+    return { title: { absolute: "Room Not Found | Riverwood Villa Weligama" }, robots: { index: false, follow: false } };
+  }
+
+  const title = `${room.name} | Riverwood Villa Weligama`;
+  const description = room.shortDescription || room.description;
+  const canonical = `${site.url}/rooms/${room.slug}`;
+  const image = room.images[0] || "/villa/villa-bedroom-high-ceiling.jpg";
+
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: site.shortName,
+      type: "website",
+      images: [{ url: image, alt: `${room.name} at Riverwood Villa Weligama` }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
+  };
+}
 
 function formatMoney(amount: number, currency: string) {
   return new Intl.NumberFormat("en", {
@@ -59,9 +91,29 @@ export default async function RoomPage({ params, searchParams }: RoomPageProps) 
   const heroImage = room.images[0] || "/villa/villa-bedroom-high-ceiling.jpg";
   const bookingHref = createBookingHref(room.slug, checkIn, checkOut, guests);
   const browseHref = createBrowseHref(room.slug, checkIn, checkOut, guests);
+  const canonical = `${site.url}/rooms/${room.slug}`;
+  const roomJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "HotelRoom",
+    name: room.name,
+    description: room.description,
+    url: canonical,
+    image: room.images.map((image) => image.startsWith("http") ? image : `${site.url}${image}`),
+    occupancy: { "@type": "QuantitativeValue", maxValue: room.maxGuests },
+    numberOfBathroomsTotal: room.bathrooms,
+    amenityFeature: room.amenities.map((amenity) => ({ "@type": "LocationFeatureSpecification", name: amenity, value: true })),
+    containedInPlace: { "@id": `${site.url}/#riverwood-villa` },
+    offers: {
+      "@type": "Offer",
+      price: room.pricePerNight,
+      priceCurrency: room.currency,
+      url: canonical,
+    },
+  };
 
   return (
     <main className="room-page">
+      <JsonLd data={[roomJsonLd, breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Rooms", path: "/rooms" }, { name: room.name, path: `/rooms/${room.slug}` }])]} />
       <section className="room-page-hero">
         <div className="room-page-copy">
           <Link href={browseHref} className="text-button" style={{ marginBottom: "2rem", padding: "0.5rem 1rem", fontSize: "0.7rem" }}>

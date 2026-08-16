@@ -10,7 +10,7 @@ const BASE_URL = "https://riverwoodvillaweligama.com";
 const CANONICAL_URL = `${BASE_URL}/blog/${BLOG_SLUG}`;
 
 export const metadata: Metadata = {
-  title: blogMeta.title,
+  title: { absolute: blogMeta.title },
   description: blogMeta.description,
   keywords: blogMeta.keywords,
   authors: [{ name: blogMeta.author, url: BASE_URL }],

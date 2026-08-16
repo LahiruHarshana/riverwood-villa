@@ -31,13 +31,13 @@ function loadMotionModules() {
 }
 
 const navItems = [
-  ["Home", "#home"],
-  ["Story", "#story"],
-  ["Rooms", "#rooms"],
-  ["River", "#river"],
-  ["Dining", "#dining"],
-  ["Gallery", "#gallery"],
-  ["Book", "#book"],
+  ["Home", "/"],
+  ["The villa", "/villa-weligama"],
+  ["Rooms", "/rooms"],
+  ["Experiences", "/experiences"],
+  ["Weligama", "/things-to-do-in-weligama"],
+  ["Gallery", "/gallery"],
+  ["Book", "/#book"],
 ] as const;
 
 const stayChapters = [
@@ -1615,13 +1615,13 @@ export default function Home() {
 
       <header className="site-nav">
         <div data-loader="nav-line" className="nav-line" aria-hidden="true" />
-        <a href="#home" className="nav-logo" aria-label="Riverwood Villa home">
+        <a href="/" className="nav-logo" aria-label="Riverwood Villa Weligama home">
           <span data-loader="nav-logo">Riverwood Villa</span>
         </a>
         <span className="nav-est">
-          <span data-loader="nav-est">EST - Private Villa</span>
+          <span data-loader="nav-est">Weligama · Sri Lanka</span>
         </span>
-        <a className="nav-book-cta" href="#book" aria-label="Book your Riverwood Villa stay">
+        <a className="nav-book-cta" href="/#book" aria-label="Book your Riverwood Villa Weligama stay">
           Book now <ArrowUpRight size={14} strokeWidth={1.9} />
         </a>
         <button
@@ -1675,7 +1675,7 @@ export default function Home() {
           <div className="hero-layout">
             <div className="hero-logo-wrap">
               <h1 id="hero-title" className="hero-h1">
-                Riverwood Villa
+                Riverwood Villa Weligama
               </h1>
               <HeroLogo />
             </div>
@@ -1692,8 +1692,8 @@ export default function Home() {
                 />
                 <p data-loader="para">
                   <span data-loader="para-line">
-                    Private riverside living, balcony mornings, hosted meals, and soft
-                    Sri Lankan river light from arrival to evening.
+                    A private riverside villa in Weligama—balcony mornings, hosted meals,
+                    tropical calm, and soft Sri Lankan river light.
                   </span>
                 </p>
               </div>
@@ -1735,11 +1735,11 @@ export default function Home() {
           </h2>
           <div className="prologue-copy">
             <p>
-              Riverwood is designed for the hours people usually rush through: balcony mornings,
+              Riverwood Villa Weligama is designed for the hours people usually rush through: balcony mornings,
               long lunches, quiet swims of light across a room, and evenings gathered beside the river.
             </p>
-            <a className="outline-button-v2" href="#stay" data-magnetic>
-              Explore the stay <ArrowDownRight size={16} />
+            <a className="outline-button-v2" href="/villa-weligama" data-magnetic>
+              Discover the villa <ArrowDownRight size={16} />
             </a>
           </div>
         </div>
@@ -2229,7 +2229,7 @@ export default function Home() {
 
       <footer className="footer-v3" data-theme="light" data-bg="#89A894">
         <div className="footer-v3-top">
-          <a href="#home" className="footer-v3-brand" aria-label="Riverwood Villa home">
+          <a href="/" className="footer-v3-brand" aria-label="Riverwood Villa Weligama home">
             Riverwood
           </a>
           <div className="footer-v3-intro">

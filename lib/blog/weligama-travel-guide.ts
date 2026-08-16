@@ -19,9 +19,12 @@ export const blogMeta = {
   publishedAt: "2026-08-16",
   modifiedAt: "2026-08-16",
   author: "Riverwood Villa",
-  heroImage: "/blog/weligama-surf-sunset.jpg",
+  heroImage: "/blog/weligama-surf-sunset.png",
   heroImageAlt:
-    "Two surfers carrying boards across Weligama Beach at sunset",
+    "Aerial view of Weligama Bay with Taprobane Island and golden beach",
+  openingImage: "/blog/weligama-bay.png",
+  openingImageAlt:
+    "Aerial view of Weligama Bay with turquoise water, coral reefs and palm-lined coast",
 };
 
 export const routeStops = [
@@ -84,8 +87,8 @@ export const places = [
   {
     number: "01",
     title: "Weligama Bay — the heart of the town",
-    image: "/blog/weligama-bay-wide.jpg",
-    alt: "Wide view of Weligama Bay and its sandy shoreline",
+    image: "/blog/sufing-on-weligama.png",
+    alt: "Surfers riding a turquoise wave at Weligama Bay",
     paragraphs: [
       "Weligama Bay is the first landscape most visitors remember: a long sandy curve, fishing craft, surf schools and a horizon that changes colour through the day. Its importance is practical as well as beautiful. The bay has become one of Sri Lanka's best-known places to begin surfing because the waves are often gentler and the bottom is sandy.",
       "Go early for softer light and cooler air, or late in the afternoon when surfers and families gather for sunset. Beginners should book a lesson rather than simply rent a board, listen to local instructors and never enter rough water because a guide describes the bay as \"beginner friendly.\" Sea conditions change daily.",
@@ -94,8 +97,8 @@ export const places = [
   {
     number: "02",
     title: "Taprobane Island — Weligama's postcard",
-    image: "/blog/weligama-beach-day.jpg",
-    alt: "Taprobane Island rising from the water in Weligama Bay",
+    image: "/blog/Taprobane-island.png",
+    alt: "Taprobane Island illuminated at dusk in Weligama Bay",
     paragraphs: [
       "Just offshore, Taprobane looks like a small tropical forest floating on the bay. A villa rises through the foliage, created in the 1930s by Count de Mauny. The island later became associated with writer and composer Paul Bowles, adding literary intrigue to its already cinematic appearance.",
       "Why it matters: Taprobane gives Weligama an identity found nowhere else on the south coast. Photograph it from the public beach, especially in calm morning light or before sunset. The island is privately occupied; access should never be assumed, and any crossing depends on permission, tide and sea conditions.",
@@ -104,7 +107,7 @@ export const places = [
   {
     number: "03",
     title: "Kushtarajagala — the ancient guardian in the rock",
-    image: "/blog/sri-lanka-coast.jpg",
+    image: "/blog/kushtarajagala.png",
     alt: "Rock-carved Avalokiteshvara figure at Kushtarajagala, Weligama",
     paragraphs: [
       "A few minutes inland from the bay stands one of Weligama's most extraordinary cultural landmarks: a monumental figure carved directly into a boulder. The 3.83-metre image is commonly identified as the Bodhisattva Avalokiteshvara. Its exact date remains debated, which makes the site more—not less—interesting: it is evidence of the layered Buddhist history of southern Sri Lanka and of artistic traditions that once travelled across the Indian Ocean world.",
@@ -114,8 +117,8 @@ export const places = [
   {
     number: "04",
     title: "Weligama's fishing life and coastal mornings",
-    image: "/blog/fishing-boat.jpg",
-    alt: "Traditional fishing boat along the Weligama coast",
+    image: "/blog/fishing-life-on-weligama-morning.png",
+    alt: "Traditional stilt fishermen along the Weligama coast at sunrise",
     paragraphs: [
       "Before cafés and surf camps define the day, Weligama belongs to working boats, markets and families whose lives are tied to the sea. A morning walk offers a more honest picture of the town than a viewpoint alone. You may see outrigger canoes, boats unloading, nets being handled and fish moving quickly from shore to market.",
       "Stilt fishing is one of the south coast's most photographed traditions, particularly west of Weligama toward Midigama, Ahangama and Koggala. Today, some scenes are arranged for visitors. Ask permission, agree on any photography fee before taking portraits and avoid presenting a staged moment as documentary fact.",
@@ -124,8 +127,8 @@ export const places = [
   {
     number: "05",
     title: "Midigama — where the surf becomes more serious",
-    image: "/blog/weligama-surf-sunset.jpg",
-    alt: "Surfers at sunset on the Weligama coast near Midigama",
+    image: "/blog/surf-on-midigama.png",
+    alt: "Surfer riding a wave at Midigama with palm-covered coastline",
     paragraphs: [
       "Around a ten-minute drive west of Weligama Bay, Midigama changes the pace. Reef breaks and named surf points attract more experienced surfers, while compact beach cafés keep the atmosphere relaxed. Love Sri Lanka highlights Lazy Left as one of the area's notable breaks.",
       "Why it matters: Midigama shows the natural progression of the south-coast surf journey. Learn in Weligama; watch or advance in Midigama with local guidance. Reef breaks are not suitable for first-time surfers, and conditions should always be checked locally.",
@@ -134,8 +137,8 @@ export const places = [
   {
     number: "06",
     title: "Mirissa — whales, coves and headland views",
-    image: "/blog/mirissa-coast.jpg",
-    alt: "Mirissa coastline with palm trees and golden sand",
+    image: "/blog/mirissa-whale-watching.png",
+    alt: "Humpback whale breaching during a whale-watching trip near Mirissa",
     paragraphs: [
       "East of Weligama, Mirissa adds three different experiences: whale-watching trips from the harbour, a lively beach, and photogenic headlands such as Coconut Tree Hill and Parrot Rock. Secret Beach offers a smaller cove, although it is no longer truly secret.",
       "The International Whaling Commission identifies Mirissa as one of Sri Lanka's principal whale-watching areas, with blue whales most commonly targeted from roughly December to March. Wildlife is never guaranteed. Choose a properly licensed operator that follows distance, speed and safety rules; responsible tourism protects both passengers and animals.",
@@ -144,8 +147,8 @@ export const places = [
   {
     number: "07",
     title: "Coconut Tree Hill and Parrot Rock — iconic perspectives",
-    image: "/blog/mirissa-coast.jpg",
-    alt: "Coconut Tree Hill viewpoint above Mirissa Beach",
+    image: "/blog/coconut-hill.png",
+    alt: "Coconut Tree Hill with palm trees above Mirissa Beach",
     paragraphs: [
       "Coconut Tree Hill's red earth, palms and open ocean have made it one of the south coast's most recognised photography locations. Sunrise is usually calmer and less crowded than sunset. Parrot Rock, closer to the centre of Mirissa Beach, gives a compact view back along the crescent of sand.",
       "Both locations can become slippery or unsafe in rain, high tide or rough sea conditions. A beautiful photograph is never worth ignoring local warnings.",
@@ -154,8 +157,8 @@ export const places = [
   {
     number: "08",
     title: "Galle Fort — history within a day trip",
-    image: "/blog/galle-fort.jpg",
-    alt: "Historic Galle Fort ramparts on the south coast of Sri Lanka",
+    image: "/blog/galle-fort.png",
+    alt: "Aerial view of Galle Fort lighthouse and historic ramparts",
     paragraphs: [
       "West of Weligama, the UNESCO-listed Galle Fort offers cobbled streets, Dutch colonial architecture, boutique shops and rampart walks above the Indian Ocean. It is one of the most rewarding half-day or full-day excursions from Weligama.",
       "Allow time to wander without a fixed itinerary—the fort reveals itself through side streets, sunset viewpoints and small museums. Combine with a morning in Weligama and return to Riverwood for a riverside evening.",

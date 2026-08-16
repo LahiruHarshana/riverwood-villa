@@ -202,6 +202,42 @@ export function WeligamaTravelBlog() {
           });
 
           gsap.fromTo(
+            ".blog-opening-visual",
+            { clipPath: "inset(0 100% 0 0)" },
+            {
+              clipPath: "inset(0 0% 0 0)",
+              duration: 1.35,
+              ease: "expo.inOut",
+              scrollTrigger: {
+                trigger: ".blog-opening-visual",
+                start: "top 82%",
+                toggleActions: "play none none reverse",
+              },
+            },
+          );
+
+          const openingImg = document.querySelector<HTMLElement>(
+            ".blog-opening-visual img",
+          );
+          if (openingImg) {
+            gsap.fromTo(
+              openingImg,
+              { scale: 1.1, yPercent: -5 },
+              {
+                scale: 1.02,
+                yPercent: 5,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: ".blog-opening-visual",
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 0.8,
+                },
+              },
+            );
+          }
+
+          gsap.fromTo(
             ".blog-callout",
             { clipPath: "inset(0 100% 0 0)" },
             {
@@ -664,6 +700,14 @@ export function WeligamaTravelBlog() {
           </p>
         </div>
       </section>
+
+      <figure className="blog-opening-visual" aria-label="Weligama Bay aerial view">
+        <BlogImage
+          src={blogMeta.openingImage}
+          alt={blogMeta.openingImageAlt}
+          sizes="100vw"
+        />
+      </figure>
 
       <aside className="blog-callout" aria-label="Riverwood promise">
         <span className="blog-callout-label">Riverwood Promise</span>

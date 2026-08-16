@@ -176,6 +176,19 @@
   margin-top: 1.25rem;
 }
 
+.blog-opening-visual {
+  position: relative;
+  margin: 0 var(--gutter) clamp(3rem, 6vw, 5rem);
+  aspect-ratio: 21 / 9;
+  max-height: 70vh;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.blog-opening-visual img {
+  object-fit: cover;
+}
+
 .blog-callout {
   margin: clamp(3rem, 6vw, 5rem) var(--gutter);
   padding: clamp(2rem, 4vw, 3.5rem);
@@ -794,6 +807,11 @@
   .blog-route-card {
     flex: none;
     width: auto;
+  }
+
+  .blog-opening-visual {
+    aspect-ratio: 16 / 10;
+    max-height: none;
   }
 }
 

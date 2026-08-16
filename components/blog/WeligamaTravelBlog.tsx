@@ -100,22 +100,6 @@ export function WeligamaTravelBlog() {
         gsap.ticker.add(raf);
         gsap.ticker.lagSmoothing(0);
 
-        const skewSetter = gsap.quickSetter("[data-skew]", "skewY", "deg") as (
-          v: number,
-        ) => void;
-        const clampSkew = gsap.utils.clamp(-4, 4);
-        let currentSkew = 0;
-        const velocityHandler = ({ velocity }: { velocity: number }) => {
-          currentSkew = clampSkew(velocity * -0.28);
-          skewSetter(currentSkew);
-        };
-        lenis.on("scroll", velocityHandler);
-        const settleSkew = () => {
-          currentSkew *= 0.88;
-          skewSetter(currentSkew);
-        };
-        gsap.ticker.add(settleSkew);
-
         const disposers: Array<() => void> = [];
         const on = <K extends keyof WindowEventMap>(
           target: Window | Document | HTMLElement,
@@ -770,7 +754,6 @@ export function WeligamaTravelBlog() {
           disposers.forEach((dispose) => dispose());
           context.revert();
           ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-          gsap.ticker.remove(settleSkew);
           gsap.ticker.remove(raf);
           lenis.destroy();
         };
@@ -788,7 +771,7 @@ export function WeligamaTravelBlog() {
   }, []);
 
   return (
-    <article ref={pageRef} className="blog-page" data-skew>
+    <article ref={pageRef} className="blog-page">
       <div className="blog-bg-dissolve" aria-hidden="true" />
       <div className="blog-film-grain" aria-hidden="true" />
       <div className="blog-progress-line" aria-hidden="true">

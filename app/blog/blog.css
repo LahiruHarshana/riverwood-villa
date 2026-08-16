@@ -1,0 +1,808 @@
+/* ═══ Riverwood Blog — Weligama Travel Guide ═══════════════════════ */
+
+.blog-page {
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: clip;
+}
+
+.blog-bg-dissolve {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--paper);
+  pointer-events: none;
+}
+
+.blog-progress-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1600;
+  width: 100%;
+  height: 2px;
+  background: rgba(17, 17, 16, 0.06);
+  pointer-events: none;
+}
+
+.blog-progress-fill {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--sage-deep), var(--sage));
+}
+
+/* ─── Hero ─────────────────────────────────────────────────────── */
+.blog-hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: end;
+  color: var(--cream);
+  overflow: clip;
+}
+
+.blog-hero-media {
+  position: absolute;
+  inset: 0;
+}
+
+.blog-hero-media img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.blog-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 16, 0.35) 0%, rgba(17, 17, 16, 0.15) 40%, rgba(17, 17, 16, 0.72) 100%),
+    linear-gradient(90deg, rgba(17, 17, 16, 0.4) 0%, transparent 55%);
+}
+
+.blog-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: clamp(6rem, 14vh, 10rem) var(--gutter) clamp(3rem, 6vh, 5rem);
+  max-width: 90rem;
+}
+
+.blog-hero-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.blog-hero-kicker span:not(:last-child)::after {
+  content: "·";
+  margin-left: 2rem;
+  opacity: 0.5;
+}
+
+.blog-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.8rem, 6vw + 1rem, 7rem);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  max-width: 52rem;
+}
+
+.blog-hero-title em {
+  font-style: italic;
+  color: rgba(246, 245, 241, 0.88);
+}
+
+.blog-hero-sub {
+  margin-top: 1.5rem;
+  max-width: 36rem;
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  line-height: 1.65;
+  opacity: 0.88;
+}
+
+.blog-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(246, 245, 241, 0.2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.blog-scroll-hint {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(2rem, 5vh, 4rem);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.blog-scroll-hint::after {
+  content: "";
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  animation: blog-scroll-pulse 2s ease-in-out infinite;
+}
+
+@keyframes blog-scroll-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleX(0.6); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+/* ─── Intro / Prologue ─────────────────────────────────────────── */
+.blog-intro {
+  padding: clamp(5rem, 10vw, 9rem) var(--gutter);
+  max-width: 72rem;
+}
+
+.blog-intro-lead {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.blog-intro-body {
+  margin-top: 2.5rem;
+  max-width: 42rem;
+  font-size: clamp(1.05rem, 1.2vw, 1.15rem);
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.blog-intro-body p + p {
+  margin-top: 1.25rem;
+}
+
+.blog-callout {
+  margin: clamp(3rem, 6vw, 5rem) var(--gutter);
+  padding: clamp(2rem, 4vw, 3.5rem);
+  border: 1px solid var(--sage-line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, var(--sage-tint), var(--paper-raised));
+  max-width: calc(72rem + 2 * var(--gutter));
+  margin-inline: auto;
+}
+
+.blog-callout-label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+}
+
+.blog-callout-text {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  line-height: 1.35;
+  font-style: italic;
+}
+
+/* ─── Route timeline (horizontal scroll) ─────────────────────────── */
+.blog-route-section {
+  padding: clamp(4rem, 8vw, 7rem) 0;
+  overflow: hidden;
+}
+
+.blog-section-header {
+  padding: 0 var(--gutter) clamp(2.5rem, 5vw, 4rem);
+  max-width: 52rem;
+}
+
+.blog-section-index {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+}
+
+.blog-section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.blog-section-title em {
+  font-style: italic;
+}
+
+.blog-section-desc {
+  margin-top: 1.25rem;
+  max-width: 36rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.blog-route-pin {
+  position: relative;
+}
+
+.blog-route-track {
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding: 0 var(--gutter) 2rem;
+  width: max-content;
+}
+
+.blog-route-card {
+  flex: 0 0 clamp(280px, 28vw, 340px);
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--paper-raised);
+  transition: border-color 0.35s ease, transform 0.35s ease;
+}
+
+.blog-route-card:hover {
+  border-color: var(--sage-line);
+  transform: translateY(-4px);
+}
+
+.blog-route-time {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+}
+
+.blog-route-stop {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.blog-route-why {
+  margin-top: 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.blog-route-progress {
+  margin: 0 var(--gutter);
+  height: 1px;
+  background: var(--line);
+}
+
+.blog-route-progress-fill {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--sage);
+}
+
+.blog-route-note {
+  padding: 1.5rem var(--gutter) 0;
+  max-width: 48rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ─── Why Weligama grid ────────────────────────────────────────── */
+.blog-why-section {
+  padding: clamp(5rem, 10vw, 8rem) var(--gutter);
+  background: var(--paper-sunk);
+}
+
+.blog-why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+  margin-top: 3rem;
+  max-width: 80rem;
+}
+
+.blog-why-card {
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--paper-raised);
+}
+
+.blog-why-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin-bottom: 0.65rem;
+}
+
+.blog-why-card p {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ─── Places chapters ──────────────────────────────────────────── */
+.blog-places-section {
+  padding: clamp(4rem, 8vw, 6rem) 0;
+}
+
+.blog-place {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter);
+  border-bottom: 1px solid var(--line);
+  max-width: 90rem;
+  margin-inline: auto;
+}
+
+.blog-place.is-reverse {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.blog-place.is-reverse .blog-place-visual {
+  order: 2;
+}
+
+.blog-place.is-reverse .blog-place-copy {
+  order: 1;
+}
+
+.blog-place-visual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.blog-place-visual img {
+  object-fit: cover;
+}
+
+.blog-place-number {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(17, 17, 16, 0.65);
+  color: var(--cream);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.blog-place-copy h3 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.blog-place-copy p {
+  margin-top: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.blog-place-copy p + p {
+  margin-top: 1rem;
+}
+
+/* ─── Riverwood section ────────────────────────────────────────── */
+.blog-riverwood-section {
+  padding: clamp(5rem, 10vw, 9rem) var(--gutter);
+  background: var(--dark);
+  color: var(--cream);
+}
+
+.blog-riverwood-inner {
+  max-width: 80rem;
+  margin-inline: auto;
+}
+
+.blog-riverwood-section .blog-section-index {
+  color: var(--sage);
+}
+
+.blog-riverwood-intro {
+  margin-top: 1.5rem;
+  max-width: 42rem;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  opacity: 0.82;
+}
+
+.blog-riverwood-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.blog-riverwood-image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.blog-riverwood-image.is-wide {
+  grid-column: span 2;
+  aspect-ratio: 21 / 9;
+}
+
+.blog-riverwood-image img {
+  object-fit: cover;
+}
+
+.blog-riverwood-image figcaption {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(17, 17, 16, 0.6);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ─── Riverwood day timeline ───────────────────────────────────── */
+.blog-day-section {
+  padding: clamp(5rem, 10vw, 8rem) var(--gutter);
+  background: var(--sage-tint);
+}
+
+.blog-day-timeline {
+  display: grid;
+  gap: 0;
+  margin-top: 3rem;
+  max-width: 52rem;
+}
+
+.blog-day-item {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1.5rem;
+  padding: 1.75rem 0;
+  border-bottom: 1px solid var(--sage-line);
+}
+
+.blog-day-time {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+}
+
+.blog-day-item h4 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.blog-day-item p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ─── When to visit ──────────────────────────────────────────────── */
+.blog-season-section {
+  padding: clamp(5rem, 10vw, 8rem) var(--gutter);
+}
+
+.blog-season-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+  margin-top: 3rem;
+  max-width: 80rem;
+}
+
+.blog-season-card {
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--paper-raised);
+}
+
+.blog-season-card span {
+  display: block;
+  margin-bottom: 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+}
+
+.blog-season-card p {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ─── Tips list ────────────────────────────────────────────────── */
+.blog-tips-section {
+  padding: clamp(4rem, 8vw, 7rem) var(--gutter);
+  background: var(--paper-sunk);
+}
+
+.blog-tips-list {
+  margin-top: 2.5rem;
+  max-width: 52rem;
+  list-style: none;
+  padding: 0;
+}
+
+.blog-tips-list li {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.blog-tips-list li::before {
+  content: counter(tip-counter, decimal-leading-zero);
+  counter-increment: tip-counter;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--sage-deep);
+}
+
+.blog-tips-list {
+  counter-reset: tip-counter;
+}
+
+/* ─── FAQ ──────────────────────────────────────────────────────── */
+.blog-faq-section {
+  padding: clamp(5rem, 10vw, 8rem) var(--gutter);
+}
+
+.blog-faq-list {
+  margin-top: 3rem;
+  max-width: 52rem;
+  border-top: 1px solid var(--line);
+}
+
+.blog-faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.blog-faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.5rem 0;
+  text-align: left;
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  line-height: 1.3;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.blog-faq-question:hover {
+  color: var(--sage-deep);
+}
+
+.blog-faq-icon {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform 0.35s var(--ease-reveal);
+}
+
+.blog-faq-item.is-open .blog-faq-icon {
+  transform: rotate(45deg);
+}
+
+.blog-faq-answer {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.45s var(--ease-reveal);
+}
+
+.blog-faq-item.is-open .blog-faq-answer {
+  max-height: 12rem;
+}
+
+.blog-faq-answer p {
+  padding-bottom: 1.5rem;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+/* ─── Final CTA ────────────────────────────────────────────────── */
+.blog-cta-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  padding: clamp(5rem, 10vw, 8rem) var(--gutter);
+  max-width: 90rem;
+  margin-inline: auto;
+}
+
+.blog-cta-visual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.blog-cta-visual img {
+  object-fit: cover;
+}
+
+.blog-cta-copy h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.blog-cta-copy h2 em {
+  font-style: italic;
+}
+
+.blog-cta-copy p {
+  margin-top: 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.blog-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.blog-cta-contact {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.blog-cta-contact a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ─── Blog footer ──────────────────────────────────────────────── */
+.blog-footer {
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter);
+  border-top: 1px solid var(--line);
+  background: var(--sage-tint);
+}
+
+.blog-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 80rem;
+  margin-inline: auto;
+}
+
+.blog-footer-brand {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+}
+
+.blog-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ─── Blog nav overrides ───────────────────────────────────────── */
+.blog-nav .nav-book-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .blog-place,
+  .blog-place.is-reverse {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-place.is-reverse .blog-place-visual,
+  .blog-place.is-reverse .blog-place-copy {
+    order: unset;
+  }
+
+  .blog-riverwood-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-riverwood-image.is-wide {
+    grid-column: span 1;
+    aspect-ratio: 16 / 10;
+  }
+
+  .blog-cta-section {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-day-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .blog-route-track {
+    flex-direction: column;
+    width: auto;
+    padding-bottom: 0;
+  }
+
+  .blog-route-card {
+    flex: none;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-scroll-hint::after {
+    animation: none;
+  }
+
+  .blog-faq-answer {
+    transition: none;
+  }
+}

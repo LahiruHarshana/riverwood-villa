@@ -2273,6 +2273,7 @@ export default function Home() {
         <div className="footer-v3-bottom">
           <span>© {new Date().getFullYear()} Riverwood Villa</span>
           <span>Designed for slower days</span>
+          <a href="/blog/weligama-travel-guide-riverwood-villa">Travel journal</a>
           <a href="#home">Back to top <ArrowUpRight size={13} /></a>
         </div>
       </footer>

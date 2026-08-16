@@ -129,7 +129,7 @@ export function WeligamaTravelBlog() {
             scaleX: 1,
             ease: "none",
             scrollTrigger: {
-              trigger: ".blog-page",
+              trigger: pageRef.current,
               start: "top top",
               end: "bottom bottom",
               scrub: 0.15,
@@ -175,7 +175,7 @@ export function WeligamaTravelBlog() {
             scaleY: 1,
             ease: "none",
             scrollTrigger: {
-              trigger: ".blog-page",
+              trigger: pageRef.current,
               start: "top top",
               end: "bottom bottom",
               scrub: 0.2,
@@ -208,6 +208,37 @@ export function WeligamaTravelBlog() {
             delay: 0.7,
           });
 
+          gsap.from(".blog-hero-coordinate, .blog-hero-edition", {
+            autoAlpha: 0,
+            duration: 1,
+            ease: "power2.out",
+            stagger: 0.12,
+            delay: 0.95,
+          });
+
+          gsap.to(".blog-hero-content", {
+            yPercent: -12,
+            autoAlpha: 0.18,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".blog-hero",
+              start: "55% center",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+
+          gsap.to(".blog-ticker-track", {
+            xPercent: -18,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".blog-ticker",
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.7,
+            },
+          });
+
           // Intro reveal
           gsap.from(".blog-intro-lead", {
             y: 50,
@@ -231,6 +262,18 @@ export function WeligamaTravelBlog() {
               trigger: ".blog-intro-body",
               start: "top 82%",
               toggleActions: "play none none reverse",
+            },
+          });
+
+          gsap.to(".blog-intro-number", {
+            yPercent: -24,
+            rotate: -5,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".blog-intro",
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.8,
             },
           });
 
@@ -325,7 +368,7 @@ export function WeligamaTravelBlog() {
               x: () => -travel(),
               ease: "none",
               scrollTrigger: {
-                trigger: routeSection,
+                trigger: routePin,
                 start: "top top",
                 end: () => `+=${travel()}`,
                 pin: routePin,
@@ -339,7 +382,7 @@ export function WeligamaTravelBlog() {
               scaleX: 1,
               ease: "none",
               scrollTrigger: {
-                trigger: routeSection,
+                trigger: routePin,
                 start: "top top",
                 end: () => `+=${travel()}`,
                 scrub: true,
@@ -365,6 +408,21 @@ export function WeligamaTravelBlog() {
                   toggleActions: "play none none reverse",
                 },
               });
+
+              if (window.matchMedia("(min-width: 981px)").matches) {
+                gsap.to(card, {
+                  rotate: index % 2 === 0 ? -1.2 : 1.2,
+                  y: index % 2 === 0 ? -10 : 10,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: card,
+                    start: "left right",
+                    end: "right left",
+                    scrub: true,
+                    horizontal: true,
+                  },
+                });
+              }
             });
 
           // Why cards
@@ -616,6 +674,17 @@ export function WeligamaTravelBlog() {
               });
             });
 
+          gsap.to(".blog-day-line-fill", {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".blog-day-timeline",
+              start: "top 70%",
+              end: "bottom 55%",
+              scrub: 0.5,
+            },
+          });
+
           // Season cards
           gsap.utils
             .toArray<HTMLElement>(".blog-season-card")
@@ -699,6 +768,22 @@ export function WeligamaTravelBlog() {
             },
           });
 
+          gsap.fromTo(
+            ".blog-cta-visual img",
+            { scale: 1.14, yPercent: -5 },
+            {
+              scale: 1.02,
+              yPercent: 6,
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".blog-cta-section",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.8,
+              },
+            },
+          );
+
           // Background color shifts
           if (bgDissolve) {
             const sections: Array<{ selector: string; color: string }> = [
@@ -774,6 +859,8 @@ export function WeligamaTravelBlog() {
     <article ref={pageRef} className="blog-page">
       <div className="blog-bg-dissolve" aria-hidden="true" />
       <div className="blog-film-grain" aria-hidden="true" />
+      <div className="blog-ambient blog-ambient-one" aria-hidden="true" />
+      <div className="blog-ambient blog-ambient-two" aria-hidden="true" />
       <div className="blog-progress-line" aria-hidden="true">
         <div className="blog-progress-fill" />
       </div>
@@ -820,6 +907,12 @@ export function WeligamaTravelBlog() {
           />
         </div>
         <div className="blog-hero-overlay" aria-hidden="true" />
+        <div className="blog-hero-frame" aria-hidden="true">
+          <span className="blog-frame-corner is-tl" />
+          <span className="blog-frame-corner is-tr" />
+          <span className="blog-frame-corner is-bl" />
+          <span className="blog-frame-corner is-br" />
+        </div>
         <div className="blog-hero-letterbox" aria-hidden="true">
           <span className="blog-letterbox-top" />
           <span className="blog-letterbox-bottom" />
@@ -844,11 +937,23 @@ export function WeligamaTravelBlog() {
             <span>By {blogMeta.author}</span>
           </div>
         </div>
+        <span className="blog-hero-coordinate">05°58&apos; N · 80°25&apos; E</span>
+        <span className="blog-hero-edition">South coast field notes · 01</span>
         <div className="blog-scroll-hint">Scroll</div>
       </section>
 
+      <div className="blog-ticker" aria-hidden="true">
+        <div className="blog-ticker-track">
+          <span>Surf slowly</span><i>✦</i><span>Follow the coast</span><i>✦</i>
+          <span>Stay by the river</span><i>✦</i><span>Weligama, Sri Lanka</span><i>✦</i>
+          <span>Surf slowly</span><i>✦</i><span>Follow the coast</span><i>✦</i>
+          <span>Stay by the river</span><i>✦</i><span>Weligama, Sri Lanka</span><i>✦</i>
+        </div>
+      </div>
+
       {/* Intro */}
       <section className="blog-intro" aria-label="Introduction">
+        <span className="blog-intro-number" aria-hidden="true">01</span>
         <p className="blog-intro-lead">
           Weligama does not reveal itself all at once. At first, you notice the
           long curve of sand, surfboards stacked beside the road and the soft
@@ -916,9 +1021,12 @@ export function WeligamaTravelBlog() {
 
         <div className="blog-route-pin">
           <div className="blog-route-track">
-            {routeStops.map((stop) => (
+            {routeStops.map((stop, index) => (
               <article className="blog-route-card" key={stop.time}>
-                <span className="blog-route-time">{stop.time}</span>
+                <div className="blog-route-card-top">
+                  <span className="blog-route-time">{stop.time}</span>
+                  <span className="blog-route-card-number">{String(index + 1).padStart(2, "0")}</span>
+                </div>
                 <h3 className="blog-route-stop">{stop.stop}</h3>
                 <p className="blog-route-why">{stop.why}</p>
               </article>
@@ -953,8 +1061,9 @@ export function WeligamaTravelBlog() {
           </p>
         </header>
         <div className="blog-why-grid">
-          {whyWeligama.map((item) => (
+          {whyWeligama.map((item, index) => (
             <article className="blog-why-card" key={item.title}>
+              <span className="blog-card-index">{String(index + 1).padStart(2, "0")}</span>
               <h3>{item.title}</h3>
               <p>{item.copy}</p>
             </article>
@@ -1042,7 +1151,7 @@ export function WeligamaTravelBlog() {
         aria-labelledby="riverwood-title"
       >
         <div className="blog-riverwood-inner">
-          <header>
+          <header className="blog-section-header blog-riverwood-header">
             <span className="blog-section-index">Where to stay</span>
             <h2 id="riverwood-title" className="blog-section-title">
               Riverwood Villa: <em>the riverside day</em> that completes Weligama
@@ -1092,6 +1201,9 @@ export function WeligamaTravelBlog() {
           </p>
         </header>
         <div className="blog-day-timeline">
+          <div className="blog-day-line" aria-hidden="true">
+            <span className="blog-day-line-fill" />
+          </div>
           {riverwoodDay.map((item) => (
             <article className="blog-day-item" key={item.time}>
               <span className="blog-day-time">{item.time}</span>
@@ -1121,8 +1233,9 @@ export function WeligamaTravelBlog() {
           </p>
         </header>
         <div className="blog-season-grid">
-          {whenToVisit.map((item) => (
+          {whenToVisit.map((item, index) => (
             <article className="blog-season-card" key={item.label}>
+              <b aria-hidden="true">{String(index + 1).padStart(2, "0")}</b>
               <span>{item.label}</span>
               <p>{item.copy}</p>
             </article>
@@ -1192,6 +1305,7 @@ export function WeligamaTravelBlog() {
             alt="Wooden balcony chairs overlooking the river at Riverwood Villa"
             sizes="(max-width: 980px) 100vw, 45vw"
           />
+          <figcaption>Riverwood Villa · Weligama</figcaption>
         </figure>
         <div className="blog-cta-copy">
           <h2 id="cta-title">

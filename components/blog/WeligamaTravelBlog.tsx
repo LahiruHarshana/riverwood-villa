@@ -100,6 +100,22 @@ export function WeligamaTravelBlog() {
         gsap.ticker.add(raf);
         gsap.ticker.lagSmoothing(0);
 
+        const skewSetter = gsap.quickSetter("[data-skew]", "skewY", "deg") as (
+          v: number,
+        ) => void;
+        const clampSkew = gsap.utils.clamp(-4, 4);
+        let currentSkew = 0;
+        const velocityHandler = ({ velocity }: { velocity: number }) => {
+          currentSkew = clampSkew(velocity * -0.28);
+          skewSetter(currentSkew);
+        };
+        lenis.on("scroll", velocityHandler);
+        const settleSkew = () => {
+          currentSkew *= 0.88;
+          skewSetter(currentSkew);
+        };
+        gsap.ticker.add(settleSkew);
+
         const disposers: Array<() => void> = [];
         const on = <K extends keyof WindowEventMap>(
           target: Window | Document | HTMLElement,
@@ -136,16 +152,49 @@ export function WeligamaTravelBlog() {
             },
           });
 
-          // Hero parallax
+          // Hero parallax + letterbox
           gsap.to(".blog-hero-media img", {
-            scale: 1.12,
-            yPercent: 12,
+            scale: 1.14,
+            yPercent: 14,
             ease: "none",
             scrollTrigger: {
               trigger: ".blog-hero",
               start: "top top",
               end: "bottom top",
               scrub: true,
+            },
+          });
+
+          gsap.fromTo(
+            ".blog-letterbox-top, .blog-letterbox-bottom",
+            { height: "14vh" },
+            {
+              height: 0,
+              duration: 1.6,
+              ease: "expo.inOut",
+              delay: 0.4,
+            },
+          );
+
+          gsap.to(".blog-letterbox-top, .blog-letterbox-bottom", {
+            height: "16vh",
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".blog-hero",
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+
+          gsap.to(".blog-reel-fill", {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".blog-page",
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.2,
             },
           });
 
@@ -203,10 +252,10 @@ export function WeligamaTravelBlog() {
 
           gsap.fromTo(
             ".blog-opening-visual",
-            { clipPath: "inset(0 100% 0 0)" },
+            { clipPath: "inset(50% 50% 50% 50%)" },
             {
               clipPath: "inset(0 0% 0 0)",
-              duration: 1.35,
+              duration: 1.5,
               ease: "expo.inOut",
               scrollTrigger: {
                 trigger: ".blog-opening-visual",
@@ -252,16 +301,17 @@ export function WeligamaTravelBlog() {
             },
           );
 
-          // Section headers
+          // Section headers — cinematic blur reveal
           gsap.utils
             .toArray<HTMLElement>(".blog-section-header")
             .forEach((header) => {
               gsap.from(header.children, {
-                y: 40,
+                y: 48,
                 autoAlpha: 0,
-                duration: 0.85,
+                filter: "blur(10px)",
+                duration: 1,
                 ease: "power3.out",
-                stagger: 0.1,
+                stagger: 0.12,
                 scrollTrigger: {
                   trigger: header,
                   start: "top 80%",
@@ -351,78 +401,191 @@ export function WeligamaTravelBlog() {
               });
             });
 
-          // Place chapters
-          gsap.utils.toArray<HTMLElement>(".blog-place").forEach((place) => {
-            const visual = place.querySelector<HTMLElement>(
-              ".blog-place-visual",
-            );
-            const copy = place.querySelector<HTMLElement>(".blog-place-copy");
+          // Scroll-directed film — places play like movie cuts (desktop)
+          const filmSection = document.querySelector<HTMLElement>(
+            ".blog-film-sequence",
+          );
+          const filmFramesEls = gsap.utils.toArray<HTMLElement>(
+            ".blog-film-frame",
+          );
+          const filmCopies = gsap.utils.toArray<HTMLElement>(".blog-film-copy");
+          const sceneCurrent = document.querySelector<HTMLElement>(
+            ".blog-reel-scene",
+          );
 
-            if (visual) {
-              gsap.fromTo(
-                visual,
-                { clipPath: "inset(0 100% 0 0)" },
-                {
-                  clipPath: "inset(0 0% 0 0)",
-                  duration: 1.25,
-                  ease: "expo.inOut",
-                  scrollTrigger: {
-                    trigger: place,
-                    start: "top 75%",
-                    toggleActions: "play none none reverse",
-                  },
+          if (
+            filmSection &&
+            filmFramesEls.length > 0 &&
+            window.matchMedia("(min-width: 981px)").matches
+          ) {
+            const filmSegment = 0.75;
+            const filmTotalDuration = filmFramesEls.length * filmSegment;
+            const filmImages = filmFramesEls
+              .map((frame) => frame.querySelector<HTMLElement>("img"))
+              .filter((image): image is HTMLElement => Boolean(image));
+
+            gsap.set(filmFramesEls, { clipPath: "inset(100% 0 0 0)" });
+            gsap.set(filmFramesEls[0], { clipPath: "inset(0% 0 0 0)" });
+            gsap.set(filmImages, { scale: 1.1 });
+            gsap.set(filmImages[0], { scale: 1.04 });
+            gsap.set(filmCopies.slice(1), { autoAlpha: 0, y: 52 });
+
+            const filmTimeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: filmSection,
+                start: "top top",
+                end: `+=${filmFramesEls.length * 75}%`,
+                pin: ".blog-film-pin",
+                scrub: 0.6,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
+                onUpdate: (self) => {
+                  const index = Math.min(
+                    filmFramesEls.length - 1,
+                    Math.floor(self.progress * filmFramesEls.length),
+                  );
+                  if (sceneCurrent) {
+                    sceneCurrent.textContent = String(index + 1).padStart(2, "0");
+                  }
                 },
-              );
+              },
+            });
 
-              const img = visual.querySelector("img");
-              if (img) {
-                gsap.fromTo(
-                  img,
-                  { scale: 1.1, yPercent: -6 },
+            filmImages.forEach((image, index) => {
+              filmTimeline.to(
+                image,
+                {
+                  scale: 1.02,
+                  duration: filmSegment,
+                  ease: "none",
+                },
+                index * filmSegment,
+              );
+            });
+
+            filmFramesEls.forEach((frame, index) => {
+              if (index === 0) return;
+              const position = index * filmSegment;
+              filmTimeline
+                .to(
+                  frame,
                   {
-                    scale: 1.02,
-                    yPercent: 6,
-                    ease: "none",
+                    clipPath: "inset(0% 0 0 0)",
+                    duration: filmSegment,
+                    ease: "power3.inOut",
+                  },
+                  position,
+                )
+                .to(
+                  filmCopies[index - 1],
+                  {
+                    autoAlpha: 0,
+                    y: -42,
+                    duration: 0.28,
+                    ease: "power2.in",
+                  },
+                  position,
+                )
+                .fromTo(
+                  filmCopies[index],
+                  { autoAlpha: 0, y: 52 },
+                  {
+                    autoAlpha: 1,
+                    y: 0,
+                    duration: 0.48,
+                    ease: "power3.out",
+                  },
+                  position + 0.12,
+                );
+            });
+
+            filmTimeline.to(
+              ".blog-film-progress-fill",
+              {
+                scaleX: 1,
+                duration: filmTotalDuration,
+                ease: "none",
+              },
+              0,
+            );
+
+            disposers.push(() => filmTimeline.kill());
+          }
+
+          // Mobile place chapters
+          gsap.utils
+            .toArray<HTMLElement>(".blog-places-mobile .blog-place")
+            .forEach((place) => {
+              const visual = place.querySelector<HTMLElement>(
+                ".blog-place-visual",
+              );
+              const copy = place.querySelector<HTMLElement>(".blog-place-copy");
+
+              if (visual) {
+                gsap.fromTo(
+                  visual,
+                  { clipPath: "inset(0 100% 0 0)" },
+                  {
+                    clipPath: "inset(0 0% 0 0)",
+                    duration: 1.25,
+                    ease: "expo.inOut",
                     scrollTrigger: {
                       trigger: place,
-                      start: "top bottom",
-                      end: "bottom top",
-                      scrub: 0.8,
+                      start: "top 75%",
+                      toggleActions: "play none none reverse",
                     },
                   },
                 );
+
+                const img = visual.querySelector("img");
+                if (img) {
+                  gsap.fromTo(
+                    img,
+                    { scale: 1.12, yPercent: -6 },
+                    {
+                      scale: 1.02,
+                      yPercent: 6,
+                      ease: "none",
+                      scrollTrigger: {
+                        trigger: place,
+                        start: "top bottom",
+                        end: "bottom top",
+                        scrub: 0.8,
+                      },
+                    },
+                  );
+                }
               }
-            }
 
-            if (copy) {
-              gsap.from(copy.children, {
-                y: 36,
-                autoAlpha: 0,
-                duration: 0.8,
-                ease: "power3.out",
-                stagger: 0.1,
-                scrollTrigger: {
-                  trigger: place,
-                  start: "top 72%",
-                  toggleActions: "play none none reverse",
-                },
-              });
-            }
-          });
+              if (copy) {
+                gsap.from(copy.children, {
+                  y: 36,
+                  autoAlpha: 0,
+                  duration: 0.8,
+                  ease: "power3.out",
+                  stagger: 0.1,
+                  scrollTrigger: {
+                    trigger: place,
+                    start: "top 72%",
+                    toggleActions: "play none none reverse",
+                  },
+                });
+              }
+            });
 
-          // Riverwood images
+          // Riverwood images — staggered film gate reveals
           gsap.utils
             .toArray<HTMLElement>(".blog-riverwood-image")
             .forEach((figure, index) => {
               gsap.fromTo(
                 figure,
-                { clipPath: "inset(100% 0 0 0)", y: 40 },
+                { clipPath: "inset(100% 0 0 0)", y: 50 },
                 {
                   clipPath: "inset(0% 0 0 0)",
                   y: 0,
-                  duration: 1.1,
+                  duration: 1.15,
                   ease: "expo.inOut",
-                  delay: index * 0.08,
+                  delay: index * 0.1,
                   scrollTrigger: {
                     trigger: figure,
                     start: "top 85%",
@@ -430,6 +593,24 @@ export function WeligamaTravelBlog() {
                   },
                 },
               );
+
+              const img = figure.querySelector("img");
+              if (img) {
+                gsap.fromTo(
+                  img,
+                  { scale: 1.14 },
+                  {
+                    scale: 1.04,
+                    ease: "none",
+                    scrollTrigger: {
+                      trigger: figure,
+                      start: "top bottom",
+                      end: "bottom top",
+                      scrub: 0.9,
+                    },
+                  },
+                );
+              }
             });
 
           // Day timeline items
@@ -589,6 +770,7 @@ export function WeligamaTravelBlog() {
           disposers.forEach((dispose) => dispose());
           context.revert();
           ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+          gsap.ticker.remove(settleSkew);
           gsap.ticker.remove(raf);
           lenis.destroy();
         };
@@ -606,10 +788,18 @@ export function WeligamaTravelBlog() {
   }, []);
 
   return (
-    <article ref={pageRef} className="blog-page">
+    <article ref={pageRef} className="blog-page" data-skew>
       <div className="blog-bg-dissolve" aria-hidden="true" />
+      <div className="blog-film-grain" aria-hidden="true" />
       <div className="blog-progress-line" aria-hidden="true">
         <div className="blog-progress-fill" />
+      </div>
+      <div className="blog-reel-indicator" aria-hidden="true">
+        <span className="blog-reel-label">Reel</span>
+        <div className="blog-reel-track">
+          <div className="blog-reel-fill" />
+        </div>
+        <em className="blog-reel-scene">01</em>
       </div>
 
       <header className="site-nav blog-nav" data-theme="dark">
@@ -647,6 +837,10 @@ export function WeligamaTravelBlog() {
           />
         </div>
         <div className="blog-hero-overlay" aria-hidden="true" />
+        <div className="blog-hero-letterbox" aria-hidden="true">
+          <span className="blog-letterbox-top" />
+          <span className="blog-letterbox-bottom" />
+        </div>
         <div className="blog-hero-content">
           <div className="blog-hero-kicker">
             <span>Riverwood Travel Journal</span>
@@ -785,7 +979,7 @@ export function WeligamaTravelBlog() {
         </div>
       </section>
 
-      {/* Places */}
+      {/* Places — cinematic film (desktop) + scroll cards (mobile) */}
       <section
         className="blog-places-section"
         aria-labelledby="places-title"
@@ -797,27 +991,66 @@ export function WeligamaTravelBlog() {
           </h2>
         </header>
 
-        {places.map((place, index) => (
-          <article
-            className={`blog-place ${index % 2 === 1 ? "is-reverse" : ""}`}
-            key={place.number}
-          >
-            <figure className="blog-place-visual">
-              <BlogImage
-                src={place.image}
-                alt={place.alt}
-                sizes="(max-width: 980px) 100vw, 45vw"
-              />
-              <span className="blog-place-number">{place.number}</span>
-            </figure>
-            <div className="blog-place-copy">
-              <h3>{place.title}</h3>
-              {place.paragraphs.map((paragraph) => (
-                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+        <div className="blog-film-sequence" aria-label="Scroll-directed destination film">
+          <div className="blog-film-pin">
+            <div className="blog-film-stage">
+              {places.map((place) => (
+                <figure className="blog-film-frame" key={place.number}>
+                  <BlogImage
+                    src={place.image}
+                    alt={place.alt}
+                    sizes="100vw"
+                  />
+                </figure>
+              ))}
+              <div className="blog-film-vignette" aria-hidden="true" />
+            </div>
+
+            <div className="blog-film-copy-stack">
+              {places.map((place) => (
+                <div className="blog-film-copy" key={place.number}>
+                  <div className="blog-film-meta">
+                    <span>{place.number} / 08</span>
+                    <span>Scene</span>
+                  </div>
+                  <h3>{place.title}</h3>
+                  <p>{place.paragraphs[0]}</p>
+                </div>
               ))}
             </div>
-          </article>
-        ))}
+
+            <div className="blog-film-side-label" aria-hidden="true">
+              Scroll-directed film
+            </div>
+            <div className="blog-film-progress" aria-hidden="true">
+              <div className="blog-film-progress-fill" />
+            </div>
+          </div>
+        </div>
+
+        <div className="blog-places-mobile">
+          {places.map((place, index) => (
+            <article
+              className={`blog-place ${index % 2 === 1 ? "is-reverse" : ""}`}
+              key={place.number}
+            >
+              <figure className="blog-place-visual">
+                <BlogImage
+                  src={place.image}
+                  alt={place.alt}
+                  sizes="(max-width: 980px) 100vw, 45vw"
+                />
+                <span className="blog-place-number">{place.number}</span>
+              </figure>
+              <div className="blog-place-copy">
+                <h3>{place.title}</h3>
+                {place.paragraphs.map((paragraph) => (
+                  <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       {/* Riverwood */}

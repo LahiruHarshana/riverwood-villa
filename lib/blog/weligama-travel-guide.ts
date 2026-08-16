@@ -22,6 +22,9 @@ export const blogMeta = {
   heroImage: "/blog/weligama-surf-sunset.png",
   heroImageAlt:
     "Aerial view of Weligama Bay with Taprobane Island and golden beach",
+  ogImage: "/sri-lanka-stilt-fishing-1200x630.jpg",
+  ogImageAlt:
+    "Traditional stilt fishermen along the Weligama coast at sunrise",
   openingImage: "/blog/weligama-bay.png",
   openingImageAlt:
     "Aerial view of Weligama Bay with turquoise water, coral reefs and palm-lined coast",

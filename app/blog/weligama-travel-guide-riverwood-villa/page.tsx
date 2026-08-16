@@ -32,10 +32,10 @@ export const metadata: Metadata = {
     tags: blogMeta.keywords,
     images: [
       {
-        url: `${BASE_URL}${blogMeta.heroImage}`,
-        width: 1920,
-        height: 1280,
-        alt: blogMeta.heroImageAlt,
+        url: `${BASE_URL}${blogMeta.ogImage}`,
+        width: 1200,
+        height: 630,
+        alt: blogMeta.ogImageAlt,
       },
     ],
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: blogMeta.title,
     description: blogMeta.description,
-    images: [`${BASE_URL}${blogMeta.heroImage}`],
+    images: [`${BASE_URL}${blogMeta.ogImage}`],
   },
   robots: {
     index: true,
@@ -63,7 +63,7 @@ const articleJsonLd = {
   "@type": "BlogPosting",
   headline: blogMeta.title,
   description: blogMeta.description,
-  image: `${BASE_URL}${blogMeta.heroImage}`,
+  image: `${BASE_URL}${blogMeta.ogImage}`,
   datePublished: blogMeta.publishedAt,
   dateModified: blogMeta.modifiedAt,
   author: {

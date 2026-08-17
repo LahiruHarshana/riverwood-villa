@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getBookingById, updateBookingStatus, deleteBooking, Booking } from "@/lib/firestore/bookings";
 import { Spinner } from "@/components/ui/Spinner";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
-import { WhatsAppButton } from "@/components/admin/WhatsAppButton";
+import { GuestWhatsAppComposer } from "@/components/admin/GuestWhatsAppComposer";
 import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, DollarSign, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -18,7 +18,6 @@ export default function BookingDetailPage() {
   const [loading, setLoading] = useState(true);
   const [confirmAction, setConfirmAction] = useState<"confirmed" | "cancelled" | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const customMsgRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -115,21 +114,6 @@ export default function BookingDetailPage() {
       </div>
     );
   }
-
-  const prebuiltMessages = [
-    {
-      label: "Confirm booking",
-      message: `Hi ${booking.guestName}, your booking at Riverwood Villa (${booking.roomName}, ${new Date(booking.checkIn).toLocaleDateString()}–${new Date(booking.checkOut).toLocaleDateString()}) is confirmed. We look forward to hosting you!`,
-    },
-    {
-      label: "Request deposit",
-      message: `Hi ${booking.guestName}, thank you for booking Riverwood Villa. To secure your reservation, please send a 30% deposit to [payment details].`,
-    },
-    {
-      label: "Ask for details",
-      message: `Hi ${booking.guestName}, we received your booking request. Could you confirm the number of guests and any dietary requirements?`,
-    },
-  ];
 
   return (
     <div className="space-y-6 admin-fade-in">
@@ -252,41 +236,7 @@ export default function BookingDetailPage() {
           </div>
         </div>
 
-        <div className="admin-panel lg:col-span-2 p-6">
-          <div className="admin-detail-section-head">
-            <div className="admin-detail-section-icon">
-              <MessageSquare className="w-4 h-4" />
-            </div>
-            <h2 className="admin-detail-section-title">Contact guest</h2>
-          </div>
-          <div className="admin-action-grid">
-            {prebuiltMessages.map((msg) => (
-              <WhatsAppButton
-                key={msg.label}
-                phone={booking.guestPhone}
-                message={msg.message}
-                label={msg.label}
-              />
-            ))}
-          </div>
-          <div className="mt-5 border-t pt-5" style={{ borderColor: "var(--ra-line)" }}>
-            <h3 className="admin-form-section-title mb-2.5">Custom message</h3>
-            <div className="flex flex-col sm:flex-row gap-2.5 items-start sm:items-end">
-              <textarea
-                ref={customMsgRef}
-                placeholder="Type your custom message here..."
-                className="admin-input flex-1 min-h-[70px]"
-                rows={2}
-              />
-              <WhatsAppButton
-                phone={booking.guestPhone}
-                message=""
-                label="Send custom"
-                customMessageRef={customMsgRef}
-              />
-            </div>
-          </div>
-        </div>
+        <GuestWhatsAppComposer booking={booking} />
       </div>
     </div>
   );

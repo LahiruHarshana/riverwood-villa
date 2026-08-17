@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { type FormEvent, useEffect, useEffectEvent, useRef, useState } from "react";
-import { BedDouble, CalendarDays, Check, Minus, Plus, Search, Users, MessageCircle } from "lucide-react";
+import { BedDouble, CalendarDays, Check, CheckCircle2, Minus, Plus, Search, Users, MessageCircle } from "lucide-react";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 type AvailableRoom = {
@@ -95,6 +95,67 @@ function createBookingWhatsAppMessage(
   return `Hi, I just submitted a booking request.\n\n*Room:* ${room.name}\n*Dates:* ${checkIn} to ${checkOut}\n*Guests:* ${guests}\n\n*Name:* ${bookingForm.guestName}\n*Email:* ${bookingForm.guestEmail}\n*Phone:* ${bookingForm.guestPhone}\n*Payment Method:* ${bookingForm.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Pay at Hotel"}${bookingForm.specialRequests ? `\n*Special Requests:* ${bookingForm.specialRequests}` : ""}`;
 }
 
+type BookingSuccessPanelProps = {
+  room: AvailableRoom;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  submittedForm: BookingFormState;
+  onNewRequest: () => void;
+};
+
+function BookingSuccessPanel({
+  room,
+  checkIn,
+  checkOut,
+  guests,
+  submittedForm,
+  onNewRequest,
+}: BookingSuccessPanelProps) {
+  const whatsappUrl = getWhatsAppUrl(
+    WHATSAPP_NUMBER,
+    createBookingWhatsAppMessage(room, checkIn, checkOut, guests, submittedForm)
+  );
+
+  return (
+    <div className="ms-booking-success" role="status" aria-live="polite">
+      <div className="ms-booking-success-icon">
+        <CheckCircle2 size={28} />
+      </div>
+      <div className="ms-booking-success-copy">
+        <h3>Booking request sent</h3>
+        <p>Thank you, {submittedForm.guestName}. We received your request and will contact you shortly to confirm your stay.</p>
+      </div>
+      <dl className="ms-booking-success-summary">
+        <div>
+          <dt>Room</dt>
+          <dd>{room.name}</dd>
+        </div>
+        <div>
+          <dt>Dates</dt>
+          <dd>{checkIn} to {checkOut}</dd>
+        </div>
+        <div>
+          <dt>Guests</dt>
+          <dd>{guests}</dd>
+        </div>
+        <div>
+          <dt>Payment</dt>
+          <dd>{submittedForm.paymentMethod === "bank_transfer" ? "Bank transfer" : "Pay at hotel"}</dd>
+        </div>
+      </dl>
+      <div className="ms-booking-success-actions">
+        <a className="ms-booking-success-whatsapp" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+          <MessageCircle size={18} /> Open WhatsApp to confirm
+        </a>
+        <button type="button" className="ms-booking-success-reset" onClick={onNewRequest}>
+          Send another request
+        </button>
+      </div>
+    </div>
+  );
+}
+
 type BookingSearchProps = {
   className?: string;
   eyebrow?: string;
@@ -143,6 +204,16 @@ export function BookingSearch({
     setSubmittedBookingForm(null);
     setIsRequestFormOpen(false);
   };
+
+  const resetBookingRequest = () => {
+    setBookingError("");
+    setBookingStatus("");
+    setSubmittedBookingForm(null);
+    setBookingForm(initialBookingForm);
+    setIsRequestFormOpen(true);
+  };
+
+  const isBookingComplete = Boolean(bookingStatus && !bookingError && submittedBookingForm && selectedRoom);
 
   const runAvailabilitySearch = async ({
     nextCheckIn,
@@ -428,6 +499,7 @@ export function BookingSearch({
                         setSelectedRoomId(room.id);
                         setBookingError("");
                         setBookingStatus("");
+                        setSubmittedBookingForm(null);
                         setIsRequestFormOpen(false);
                       }}
                     >
@@ -447,102 +519,88 @@ export function BookingSearch({
 
             {selectedRoom && (
               <div className="ms-request">
-                <div className="ms-request-summary">
-                  <div>
-                    <strong>{selectedRoom.name}</strong>
-                    <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
-                  </div>
-                  <div className="ms-request-actions">
-                    <Link className="ms-room-link" href={createRoomHref(selectedRoom, checkIn, checkOut, guests)}>
-                      View room details
-                    </Link>
-                    <button
-                      type="button"
-                      className="ms-request-toggle"
-                      onClick={() => setIsRequestFormOpen((current) => !current)}
-                      aria-expanded={isRequestFormOpen}
-                    >
-                      {isRequestFormOpen ? "Hide form" : "Request room"}
-                    </button>
-                  </div>
-                </div>
-
-                {(bookingError || bookingStatus) && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
-                    <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
-                      {bookingError || bookingStatus}
-                    </p>
-                    {bookingStatus && !bookingError && selectedRoom && submittedBookingForm && (
-                      <a
-                        href={getWhatsAppUrl(
-                          WHATSAPP_NUMBER,
-                          createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, submittedBookingForm)
-                        )}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "0.5rem",
-                          background: "#25D366",
-                          color: "#fff",
-                          padding: "0.6rem 1rem",
-                          borderRadius: "0.4rem",
-                          fontWeight: 500,
-                          textDecoration: "none",
-                          fontSize: "0.9rem"
-                        }}
-                      >
-                        <MessageCircle size={18} /> Open WhatsApp to Confirm
-                      </a>
-                    )}
-                  </div>
-                )}
-
-                {isRequestFormOpen && (
-                  <form className="ms-request-form" onSubmit={handleBookingSubmit}>
-                    <div className="ms-request-grid">
-                      <input
-                        value={bookingForm.guestName}
-                        onChange={(e) => updateBookingForm("guestName", e.target.value)}
-                        placeholder="Full name"
-                        autoComplete="name"
-                        required
-                      />
-                      <input
-                        type="email"
-                        value={bookingForm.guestEmail}
-                        onChange={(e) => updateBookingForm("guestEmail", e.target.value)}
-                        placeholder="Email address"
-                        autoComplete="email"
-                        required
-                      />
-                      <input
-                        value={bookingForm.guestPhone}
-                        onChange={(e) => updateBookingForm("guestPhone", e.target.value)}
-                        placeholder="Phone / WhatsApp"
-                        autoComplete="tel"
-                        required
-                      />
-                      <select
-                        value={bookingForm.paymentMethod}
-                        onChange={(e) => updateBookingForm("paymentMethod", e.target.value)}
-                      >
-                        <option value="pay_at_hotel">Pay at hotel</option>
-                        <option value="bank_transfer">Bank transfer</option>
-                      </select>
+                {isBookingComplete && submittedBookingForm ? (
+                  <BookingSuccessPanel
+                    room={selectedRoom}
+                    checkIn={checkIn}
+                    checkOut={checkOut}
+                    guests={guests}
+                    submittedForm={submittedBookingForm}
+                    onNewRequest={resetBookingRequest}
+                  />
+                ) : (
+                  <>
+                    <div className="ms-request-summary">
+                      <div>
+                        <strong>{selectedRoom.name}</strong>
+                        <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
+                      </div>
+                      <div className="ms-request-actions">
+                        <Link className="ms-room-link" href={createRoomHref(selectedRoom, checkIn, checkOut, guests)}>
+                          View room details
+                        </Link>
+                        <button
+                          type="button"
+                          className="ms-request-toggle"
+                          onClick={() => setIsRequestFormOpen((current) => !current)}
+                          aria-expanded={isRequestFormOpen}
+                        >
+                          {isRequestFormOpen ? "Hide form" : "Request room"}
+                        </button>
+                      </div>
                     </div>
-                    <textarea
-                      value={bookingForm.specialRequests}
-                      onChange={(e) => updateBookingForm("specialRequests", e.target.value)}
-                      placeholder="Special requests, arrival time, or questions"
-                      rows={2}
-                    />
-                    <button className="ms-request-submit" type="submit" disabled={isBooking}>
-                      {isBooking ? "Sending request..." : "Send booking request"}
-                    </button>
-                  </form>
+
+                    {bookingError && (
+                      <p className="ms-note is-error" style={{ marginTop: "1rem" }}>
+                        {bookingError}
+                      </p>
+                    )}
+
+                    {isRequestFormOpen && (
+                      <form className="ms-request-form" onSubmit={handleBookingSubmit}>
+                        <div className="ms-request-grid">
+                          <input
+                            value={bookingForm.guestName}
+                            onChange={(e) => updateBookingForm("guestName", e.target.value)}
+                            placeholder="Full name"
+                            autoComplete="name"
+                            required
+                          />
+                          <input
+                            type="email"
+                            value={bookingForm.guestEmail}
+                            onChange={(e) => updateBookingForm("guestEmail", e.target.value)}
+                            placeholder="Email address"
+                            autoComplete="email"
+                            required
+                          />
+                          <input
+                            value={bookingForm.guestPhone}
+                            onChange={(e) => updateBookingForm("guestPhone", e.target.value)}
+                            placeholder="Phone / WhatsApp"
+                            autoComplete="tel"
+                            required
+                          />
+                          <select
+                            value={bookingForm.paymentMethod}
+                            onChange={(e) => updateBookingForm("paymentMethod", e.target.value)}
+                          >
+                            <option value="pay_at_hotel">Pay at hotel</option>
+                            <option value="bank_transfer">Bank transfer</option>
+                          </select>
+                        </div>
+                        <textarea
+                          value={bookingForm.specialRequests}
+                          onChange={(e) => updateBookingForm("specialRequests", e.target.value)}
+                          placeholder="Special requests, arrival time, or questions"
+                          rows={2}
+                        />
+                        <button className="ms-request-submit" type="submit" disabled={isBooking}>
+                          {isBooking ? "Sending request..." : "Send booking request"}
+                        </button>
+                      </form>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -637,6 +695,7 @@ export function BookingSearch({
                   setSelectedRoomId(room.id);
                   setBookingError("");
                   setBookingStatus("");
+                  setSubmittedBookingForm(null);
                 }}
               >
                 <span className="ms-room-thumb">
@@ -653,90 +712,74 @@ export function BookingSearch({
           </div>
 
           {selectedRoom && (
-            <form className="ms-request-form" onSubmit={handleBookingSubmit}>
-              <div className="ms-request-summary">
-                <div>
-                  <strong>Request {selectedRoom.name}</strong>
-                  <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
-                </div>
-                <Link className="ms-room-link" href={createRoomHref(selectedRoom, checkIn, checkOut, guests)}>
-                  View room details
-                </Link>
-              </div>
-
-              <div className="ms-request-grid">
-                <input
-                  value={bookingForm.guestName}
-                  onChange={(e) => updateBookingForm("guestName", e.target.value)}
-                  placeholder="Full name"
-                  autoComplete="name"
-                />
-                <input
-                  type="email"
-                  value={bookingForm.guestEmail}
-                  onChange={(e) => updateBookingForm("guestEmail", e.target.value)}
-                  placeholder="Email address"
-                  autoComplete="email"
-                />
-                <input
-                  value={bookingForm.guestPhone}
-                  onChange={(e) => updateBookingForm("guestPhone", e.target.value)}
-                  placeholder="Phone / WhatsApp"
-                  autoComplete="tel"
-                />
-                <select
-                  value={bookingForm.paymentMethod}
-                  onChange={(e) => updateBookingForm("paymentMethod", e.target.value)}
-                >
-                  <option value="pay_at_hotel">Pay at hotel</option>
-                  <option value="bank_transfer">Bank transfer</option>
-                </select>
-              </div>
-
-              <textarea
-                value={bookingForm.specialRequests}
-                onChange={(e) => updateBookingForm("specialRequests", e.target.value)}
-                placeholder="Special requests, arrival time, or questions"
-                rows={3}
+            isBookingComplete && submittedBookingForm ? (
+              <BookingSuccessPanel
+                room={selectedRoom}
+                checkIn={checkIn}
+                checkOut={checkOut}
+                guests={guests}
+                submittedForm={submittedBookingForm}
+                onNewRequest={resetBookingRequest}
               />
-
-              {(bookingError || bookingStatus) && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
-                  <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
-                    {bookingError || bookingStatus}
-                  </p>
-                  {bookingStatus && !bookingError && selectedRoom && submittedBookingForm && (
-                    <a
-                      href={getWhatsAppUrl(
-                        WHATSAPP_NUMBER,
-                        createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, submittedBookingForm)
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "0.5rem",
-                        background: "#25D366",
-                        color: "#fff",
-                        padding: "0.6rem 1rem",
-                        borderRadius: "0.4rem",
-                        fontWeight: 500,
-                        textDecoration: "none",
-                        fontSize: "0.9rem"
-                      }}
-                    >
-                      <MessageCircle size={18} /> Open WhatsApp to Confirm
-                    </a>
-                  )}
+            ) : (
+              <form className="ms-request-form" onSubmit={handleBookingSubmit}>
+                <div className="ms-request-summary">
+                  <div>
+                    <strong>Request {selectedRoom.name}</strong>
+                    <span>{formatMoney(selectedRoom.pricePerNight, selectedRoom.currency)} / night</span>
+                  </div>
+                  <Link className="ms-room-link" href={createRoomHref(selectedRoom, checkIn, checkOut, guests)}>
+                    View room details
+                  </Link>
                 </div>
-              )}
 
-              <button className="ms-request-submit" type="submit" disabled={isBooking}>
-                {isBooking ? "Sending request..." : "Request this room"}
-              </button>
-            </form>
+                <div className="ms-request-grid">
+                  <input
+                    value={bookingForm.guestName}
+                    onChange={(e) => updateBookingForm("guestName", e.target.value)}
+                    placeholder="Full name"
+                    autoComplete="name"
+                  />
+                  <input
+                    type="email"
+                    value={bookingForm.guestEmail}
+                    onChange={(e) => updateBookingForm("guestEmail", e.target.value)}
+                    placeholder="Email address"
+                    autoComplete="email"
+                  />
+                  <input
+                    value={bookingForm.guestPhone}
+                    onChange={(e) => updateBookingForm("guestPhone", e.target.value)}
+                    placeholder="Phone / WhatsApp"
+                    autoComplete="tel"
+                  />
+                  <select
+                    value={bookingForm.paymentMethod}
+                    onChange={(e) => updateBookingForm("paymentMethod", e.target.value)}
+                  >
+                    <option value="pay_at_hotel">Pay at hotel</option>
+                    <option value="bank_transfer">Bank transfer</option>
+                  </select>
+                </div>
+
+                <textarea
+                  value={bookingForm.specialRequests}
+                  onChange={(e) => updateBookingForm("specialRequests", e.target.value)}
+                  placeholder="Special requests, arrival time, or questions"
+                  rows={3}
+                />
+
+                {bookingError && (
+                  <p className="ms-note is-error" style={{ marginTop: "1rem" }}>
+                    {bookingError}
+                  </p>
+                )}
+
+                <button className="ms-request-submit" type="submit" disabled={isBooking}>
+                  {isBooking ? "Sending request..." : "Request this room"}
+                </button>
+              </form>
+            )
           )}
         </div>
       )}

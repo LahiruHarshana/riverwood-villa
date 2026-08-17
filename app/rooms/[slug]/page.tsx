@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPublicRoomBySlug } from "@/lib/public-rooms";
 import { JsonLd } from "@/components/site/JsonLd";
-import { breadcrumbJsonLd, site } from "@/lib/site";
+import { breadcrumbJsonLd, createPageMetadata, site } from "@/lib/site";
+import { standaloneJsonLd } from "@/lib/seo";
 
 export const runtime = "nodejs";
 
@@ -26,25 +27,24 @@ export async function generateMetadata({ params }: RoomPageProps): Promise<Metad
     return { title: { absolute: "Room Not Found | Riverwood Villa Weligama" }, robots: { index: false, follow: false } };
   }
 
-  const title = `${room.name} | Riverwood Villa Weligama`;
-  const description = room.shortDescription || room.description;
-  const canonical = `${site.url}/rooms/${room.slug}`;
+  const title = `${room.name} at Riverwood Villa Weligama | Book Direct`;
+  const description =
+    room.shortDescription ||
+    `${room.name} at Riverwood Villa Weligama. A calm riverside room for up to ${room.maxGuests} guests in Pelana, Weligama, Sri Lanka.`;
   const image = room.images[0] || "/villa/villa-bedroom-high-ceiling.jpg";
 
-  return {
-    title: { absolute: title },
+  return createPageMetadata({
+    title,
     description,
-    alternates: { canonical },
-    openGraph: {
-      title,
-      description,
-      url: canonical,
-      siteName: site.shortName,
-      type: "website",
-      images: [{ url: image, alt: `${room.name} at Riverwood Villa Weligama` }],
-    },
-    twitter: { card: "summary_large_image", title, description, images: [image] },
-  };
+    path: `/rooms/${room.slug}`,
+    image,
+    keywords: [
+      `${room.name} Weligama`,
+      "Riverwood Villa room",
+      "book room Weligama",
+      "Weligama boutique room",
+    ],
+  });
 }
 
 function formatMoney(amount: number, currency: string) {
@@ -93,7 +93,6 @@ export default async function RoomPage({ params, searchParams }: RoomPageProps) 
   const browseHref = createBrowseHref(room.slug, checkIn, checkOut, guests);
   const canonical = `${site.url}/rooms/${room.slug}`;
   const roomJsonLd = {
-    "@context": "https://schema.org",
     "@type": "HotelRoom",
     name: room.name,
     description: room.description,
@@ -113,7 +112,7 @@ export default async function RoomPage({ params, searchParams }: RoomPageProps) 
 
   return (
     <main className="room-page">
-      <JsonLd data={[roomJsonLd, breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Rooms", path: "/rooms" }, { name: room.name, path: `/rooms/${room.slug}` }])]} />
+      <JsonLd data={[...standaloneJsonLd([roomJsonLd]), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Rooms", path: "/rooms" }, { name: room.name, path: `/rooms/${room.slug}` }])]} />
       <section className="room-page-hero">
         <div className="room-page-copy">
           <Link href={browseHref} className="text-button" style={{ marginBottom: "2rem", padding: "0.5rem 1rem", fontSize: "0.7rem" }}>

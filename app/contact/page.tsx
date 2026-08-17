@@ -5,20 +5,22 @@ import { ArrowUpRight, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { JsonLd } from "@/components/site/JsonLd";
 import { MarketingShell } from "@/components/site/MarketingShell";
 import { breadcrumbJsonLd, createPageMetadata, site } from "@/lib/site";
+import { standaloneJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Contact Riverwood Villa Weligama | Book Your Stay",
-  description: "Contact Riverwood Villa Weligama directly for room availability, group stays and booking questions. Find our phone, email and Pelana address.",
+  title: "Contact Riverwood Villa Weligama | Book Your Riverside Stay",
+  description:
+    "Contact Riverwood Villa Weligama directly for availability, group stays and booking questions. Phone, email, WhatsApp and Pelana address for the best villa stay in Weligama.",
   path: "/contact",
-  keywords: ["contact Riverwood Villa", "book Riverwood Villa Weligama", "Riverwood Villa phone", "Riverwood Villa address"],
+  keywords: ["contact Riverwood Villa", "book Riverwood Villa Weligama", "Riverwood Villa phone", "Riverwood Villa address", "book villa Weligama"],
 });
 
 export default function ContactPage() {
-  const contactJsonLd = { "@context": "https://schema.org", "@type": "ContactPage", name: "Contact Riverwood Villa Weligama", url: `${site.url}/contact`, mainEntity: { "@id": `${site.url}/#riverwood-villa` } };
+  const contactJsonLd = { "@type": "ContactPage", name: "Contact Riverwood Villa Weligama", url: `${site.url}/contact`, mainEntity: { "@id": `${site.url}/#riverwood-villa` } };
 
   return (
     <MarketingShell>
-      <JsonLd data={[contactJsonLd, breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Contact", path: "/contact" }])]} />
+      <JsonLd data={[...standaloneJsonLd([contactJsonLd]), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Contact", path: "/contact" }])]} />
       <main className="mp-contact-page">
         <section className="mp-contact-hero">
           <figure><Image src="/villa/villa-exterior-front.jpg" alt="Entrance to Riverwood Villa Weligama in Pelana" fill priority sizes="(max-width: 900px) 100vw, 50vw" /></figure>

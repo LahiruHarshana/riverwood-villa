@@ -6,16 +6,17 @@ import { JsonLd } from "@/components/site/JsonLd";
 import { MarketingShell } from "@/components/site/MarketingShell";
 import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbJsonLd, createPageMetadata, site } from "@/lib/site";
+import { standaloneJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Riverwood Villa Weligama | Private Riverside Villa",
-  description: "Discover Riverwood Villa Weligama, a private riverside boutique stay with balcony rooms, tropical gardens, hosted meals and fast Starlink Wi-Fi.",
+  title: "Riverwood Villa Weligama | Private Riverside Boutique Villa in Sri Lanka",
+  description:
+    "Discover Riverwood Villa Weligama, a private riverside boutique stay with balcony rooms, tropical gardens, hosted meals, Starlink Wi-Fi and direct booking.",
   path: "/villa-weligama",
-  keywords: ["Riverwood Villa Weligama", "villa in Weligama", "private villa Weligama", "riverside villa Weligama", "boutique hotel Weligama"],
+  keywords: ["Riverwood Villa Weligama", "villa in Weligama", "private villa Weligama", "riverside villa Weligama", "boutique hotel Weligama", "best villa Weligama"],
 });
 
 const lodgingJsonLd = {
-  "@context": "https://schema.org",
   "@type": ["LodgingBusiness", "Hotel"],
   "@id": `${site.url}/#riverwood-villa`,
   name: site.name,
@@ -56,7 +57,7 @@ const highlights = [
 export default function VillaWeligamaPage() {
   return (
     <MarketingShell>
-      <JsonLd data={[lodgingJsonLd, breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Villa in Weligama", path: "/villa-weligama" }])]} />
+      <JsonLd data={[...standaloneJsonLd([lodgingJsonLd]), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Villa in Weligama", path: "/villa-weligama" }])]} />
       <main>
         <PageHero
           eyebrow="The signature stay in Weligama"

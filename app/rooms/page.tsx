@@ -8,10 +8,12 @@ import { JsonLd } from "@/components/site/JsonLd";
 import { MarketingShell } from "@/components/site/MarketingShell";
 import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbJsonLd, createPageMetadata, site } from "@/lib/site";
+import { faqPageJsonLd, standaloneJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Rooms at Riverwood Villa Weligama | Book Direct",
-  description: "Explore calm rooms at Riverwood Villa Weligama with canopy beds, high ceilings, balcony access, riverside views and direct-booking availability.",
+  title: "Rooms at Riverwood Villa Weligama | Check Availability & Book Direct",
+  description:
+    "Explore calm balcony rooms at Riverwood Villa Weligama with canopy beds, riverside views, Starlink Wi-Fi and direct availability for the best boutique stay in Weligama.",
   path: "/rooms",
   keywords: ["Riverwood Villa rooms", "rooms in Weligama", "Weligama accommodation", "boutique rooms Weligama", "book villa Weligama"],
 });
@@ -24,12 +26,12 @@ const roomFaqs = [
 ];
 
 export default function RoomsPage() {
-  const faqJsonLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: roomFaqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
-  const pageJsonLd = { "@context": "https://schema.org", "@type": "CollectionPage", name: "Rooms at Riverwood Villa Weligama", url: `${site.url}/rooms`, about: { "@id": `${site.url}/#riverwood-villa` } };
+  const faqJsonLd = faqPageJsonLd(roomFaqs);
+  const pageJsonLd = { "@type": "CollectionPage", name: "Rooms at Riverwood Villa Weligama", url: `${site.url}/rooms`, about: { "@id": `${site.url}/#riverwood-villa` } };
 
   return (
     <MarketingShell>
-      <JsonLd data={[pageJsonLd, faqJsonLd, breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Rooms", path: "/rooms" }])]} />
+      <JsonLd data={[...standaloneJsonLd([pageJsonLd, faqJsonLd]), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Rooms", path: "/rooms" }])]} />
       <main>
         <PageHero
           eyebrow="Sleep beside the river"

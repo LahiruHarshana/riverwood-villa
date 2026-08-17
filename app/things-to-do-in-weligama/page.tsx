@@ -6,12 +6,14 @@ import { JsonLd } from "@/components/site/JsonLd";
 import { MarketingShell } from "@/components/site/MarketingShell";
 import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbJsonLd, createPageMetadata, site } from "@/lib/site";
+import { faqPageJsonLd, standaloneJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Things to Do in Weligama | Riverwood Villa Local Guide",
-  description: "Discover the best things to do in Weligama: surf Weligama Bay, see Taprobane Island, visit Kushtarajagala and explore Mirissa, Midigama and Galle.",
+  title: "Things to Do in Weligama | Riverwood Villa Local Travel Guide",
+  description:
+    "Discover the best things to do in Weligama: surf Weligama Bay, see Taprobane Island, visit Kushtarajagala and explore Mirissa, Midigama and Galle from Riverwood Villa.",
   path: "/things-to-do-in-weligama",
-  keywords: ["things to do in Weligama", "Weligama attractions", "Weligama travel guide", "Weligama surfing", "Riverwood Villa Weligama"],
+  keywords: ["things to do in Weligama", "Weligama attractions", "Weligama travel guide", "Weligama surfing", "Riverwood Villa Weligama", "best places Weligama"],
 });
 
 const places = [
@@ -31,12 +33,12 @@ const faqs = [
 ];
 
 export default function ThingsToDoInWeligamaPage() {
-  const destinationJsonLd = { "@context": "https://schema.org", "@type": "TouristDestination", name: "Weligama", description: "A south-coast Sri Lankan destination known for surfing, fishing culture, beaches and Taprobane Island.", url: `${site.url}/things-to-do-in-weligama`, touristType: ["Surfers", "Beach travellers", "Culture travellers", "Families"] };
-  const faqJsonLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
+  const destinationJsonLd = { "@type": "TouristDestination", name: "Weligama", description: "A south-coast Sri Lankan destination known for surfing, fishing culture, beaches and Taprobane Island.", url: `${site.url}/things-to-do-in-weligama`, touristType: ["Surfers", "Beach travellers", "Culture travellers", "Families"] };
+  const faqJsonLd = faqPageJsonLd(faqs);
 
   return (
     <MarketingShell>
-      <JsonLd data={[destinationJsonLd, faqJsonLd, breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Things to do in Weligama", path: "/things-to-do-in-weligama" }])]} />
+      <JsonLd data={[...standaloneJsonLd([destinationJsonLd, faqJsonLd]), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Things to do in Weligama", path: "/things-to-do-in-weligama" }])]} />
       <main>
         <PageHero
           eyebrow="A local guide by Riverwood Villa"

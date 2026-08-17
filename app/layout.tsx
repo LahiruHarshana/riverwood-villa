@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Bodoni_Moda, Manrope } from "next/font/google";
+import { JsonLd } from "@/components/site/JsonLd";
+import { PageTracker } from "@/components/analytics/PageTracker";
+import { createSiteGraph, defaultKeywords, homeFaqJsonLd } from "@/lib/seo";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -18,33 +21,47 @@ const bodoni = Bodoni_Moda({
   display: "swap",
 });
 
+const defaultTitle =
+  "Riverwood Villa Weligama: Private Riverside Boutique Stay | Book Direct";
+const defaultDescription =
+  "Built for unhurried south-coast stays, Riverwood Villa Weligama offers balcony rooms beside the river, hosted meals, Starlink Wi-Fi and direct booking in Weligama, Sri Lanka.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Riverwood Villa Weligama | Private Riverside Villa",
+    default: defaultTitle,
     template: "%s | Riverwood Villa Weligama",
   },
-  description:
-    "Riverwood Villa Weligama is a private riverside boutique stay with balcony rooms, hosted meals, tropical gardens and fast Starlink Wi-Fi in Weligama, Sri Lanka.",
-  keywords: ["Riverwood Villa Weligama", "Weligama villa", "villa in Weligama", "riverside villa Sri Lanka", "boutique stay Weligama", "private villa Weligama", "Weligama accommodation"],
-  authors: [{ name: "Riverwood Villa Weligama", url: site.url }],
-  creator: "Riverwood Villa Weligama",
-  publisher: "Riverwood Villa Weligama",
-  alternates: { canonical: site.url },
-  icons: {
-    icon: [
-      { url: "/brand/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/brand/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-    ],
-    shortcut: "/brand/favicon.ico",
-    apple: "/brand/apple-touch-icon.png",
+  description: defaultDescription,
+  keywords: [...defaultKeywords],
+  applicationName: site.shortName,
+  authors: [{ name: site.name, url: site.url }],
+  creator: site.name,
+  publisher: site.name,
+  category: "travel",
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
-  manifest: "/brand/site.webmanifest",
+  alternates: {
+    canonical: site.url,
+    languages: {
+      "en-US": site.url,
+    },
+  },
+  icons: {
+    icon: [{ url: "/brand/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/brand/favicon.svg",
+    apple: [{ url: "/og.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
-    title: "Riverwood Villa Weligama | Private Riverside Villa",
-    description: "A private riverside boutique stay with balcony rooms, hosted meals, tropical gardens and fast Starlink Wi-Fi in Weligama, Sri Lanka.",
+    title: defaultTitle,
+    description: defaultDescription,
     url: site.url,
-    siteName: "Riverwood Villa",
+    siteName: site.shortName,
     images: [
       {
         url: "/og.png",
@@ -58,8 +75,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Riverwood Villa Weligama | Private Riverside Villa",
-    description: "Stay beside the river at Riverwood Villa Weligama, a private boutique villa on Sri Lanka's south coast.",
+    title: defaultTitle,
+    description: defaultDescription,
     images: ["/og.png"],
   },
   robots: {
@@ -75,40 +92,7 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": ["LodgingBusiness", "Hotel"],
-  "@id": `${site.url}/#riverwood-villa`,
-  name: site.name,
-  alternateName: "Riverwood Villa",
-  image: [`${site.url}/villa/villa-hero.webp`, `${site.url}/og.png`],
-  logo: `${site.url}/brand/riverwood-logo.png`,
-  description: "A private riverside boutique villa with balcony rooms, hosted meals, tropical gardens and Starlink Wi-Fi in Weligama, Sri Lanka.",
-  url: site.url,
-  telephone: site.phone,
-  email: site.email,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "No. 47/7, Sri Sambuddathwa Jayanthi Mw, Pelana",
-    addressLocality: "Weligama",
-    addressRegion: "Southern Province",
-    postalCode: "81700",
-    addressCountry: "LK",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 5.973,
-    longitude: 80.428
-  },
-  priceRange: "$$",
-  amenityFeature: [
-    { "@type": "LocationFeatureSpecification", name: "Riverside setting", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Starlink Wi-Fi", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Private balconies", value: true },
-  ],
-};
-
-import { PageTracker } from "@/components/analytics/PageTracker";
+const globalStructuredData = createSiteGraph(homeFaqJsonLd);
 
 export default function RootLayout({
   children,
@@ -118,10 +102,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={globalStructuredData} />
       </head>
       <body className={`${manrope.variable} ${bodoni.variable}`}>
         {children}

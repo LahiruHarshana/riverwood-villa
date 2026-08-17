@@ -8,8 +8,9 @@ import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbJsonLd, createPageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Riverwood Villa Experiences | Weligama Riverside Stay",
-  description: "Plan riverside mornings, hosted dining, surf days, wildlife watching and remote-work stays at Riverwood Villa Weligama, Sri Lanka.",
+  title: "Riverwood Villa Experiences | Weligama Riverside Stay & Surf Days",
+  description:
+    "Plan riverside mornings, hosted dining, surf days, wildlife watching and remote-work stays at Riverwood Villa Weligama, the boutique riverside base on Sri Lanka's south coast.",
   path: "/experiences",
   keywords: ["Riverwood Villa experiences", "Weligama villa experiences", "riverside stay Sri Lanka", "surf stay Weligama", "workation Weligama"],
 });

@@ -6,8 +6,9 @@ import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbJsonLd, createPageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Riverwood Villa Weligama Gallery | Rooms & Riverside",
-  description: "See Riverwood Villa Weligama in photographs: riverside balconies, canopy rooms, tropical gardens, hosted dining, wildlife and golden evenings.",
+  title: "Riverwood Villa Weligama Gallery | Rooms, River & Tropical Gardens",
+  description:
+    "See Riverwood Villa Weligama in photographs: riverside balconies, canopy rooms, tropical gardens, hosted dining, wildlife and golden evenings on the south coast.",
   path: "/gallery",
   keywords: ["Riverwood Villa gallery", "Riverwood Villa Weligama photos", "Weligama villa photos", "riverside villa Sri Lanka"],
 });

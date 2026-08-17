@@ -120,6 +120,7 @@ export function BookingSearch({
   const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const [bookingForm, setBookingForm] = useState<BookingFormState>(initialBookingForm);
+  const [submittedBookingForm, setSubmittedBookingForm] = useState<BookingFormState | null>(null);
   const [bookingError, setBookingError] = useState("");
   const [bookingStatus, setBookingStatus] = useState("");
   const [isRequestFormOpen, setIsRequestFormOpen] = useState(false);
@@ -139,6 +140,7 @@ export function BookingSearch({
     setSelectedRoomId("");
     setBookingError("");
     setBookingStatus("");
+    setSubmittedBookingForm(null);
     setIsRequestFormOpen(false);
   };
 
@@ -281,6 +283,7 @@ export function BookingSearch({
     event.preventDefault();
     setBookingError("");
     setBookingStatus("");
+    setSubmittedBookingForm(null);
 
     if (!selectedRoom) {
       setBookingError("Select a room before sending your booking request.");
@@ -316,6 +319,7 @@ export function BookingSearch({
         throw new Error(data.error || "Booking request failed.");
       }
 
+      setSubmittedBookingForm({ ...bookingForm });
       setBookingStatus("Booking request sent. We will contact you shortly to confirm the stay.");
       setBookingForm(initialBookingForm);
       setIsRequestFormOpen(false);
@@ -468,11 +472,11 @@ export function BookingSearch({
                     <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
                       {bookingError || bookingStatus}
                     </p>
-                    {bookingStatus && !bookingError && selectedRoom && (
+                    {bookingStatus && !bookingError && selectedRoom && submittedBookingForm && (
                       <a
                         href={getWhatsAppUrl(
                           WHATSAPP_NUMBER,
-                          createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, bookingForm)
+                          createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, submittedBookingForm)
                         )}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -701,11 +705,11 @@ export function BookingSearch({
                   <p className={`ms-note ${bookingError ? "is-error" : ""}`}>
                     {bookingError || bookingStatus}
                   </p>
-                  {bookingStatus && !bookingError && selectedRoom && (
+                  {bookingStatus && !bookingError && selectedRoom && submittedBookingForm && (
                     <a
                       href={getWhatsAppUrl(
                         WHATSAPP_NUMBER,
-                        createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, bookingForm)
+                        createBookingWhatsAppMessage(selectedRoom, checkIn, checkOut, guests, submittedBookingForm)
                       )}
                       target="_blank"
                       rel="noopener noreferrer"

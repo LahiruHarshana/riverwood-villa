@@ -82,149 +82,156 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="admin-panel p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Room Name */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Room Name</label>
-            <input
-              {...register("name", {
-                onChange: (e) => {
-                  if (!defaultValues && !slugTouched.current) {
-                    setValue("slug", autoSlug(e.target.value));
-                  }
-                },
-              })}
-              className="admin-input"
-              placeholder="e.g. River View Suite"
-            />
-            {errors.name && <p className="text-xs font-medium text-red-600">{errors.name.message}</p>}
+      <div className="admin-panel p-6 md:p-8">
+        <div className="admin-form-section">
+          <div className="admin-form-section-head">
+            <h2 className="admin-form-section-title">Room details</h2>
+            <p className="admin-form-section-copy">Set the name, URL slug, and guest-facing description.</p>
           </div>
-
-          {/* Slug */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Slug</label>
-            <input
-              {...register("slug", {
-                onChange: () => { slugTouched.current = true; },
-              })}
-              className="admin-input"
-              placeholder="e.g. river-view-suite"
-            />
-            {errors.slug && <p className="text-xs font-medium text-red-600">{errors.slug.message}</p>}
-          </div>
-
-          {/* Description */}
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Description</label>
-            <textarea
-              {...register("description")}
-              rows={4}
-              className="admin-input"
-              placeholder="Describe the room, its features, and what makes it special..."
-            />
-            {errors.description && <p className="text-xs font-medium text-red-600">{errors.description.message}</p>}
-          </div>
-
-          {/* Price */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Price Per Night (USD)</label>
-            <input
-              type="number"
-              step="0.01"
-              {...register("pricePerNight", { valueAsNumber: true })}
-              className="admin-input"
-            />
-            {errors.pricePerNight && <p className="text-xs font-medium text-red-600">{errors.pricePerNight.message}</p>}
-          </div>
-
-          {/* Max Guests */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Max Guests</label>
-            <input
-              type="number"
-              {...register("maxGuests", { valueAsNumber: true })}
-              className="admin-input"
-            />
-            {errors.maxGuests && <p className="text-xs font-medium text-red-600">{errors.maxGuests.message}</p>}
-          </div>
-
-          {/* Bedrooms */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Bedrooms</label>
-            <input
-              type="number"
-              {...register("bedrooms", { valueAsNumber: true })}
-              className="admin-input"
-            />
-            {errors.bedrooms && <p className="text-xs font-medium text-red-600">{errors.bedrooms.message}</p>}
-          </div>
-
-          {/* Bathrooms */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Bathrooms</label>
-            <input
-              type="number"
-              {...register("bathrooms", { valueAsNumber: true })}
-              className="admin-input"
-            />
-            {errors.bathrooms && <p className="text-xs font-medium text-red-600">{errors.bathrooms.message}</p>}
-          </div>
-
-          {/* Amenities */}
-          <div className="md:col-span-2 space-y-2">
-            <label className="text-sm font-medium text-gray-700">Amenities</label>
-            {amenities.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {amenities.map((amenity, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-500/20"
-                  >
-                    {amenity}
-                    <button type="button" onClick={() => removeAmenity(index)} className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="admin-field-grid">
+            <div>
+              <label className="admin-field-label">Room name</label>
               <input
-                onKeyDown={handleAmenityKeyDown}
-                placeholder="Type and press Enter to add"
-                className="admin-input flex-1"
+                {...register("name", {
+                  onChange: (e) => {
+                    if (!defaultValues && !slugTouched.current) {
+                      setValue("slug", autoSlug(e.target.value));
+                    }
+                  },
+                })}
+                className="admin-input"
+                placeholder="e.g. River View Suite"
               />
-              <button
-                type="button"
-                onClick={handleAmenityClick}
-                className="flex h-[42px] w-full items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-700 sm:h-[38px] sm:w-[38px]"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
+              {errors.name && <p className="text-xs font-medium text-red-600 mt-1">{errors.name.message}</p>}
+            </div>
+
+            <div>
+              <label className="admin-field-label">Slug</label>
+              <input
+                {...register("slug", {
+                  onChange: () => { slugTouched.current = true; },
+                })}
+                className="admin-input"
+                placeholder="e.g. river-view-suite"
+              />
+              {errors.slug && <p className="text-xs font-medium text-red-600 mt-1">{errors.slug.message}</p>}
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="admin-field-label">Description</label>
+              <textarea
+                {...register("description")}
+                rows={4}
+                className="admin-input"
+                placeholder="Describe the room, its features, and what makes it special..."
+              />
+              {errors.description && <p className="text-xs font-medium text-red-600 mt-1">{errors.description.message}</p>}
             </div>
           </div>
+        </div>
 
-          {/* Images */}
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Images</label>
-            <ImageUploader value={images} onChange={(urls) => setValue("images", urls)} />
+        <div className="admin-form-section">
+          <div className="admin-form-section-head">
+            <h2 className="admin-form-section-title">Capacity and pricing</h2>
+            <p className="admin-form-section-copy">Define nightly rate, guest limits, and room layout.</p>
           </div>
-
-          {/* Available */}
-          <div className="md:col-span-2">
-            <label className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 cursor-pointer transition-colors hover:bg-gray-100">
+          <div className="admin-field-grid">
+            <div>
+              <label className="admin-field-label">Price per night (USD)</label>
               <input
-                type="checkbox"
-                {...register("isAvailable")}
-                id="isAvailable"
-                className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500/20"
+                type="number"
+                step="0.01"
+                {...register("pricePerNight", { valueAsNumber: true })}
+                className="admin-input"
               />
-              <span className="text-sm font-medium text-gray-700 cursor-pointer">
-                Room is available for booking
-              </span>
-            </label>
+              {errors.pricePerNight && <p className="text-xs font-medium text-red-600 mt-1">{errors.pricePerNight.message}</p>}
+            </div>
+
+            <div>
+              <label className="admin-field-label">Max guests</label>
+              <input
+                type="number"
+                {...register("maxGuests", { valueAsNumber: true })}
+                className="admin-input"
+              />
+              {errors.maxGuests && <p className="text-xs font-medium text-red-600 mt-1">{errors.maxGuests.message}</p>}
+            </div>
+
+            <div>
+              <label className="admin-field-label">Bedrooms</label>
+              <input
+                type="number"
+                {...register("bedrooms", { valueAsNumber: true })}
+                className="admin-input"
+              />
+              {errors.bedrooms && <p className="text-xs font-medium text-red-600 mt-1">{errors.bedrooms.message}</p>}
+            </div>
+
+            <div>
+              <label className="admin-field-label">Bathrooms</label>
+              <input
+                type="number"
+                {...register("bathrooms", { valueAsNumber: true })}
+                className="admin-input"
+              />
+              {errors.bathrooms && <p className="text-xs font-medium text-red-600 mt-1">{errors.bathrooms.message}</p>}
+            </div>
           </div>
+        </div>
+
+        <div className="admin-form-section">
+          <div className="admin-form-section-head">
+            <h2 className="admin-form-section-title">Amenities</h2>
+            <p className="admin-form-section-copy">Add quick highlights guests can scan before booking.</p>
+          </div>
+          {amenities.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {amenities.map((amenity, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-500/20"
+                >
+                  {amenity}
+                  <button type="button" onClick={() => removeAmenity(index)} className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <input
+              onKeyDown={handleAmenityKeyDown}
+              placeholder="Type and press Enter to add"
+              className="admin-input flex-1"
+            />
+            <button
+              type="button"
+              onClick={handleAmenityClick}
+              className="admin-primary-button w-full sm:w-auto"
+            >
+              <Plus className="w-4 h-4" /> Add
+            </button>
+          </div>
+        </div>
+
+        <div className="admin-form-section">
+          <div className="admin-form-section-head">
+            <h2 className="admin-form-section-title">Photos</h2>
+            <p className="admin-form-section-copy">Upload clear room images for the public listing.</p>
+          </div>
+          <ImageUploader value={images} onChange={(urls) => setValue("images", urls)} />
+        </div>
+
+        <div className="admin-form-section">
+          <label className="admin-checkbox-card">
+            <input
+              type="checkbox"
+              {...register("isAvailable")}
+              id="isAvailable"
+            />
+            <span>Room is available for booking</span>
+          </label>
         </div>
       </div>
 
@@ -234,7 +241,7 @@ export function RoomForm({ defaultValues, onSubmit, isSubmitting }: RoomFormProp
           disabled={isSubmitting}
           className="admin-primary-button flex-1 disabled:opacity-40"
         >
-          {isSubmitting ? <><Spinner size="sm" /> Saving...</> : "Save Room"}
+          {isSubmitting ? <><Spinner size="sm" /> Saving...</> : "Save room"}
         </button>
       </div>
     </form>

@@ -4,9 +4,10 @@ import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getBookingById, updateBookingStatus, deleteBooking, Booking } from "@/lib/firestore/bookings";
 import { Spinner } from "@/components/ui/Spinner";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { WhatsAppButton } from "@/components/admin/WhatsAppButton";
-import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, ArrowLeft, DollarSign, Trash2 } from "lucide-react";
+import { User, Mail, Phone, Calendar, Users, Clock, MessageSquare, CheckCircle, XCircle, DollarSign, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 
 export default function BookingDetailPage() {
@@ -45,13 +46,13 @@ export default function BookingDetailPage() {
   const handleDelete = async () => {
     if (!booking) return;
     const result = await Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "Remove this cancelled booking permanently? This action cannot be undone.",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#10b981',
-      cancelButtonColor: '#ef4444',
-      confirmButtonText: 'Yes, remove it!'
+      confirmButtonColor: "#10b981",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Yes, remove it!",
     });
     if (!result.isConfirmed) return;
     setDeleting(true);
@@ -68,13 +69,13 @@ export default function BookingDetailPage() {
     if (!booking) return;
     if (status === "cancelled") {
       const result = await Swal.fire({
-        title: 'Cancel Booking?',
+        title: "Cancel Booking?",
         text: "Cancel this booking? This will notify the guest.",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Yes, cancel it!'
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Yes, cancel it!",
       });
       if (!result.isConfirmed) return;
     }
@@ -83,11 +84,11 @@ export default function BookingDetailPage() {
       await updateBookingStatus(booking.id, status);
       setBooking((prev) => (prev ? { ...prev, status } : null));
       Swal.fire({
-        title: 'Success!',
+        title: "Success!",
         text: `Booking has been ${status}.`,
-        icon: 'success',
+        icon: "success",
         timer: 1500,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
     } catch (error) {
       console.error("Failed to update status:", error);
@@ -106,124 +107,118 @@ export default function BookingDetailPage() {
 
   if (!booking) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-400">
+      <div className="admin-empty-state py-24 text-center">
+        <div className="admin-empty-icon mb-4">
           <Calendar className="h-6 w-6" />
         </div>
-        <p className="font-semibold text-gray-900">Booking not found</p>
+        <p className="font-semibold" style={{ color: "var(--ra-ink-strong)" }}>Booking not found</p>
       </div>
     );
   }
 
   const prebuiltMessages = [
     {
-      label: "Confirm Booking",
+      label: "Confirm booking",
       message: `Hi ${booking.guestName}, your booking at Riverwood Villa (${booking.roomName}, ${new Date(booking.checkIn).toLocaleDateString()}–${new Date(booking.checkOut).toLocaleDateString()}) is confirmed. We look forward to hosting you!`,
     },
     {
-      label: "Request Deposit",
+      label: "Request deposit",
       message: `Hi ${booking.guestName}, thank you for booking Riverwood Villa. To secure your reservation, please send a 30% deposit to [payment details].`,
     },
     {
-      label: "Ask for Details",
+      label: "Ask for details",
       message: `Hi ${booking.guestName}, we received your booking request. Could you confirm the number of guests and any dietary requirements?`,
     },
   ];
 
   return (
     <div className="space-y-6 admin-fade-in">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <button
-            onClick={() => router.back()}
-            className="mb-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-gray-700"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back
-          </button>
-          <span className="admin-page-kicker">Guest request</span>
-          <h1 className="admin-page-title">Booking Details</h1>
-          <p className="admin-page-subtitle">Review the stay, update status, and send a clear message to the guest.</p>
-        </div>
-        <BookingStatusBadge status={booking.status} />
-      </div>
+      <AdminPageHeader
+        kicker="Guest request"
+        title="Booking details"
+        subtitle="Review the stay, update status, and send a clear message to the guest."
+        backHref="/admin/bookings"
+        backLabel="Back to bookings"
+        meta={<BookingStatusBadge status={booking.status} />}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Guest */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div className="admin-panel p-6">
-          <div className="mb-5 flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+          <div className="admin-detail-section-head">
+            <div className="admin-detail-section-icon">
               <User className="w-4 h-4" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900">Guest information</h2>
+            <h2 className="admin-detail-section-title">Guest information</h2>
           </div>
           <div className="space-y-2.5">
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
-              <User className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="font-medium text-sm text-gray-900">{booking.guestName}</span>
+            <div className="admin-info-row">
+              <User className="w-4 h-4" />
+              <span>{booking.guestName}</span>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
-              <Mail className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="text-sm text-gray-600">{booking.guestEmail}</span>
+            <div className="admin-info-row">
+              <Mail className="w-4 h-4" />
+              <span>{booking.guestEmail}</span>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
-              <Phone className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="text-sm text-gray-600">{booking.guestPhone}</span>
+            <div className="admin-info-row">
+              <Phone className="w-4 h-4" />
+              <span>{booking.guestPhone}</span>
             </div>
           </div>
         </div>
 
-        {/* Stay */}
         <div className="admin-panel p-6">
-          <div className="mb-5 flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+          <div className="admin-detail-section-head">
+            <div className="admin-detail-section-icon">
               <Calendar className="w-4 h-4" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900">Stay information</h2>
+            <h2 className="admin-detail-section-title">Stay information</h2>
           </div>
           <div className="space-y-2.5">
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="rounded-lg bg-gray-50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Check-in</p>
-                <p className="font-medium text-sm text-gray-900">{new Date(booking.checkIn).toLocaleDateString()}</p>
+            <div className="admin-field-grid">
+              <div className="admin-info-row">
+                <div>
+                  <small>Check-in</small>
+                  <p>{new Date(booking.checkIn).toLocaleDateString()}</p>
+                </div>
               </div>
-              <div className="rounded-lg bg-gray-50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Check-out</p>
-                <p className="font-medium text-sm text-gray-900">{new Date(booking.checkOut).toLocaleDateString()}</p>
+              <div className="admin-info-row">
+                <div>
+                  <small>Check-out</small>
+                  <p>{new Date(booking.checkOut).toLocaleDateString()}</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
-              <Clock className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="text-sm text-gray-600">Duration: <strong className="text-gray-900">{duration} nights</strong></span>
+            <div className="admin-info-row">
+              <Clock className="w-4 h-4" />
+              <span>Duration: <strong>{duration} nights</strong></span>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
-              <Users className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="text-sm text-gray-600">{booking.guests} guests</span>
+            <div className="admin-info-row">
+              <Users className="w-4 h-4" />
+              <span>{booking.guests} guest{booking.guests === 1 ? "" : "s"}</span>
             </div>
-            <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
-              <DollarSign className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className="text-sm text-gray-600">Total: <strong className="text-gray-900">${(booking.total || 0).toLocaleString()}</strong></span>
+            <div className="admin-info-row">
+              <DollarSign className="w-4 h-4" />
+              <span>Total: <strong>${(booking.total || 0).toLocaleString()}</strong></span>
             </div>
             {booking.specialRequests && (
-              <div className="flex items-start gap-3 rounded-lg bg-amber-50 px-4 py-3 border border-amber-200/50">
-                <MessageSquare className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="admin-info-row is-highlight">
+                <MessageSquare className="w-4 h-4" />
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-0.5">Special Requests</p>
-                  <p className="text-sm text-gray-600">{booking.specialRequests}</p>
+                  <small>Special requests</small>
+                  <p>{booking.specialRequests}</p>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Status Management */}
         <div className="admin-panel lg:col-span-2 p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+            <div className="admin-detail-section-head mb-0">
+              <div className="admin-detail-section-icon">
                 <CheckCircle className="w-4 h-4" />
               </div>
-              <h2 className="text-base font-semibold text-gray-900">Status management</h2>
+              <h2 className="admin-detail-section-title">Status management</h2>
             </div>
             <BookingStatusBadge status={booking.status} />
           </div>
@@ -234,7 +229,7 @@ export default function BookingDetailPage() {
               className="admin-primary-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px]"
             >
               {confirmAction === "confirmed" ? <Spinner size="sm" /> : <CheckCircle className="w-4 h-4" />}
-              {booking.status === "confirmed" ? "Already Confirmed" : "Confirm Booking"}
+              {booking.status === "confirmed" ? "Already confirmed" : "Confirm booking"}
             </button>
             <button
               onClick={() => handleStatusChange("cancelled")}
@@ -242,30 +237,29 @@ export default function BookingDetailPage() {
               className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px]"
             >
               {confirmAction === "cancelled" ? <Spinner size="sm" /> : <XCircle className="w-4 h-4" />}
-              {booking.status === "cancelled" ? "Already Cancelled" : "Cancel Booking"}
+              {booking.status === "cancelled" ? "Already cancelled" : "Cancel booking"}
             </button>
             {booking.status === "cancelled" && (
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px] !border-red-600 !text-red-600 hover:!bg-red-600 hover:!text-white"
+                className="admin-danger-button disabled:cursor-not-allowed disabled:opacity-30 min-w-[160px]"
               >
                 {deleting ? <Spinner size="sm" /> : <Trash2 className="w-4 h-4" />}
-                Remove Booking
+                Remove booking
               </button>
             )}
           </div>
         </div>
 
-        {/* WhatsApp */}
         <div className="admin-panel lg:col-span-2 p-6">
-          <div className="mb-5 flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+          <div className="admin-detail-section-head">
+            <div className="admin-detail-section-icon">
               <MessageSquare className="w-4 h-4" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900">Contact guest</h2>
+            <h2 className="admin-detail-section-title">Contact guest</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div className="admin-action-grid">
             {prebuiltMessages.map((msg) => (
               <WhatsAppButton
                 key={msg.label}
@@ -275,8 +269,8 @@ export default function BookingDetailPage() {
               />
             ))}
           </div>
-          <div className="mt-5 border-t border-gray-100 pt-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2.5">Custom Message</h3>
+          <div className="mt-5 border-t pt-5" style={{ borderColor: "var(--ra-line)" }}>
+            <h3 className="admin-form-section-title mb-2.5">Custom message</h3>
             <div className="flex flex-col sm:flex-row gap-2.5 items-start sm:items-end">
               <textarea
                 ref={customMsgRef}
@@ -287,7 +281,7 @@ export default function BookingDetailPage() {
               <WhatsAppButton
                 phone={booking.guestPhone}
                 message=""
-                label="Send Custom"
+                label="Send custom"
                 customMessageRef={customMsgRef}
               />
             </div>

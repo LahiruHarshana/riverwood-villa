@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { RoomForm } from "@/components/admin/RoomForm";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { getRoomById, updateRoom, Room, RoomFormData } from "@/lib/firestore/rooms";
 import { Spinner } from "@/components/ui/Spinner";
+import { BedDouble } from "lucide-react";
 
 export default function EditRoomPage() {
   const router = useRouter();
@@ -59,25 +61,25 @@ export default function EditRoomPage() {
 
   if (!room) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center admin-fade-in">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-400">
-          <Spinner size="sm" />
+      <div className="admin-empty-state py-24 text-center admin-fade-in">
+        <div className="admin-empty-icon mb-4">
+          <BedDouble className="h-6 w-6" />
         </div>
-        <p className="font-semibold text-gray-900">Room not found</p>
+        <p className="font-semibold" style={{ color: "var(--ra-ink-strong)" }}>Room not found</p>
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-3xl admin-fade-in">
-      <div className="mb-6">
-        <span className="admin-page-kicker">Inventory</span>
-        <h1 className="admin-page-title">Edit room</h1>
-        <p className="admin-page-subtitle">Refine the listing, rates, and availability guests see before booking.</p>
-      </div>
-      <div className="admin-panel p-6 md:p-8">
-        <RoomForm defaultValues={room} onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-      </div>
+      <AdminPageHeader
+        kicker="Inventory"
+        title="Edit room"
+        subtitle="Refine the listing, rates, and availability guests see before booking."
+        backHref="/admin/rooms"
+        backLabel="Back to rooms"
+      />
+      <RoomForm defaultValues={room} onSubmit={handleSubmit} isSubmitting={isSubmitting} />
     </div>
   );
 }

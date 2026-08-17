@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Sidebar } from "@/components/admin/Sidebar";
+import { AdminTopBar } from "@/components/admin/AdminTopBar";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,8 +23,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <AuthProvider>
       <div className="admin-app flex min-h-screen" style={{ background: "var(--ra-paper)" }}>
         <Sidebar currentPath={pathname} />
-        <main className="admin-main flex-1 ml-0 md:ml-[260px] min-h-screen">
-          <div className="admin-content">{children}</div>
+        <main className="admin-main flex-1 ml-0 md:ml-[272px] min-h-screen">
+          <AdminTopBar />
+          <div className="admin-content">
+            <div className="admin-page-wrapper">{children}</div>
+          </div>
         </main>
       </div>
     </AuthProvider>

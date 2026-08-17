@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useBookings } from "@/hooks/useBookings";
 import { BookingTable } from "@/components/admin/BookingTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { FilterChips } from "@/components/admin/FilterChips";
 import { Spinner } from "@/components/ui/Spinner";
 import { deleteBooking } from "@/lib/firestore/bookings";
-import { Filter, Search, SlidersHorizontal, CalendarDays } from "lucide-react";
+import { Search, SlidersHorizontal, CalendarDays } from "lucide-react";
 
 export default function BookingsPage() {
   const { bookings, loading, error, refetch } = useBookings();
@@ -31,6 +33,13 @@ export default function BookingsPage() {
     return matchesStatus && matchesSearch;
   });
 
+  const statusCounts = {
+    all: bookings.length,
+    pending: bookings.filter((b) => b.status === "pending").length,
+    confirmed: bookings.filter((b) => b.status === "confirmed").length,
+    cancelled: bookings.filter((b) => b.status === "cancelled").length,
+  };
+
   if (loading) {
     return (
       <div className="admin-loading">
@@ -53,44 +62,61 @@ export default function BookingsPage() {
 
   return (
     <div className="space-y-6 admin-fade-in">
-      {/* Header */}
-      <div className="admin-page-header flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <span className="admin-page-kicker">Reservations</span>
-          <h1 className="admin-page-title">Bookings</h1>
-          <p className="admin-page-subtitle">Filter enquiries, confirm guests, and keep every stay moving smoothly.</p>
+      <AdminPageHeader
+        kicker="Reservations"
+        title="Bookings"
+        subtitle="Filter enquiries, confirm guests, and keep every stay moving smoothly."
+      />
+
+      <div className="admin-summary-strip">
+        <div className="admin-summary-item">
+          <span>Total</span>
+          <strong>{statusCounts.all}</strong>
         </div>
-        <div className="admin-page-toolbar flex flex-wrap items-center gap-2.5">
-          {/* Search */}
-          <div className="relative w-full sm:w-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <div className="admin-summary-item">
+          <span>Pending</span>
+          <strong>{statusCounts.pending}</strong>
+        </div>
+        <div className="admin-summary-item">
+          <span>Confirmed</span>
+          <strong>{statusCounts.confirmed}</strong>
+        </div>
+        <div className="admin-summary-item">
+          <span>Cancelled</span>
+          <strong>{statusCounts.cancelled}</strong>
+        </div>
+      </div>
+
+      <div className="admin-toolbar-panel">
+        <FilterChips
+          value={statusFilter}
+          onChange={setStatusFilter}
+          ariaLabel="Booking status filters"
+          options={[
+            { value: "all", label: "All", count: statusCounts.all },
+            { value: "pending", label: "Pending", count: statusCounts.pending },
+            { value: "confirmed", label: "Confirmed", count: statusCounts.confirmed },
+            { value: "cancelled", label: "Cancelled", count: statusCounts.cancelled },
+          ]}
+        />
+
+        <div className="admin-toolbar-panel-row">
+          <div className="relative admin-search-wrap">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--ra-ink-faint)" }} />
             <input
               type="text"
               placeholder="Search guest or room..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="admin-input !pl-9 sm:w-[14rem]"
+              className="admin-input !pl-9"
             />
           </div>
-
-          {/* Status filter */}
-          <div className="relative w-full sm:w-auto">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="admin-input !pl-9 !pr-8 appearance-none cursor-pointer min-w-[7.5rem]"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
+          <p className="admin-results-note">
+            Showing {filteredBookings.length} of {bookings.length} booking{bookings.length === 1 ? "" : "s"}
+          </p>
         </div>
       </div>
 
-      {/* Table Card */}
       {bookings.length === 0 ? (
         <div className="admin-empty-state py-16 text-center">
           <div className="admin-empty-icon mb-4">

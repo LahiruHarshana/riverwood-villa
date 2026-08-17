@@ -21,9 +21,24 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { label: "Overview", path: "/admin", icon: LayoutDashboard },
-  { label: "Rooms", path: "/admin/rooms", icon: BedDouble },
-  { label: "Bookings", path: "/admin/bookings", icon: CalendarDays },
+  {
+    label: "Overview",
+    description: "Dashboard and metrics",
+    path: "/admin",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Rooms",
+    description: "Inventory and pricing",
+    path: "/admin/rooms",
+    icon: BedDouble,
+  },
+  {
+    label: "Bookings",
+    description: "Guest requests",
+    path: "/admin/bookings",
+    icon: CalendarDays,
+  },
 ];
 
 export function Sidebar({ currentPath }: SidebarProps) {
@@ -75,8 +90,10 @@ export function Sidebar({ currentPath }: SidebarProps) {
             R
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-black tracking-tight text-gray-950">Riverwood Admin</p>
-            <span className="block truncate text-[0.65rem] font-bold uppercase tracking-[0.14em] text-gray-400">
+            <p className="truncate text-sm font-black tracking-tight" style={{ color: "var(--ra-ink-strong)" }}>
+              Riverwood Admin
+            </p>
+            <span className="block truncate text-[0.65rem] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--ra-ink-muted)" }}>
               Villa operations
             </span>
           </div>
@@ -92,36 +109,40 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
       <aside
         className={`
-          fixed top-0 left-0 h-full w-[min(21.5rem,calc(100vw-1.5rem))] md:w-[260px] z-40
+          fixed top-0 left-0 h-full w-[min(21.5rem,calc(100vw-1.5rem))] md:w-[272px] z-40
           admin-sidebar
           transform transition-transform duration-300 ease-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
       >
         <div className="flex h-full flex-col px-4 py-6">
-          {/* Brand */}
           <Link
             href="/admin"
             onClick={() => setIsOpen(false)}
-            className="mb-6 px-2 group"
+            className="mb-8 px-2"
           >
             <div className="flex items-center gap-3">
-              <div className="admin-brand-mark flex h-9 w-9 shrink-0 items-center justify-center text-white font-semibold text-sm">
+              <div className="admin-brand-mark flex h-10 w-10 shrink-0 items-center justify-center text-white font-semibold text-sm">
                 R
               </div>
               <div className="min-w-0">
-                <h2 className="text-sm font-semibold text-gray-900 tracking-tight truncate">
-                  Riverwood
+                <h2 className="text-sm font-black tracking-tight truncate" style={{ color: "var(--ra-ink-strong)" }}>
+                  Riverwood Villa
                 </h2>
-                <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-gray-400 mt-0.5 truncate">
-                  Admin Panel
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.12em] mt-0.5 truncate" style={{ color: "var(--ra-ink-muted)" }}>
+                  Admin workspace
                 </p>
               </div>
             </div>
           </Link>
 
-          {/* Navigation */}
-          <nav className="flex flex-1 flex-col gap-0.5">
+          <div className="px-2 mb-3">
+            <p className="text-[0.65rem] font-black uppercase tracking-[0.14em]" style={{ color: "var(--ra-ink-faint)" }}>
+              Main menu
+            </p>
+          </div>
+
+          <nav className="flex flex-1 flex-col gap-1">
             {navItems.map((item, i) => {
               const active = isActive(item.path);
               const Icon = item.icon;
@@ -132,60 +153,46 @@ export function Sidebar({ currentPath }: SidebarProps) {
                   ref={(el) => { navRefs.current[i] = el; }}
                   href={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`
-                    relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150
-                    ${active
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }
-                  `}
+                  className={`admin-nav-link ${active ? "is-active" : ""}`}
                 >
-                  {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-emerald-500" />
-                  )}
-                  <span className={`
-                    flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-all duration-150
-                    ${active
-                      ? "bg-emerald-100 text-emerald-700 shadow-sm"
-                      : "text-gray-400 group-hover:text-gray-600"
-                    }
-                  `}>
+                  <span className="admin-nav-link-icon">
                     <Icon className="w-4 h-4" />
                   </span>
-                  <span className="truncate">{item.label}</span>
-                  {active && (
-                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-emerald-400" />
-                  )}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate">{item.label}</span>
+                    <span className="admin-nav-link-copy">{item.description}</span>
+                  </span>
+                  {active && <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-70" />}
                 </Link>
               );
             })}
 
-            <div className="my-3 border-t border-gray-100" />
+            <div className="my-4 border-t" style={{ borderColor: "var(--ra-line)" }} />
 
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-all duration-150 hover:bg-gray-50 hover:text-gray-900"
+              className="admin-nav-link"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400">
+              <span className="admin-nav-link-icon">
                 <House className="w-4 h-4" />
               </span>
-              <span>View Site</span>
-              <ExternalLink className="w-3 h-3 ml-auto text-gray-300" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate">View site</span>
+                <span className="admin-nav-link-copy">Open public website</span>
+              </span>
+              <ExternalLink className="w-3 h-3 shrink-0 opacity-50" />
             </a>
 
-            {/* User profile */}
-            <div className="mt-auto mb-3">
+            <div className="mt-auto mb-3 pt-4">
               <div className="admin-sidebar-user">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-100 text-emerald-700 font-semibold text-xs">
-                  {userInitial}
-                </div>
+                <div className="admin-topbar-avatar">{userInitial}</div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-gray-900 truncate">
+                  <p className="text-xs font-bold truncate" style={{ color: "var(--ra-ink-strong)" }}>
                     {userEmail || "Admin User"}
                   </p>
-                  <p className="text-[0.6rem] font-medium uppercase tracking-wider text-gray-400 truncate">
+                  <p className="text-[0.62rem] font-bold uppercase tracking-wider truncate" style={{ color: "var(--ra-ink-muted)" }}>
                     Administrator
                   </p>
                 </div>
@@ -194,19 +201,21 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
             <button
               onClick={handleSignOut}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-400 transition-all duration-150 hover:bg-red-50 hover:text-red-600"
+              className="admin-nav-link is-danger"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors">
+              <span className="admin-nav-link-icon">
                 <LogOut className="w-4 h-4" />
               </span>
-              <span>Sign Out</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate">Sign out</span>
+                <span className="admin-nav-link-copy">End admin session</span>
+              </span>
             </button>
           </nav>
 
-          {/* Footer */}
-          <div className="mt-4 pt-4 border-t border-gray-100 px-2">
-            <p className="text-[0.65rem] font-medium leading-5 text-gray-300 tracking-wide uppercase">
-              Riverwood Villa · Private Villa
+          <div className="mt-4 pt-4 border-t px-2" style={{ borderColor: "var(--ra-line)" }}>
+            <p className="text-[0.62rem] font-bold leading-5 tracking-wide uppercase" style={{ color: "var(--ra-ink-faint)" }}>
+              Riverwood Villa · Private admin
             </p>
           </div>
         </div>

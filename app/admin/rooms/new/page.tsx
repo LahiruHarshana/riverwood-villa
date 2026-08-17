@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RoomForm } from "@/components/admin/RoomForm";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { createRoom, RoomFormData } from "@/lib/firestore/rooms";
 
 export default function NewRoomPage() {
@@ -21,15 +22,15 @@ export default function NewRoomPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-6">
-        <span className="admin-page-kicker">Inventory</span>
-        <h1 className="admin-page-title">Add room</h1>
-        <p className="admin-page-subtitle">Create a room listing with guest-ready details and imagery.</p>
-      </div>
-      <div className="admin-panel p-6 md:p-8">
-        <RoomForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-      </div>
+    <div className="mx-auto max-w-3xl admin-fade-in">
+      <AdminPageHeader
+        kicker="Inventory"
+        title="Add room"
+        subtitle="Create a room listing with guest-ready details and imagery."
+        backHref="/admin/rooms"
+        backLabel="Back to rooms"
+      />
+      <RoomForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
     </div>
   );
 }

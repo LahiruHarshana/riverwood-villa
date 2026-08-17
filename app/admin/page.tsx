@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { StatsCard } from "@/components/admin/StatsCard";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { getRooms } from "@/lib/firestore/rooms";
 import { getBookings, Booking } from "@/lib/firestore/bookings";
@@ -69,9 +70,9 @@ export default function DashboardPage() {
   const [upcomingCheckins, setUpcomingCheckins] = useState<Booking[]>([]);
   const [priorityBookings, setPriorityBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const headerRef = useRef<HTMLElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const panelsRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -146,9 +147,9 @@ export default function DashboardPage() {
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    if (headerRef.current) {
+    if (heroRef.current) {
       tl.fromTo(
-        headerRef.current.children,
+        heroRef.current.children,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }
       );
@@ -195,24 +196,21 @@ export default function DashboardPage() {
   const cancelledVisualRate = stats.cancelledBookings ? Math.max(cancelledRate, 5) : 0;
 
   return (
-    <div className="admin-dashboard space-y-8">
-      {/* Header */}
-      <header ref={headerRef} className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <span className="admin-page-kicker">Dashboard</span>
-          <h1 className="admin-page-title">Villa Operations</h1>
-          <p className="admin-page-subtitle">
-            A snapshot of rooms, requests, and the guest arrivals that need attention this week.
-          </p>
-        </div>
-        <div className="admin-date-badge">
-          <span className="dot relative" />
-          {new Date().toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
-        </div>
-      </header>
+    <div className="admin-dashboard space-y-8 admin-fade-in">
+      <AdminPageHeader
+        kicker="Dashboard"
+        title="Villa operations"
+        subtitle="A clear snapshot of rooms, guest requests, and arrivals that need attention this week."
+        meta={
+          <div className="admin-date-badge">
+            <span className="dot relative" />
+            {new Date().toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+          </div>
+        }
+      />
 
       {/* Executive overview */}
-      <section className="admin-hero-grid">
+      <section ref={heroRef} className="admin-hero-grid">
         <div className="admin-hero-card">
           <div className="admin-hero-glow" />
           <div className="relative z-10 flex h-full flex-col justify-between gap-8">

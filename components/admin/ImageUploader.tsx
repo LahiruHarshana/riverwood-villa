@@ -41,18 +41,18 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
           <button
             type="button"
             onClick={() => open?.()}
-            className="group flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 px-4 py-5 text-sm font-semibold text-gray-500 transition-all duration-150 hover:border-emerald-300 hover:bg-emerald-50/50"
+            className="admin-upload-dropzone group"
           >
             <Upload className="w-5 h-5 transition-transform group-hover:-translate-y-0.5" />
-            Upload Photos
+            Upload photos
           </button>
         )}
       </CldUploadWidget>
 
       {value.length > 0 && (
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+        <div className="admin-upload-grid md:grid-cols-4">
           {value.map((url, index) => (
-            <div key={index} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100 ring-1 ring-gray-200">
+            <div key={index} className="admin-upload-thumb group">
               <Image
                 src={url}
                 alt={`Room image ${index + 1}`}

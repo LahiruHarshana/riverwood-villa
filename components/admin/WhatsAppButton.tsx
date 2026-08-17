@@ -26,7 +26,7 @@ export function WhatsAppButton({ phone, message, label, customMessage, customMes
   return (
     <button
       onClick={handleClick}
-      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-[1px] hover:bg-[#128C7E] hover:shadow-md active:translate-y-0 sm:w-auto"
+      className="admin-whatsapp-button"
     >
       <MessageCircle className="w-4 h-4" /> {label}
     </button>
